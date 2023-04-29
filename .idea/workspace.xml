@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="" />
+    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ADCS_n_Propulsion/cube_ascii.stl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADCS_n_Propulsion/cube_binary.stl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADCS_n_Propulsion/project_area_backend.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADCS_n_Propulsion/project_area_ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,10 +36,15 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/lodew/OneDrive/Documenten/University Subjects/DSE_Actual/DSE",
+    "last_opened_file_path": "C:/Users/Lodewijk/Documents/University_Subjects/DSE/DSE/ADCS_n_Propulsion",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Lodewijk\Documents\University_Subjects\DSE\DSE\ADCS_n_Propulsion" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -43,6 +54,7 @@
       <option name="presentableId" value="Default" />
       <updated>1682800169558</updated>
       <workItem from="1682800176168" duration="6505000" />
+      <workItem from="1682808854395" duration="270000" />
     </task>
     <servers />
   </component>
