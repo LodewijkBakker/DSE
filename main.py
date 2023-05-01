@@ -19,3 +19,22 @@ f_aero = rho*a_frontal*c_d_satellite*v_orbit**2  # [n] aerodynamic force at nomi
 safety_factor = 1.5
 delta_v = f_aero / mass_sat * t_life * safety_factor # [m/s] delta v
 
+# ADCS disturbance torques:
+mag_field_max = 0
+mag_dipola = 0
+w_used = 20  # power used
+mag_dist_torque = 0
+
+largest_arm = 0.1
+a_largest_frontal_area = 1
+
+q_sun_max = 1414
+c_light = 299,792,458  # [m/s] https://physics.nist.gov/cgi-bin/cuu/Value?c
+a_reflectivity = 0.9
+sun_dist_torque = 0
+
+f_aero = rho*a_largest_frontal_area*c_d_satellite*v_orbit**2
+# [n] aerodynamic force at nominal orbit, maximum around any axis
+aero_dist_torque = f_aero*largest_arm
+
+gravity_dist_torque = 0
