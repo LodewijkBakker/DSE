@@ -14,6 +14,7 @@ from scipy.spatial.transform import Rotation as R
 import multiprocessing as mp
 
 import ADCS_n_Propulsion.project_area_backend as pab
+from stl import mesh
 
 
 def in_val_octant(point_coord, octant_sel):
@@ -177,8 +178,6 @@ def sphere_fibonacci_grid_points(ng, user_input_angles, octant_sel):
     draw_angle_point_rep_canvas(rot_angles, user_input_angles)
     return rot_angles
 
-
-from stl import mesh
 
 def engage_mp_calculate_area():
     global res

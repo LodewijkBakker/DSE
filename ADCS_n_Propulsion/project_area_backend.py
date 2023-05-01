@@ -3,8 +3,8 @@ import os
 import cProfile
 
 import numpy as np
-import stl
-from stl import mesh
+# import stl
+# from stl import mesh
 
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
@@ -168,3 +168,5 @@ def _calculate_projected_area(rot_angles, stl_model):
 #     #print(res)
 #     return res
 #     # 24.2, 0 degree angles for fokker g1
+
+# get centroid, distance from 0.0
