@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 def drag_calc(v_mag, r_pos):
     a_frontal = 1
-    c_d = 3
+    c_d = 2.2
     # get drag on r_pos
-    rho = 0
+    rho = 1.38E-11
     return 0.5*rho**c_d*a_frontal*v_mag**2
 
 def dy_vector(t, Y, mu, g0, Isp, T, t_burn, r_goal, burn_r, r_body):
