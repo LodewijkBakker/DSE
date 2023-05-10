@@ -1,23 +1,30 @@
 ["Natural constants"]
 mu=3.986004418e14
 g0= 9.80665
-Rad_Earth=6371800
-"Pos sun"=[[1.5102E11,0,0]]
+"Rad Earth"=6371800
+"Pos sun"=[151023e7,0e1,0e1]
 u_sun=[1,0,0]
 
-["Satellite Parameters"]
-dry_mass=54
-fuel_mass=4
+["Satellite parameters"]
+"dry mass"=54
+"fuel mass"=4
 Cd=2.027
-A_extended= 0.19547
-A_solar=1.5
+"A_extended"= 0.19547
+"A_solar"=1.5
 Thrust=1e-3
 I_sp=1000
 
 ["Orbital parameters"]
-Starting_alt=300e3
-Min_alt=295e3
-Max_alt=305e3
-
+"Starting alt"=300e3
+"Min alt"=295e3
+"Max alt"=305e3
+e=0
+a=6671.8e3
+i=0
+omega_AP=0
+omega_LAN=0.1
+T=0
+EA=0
+t=0
 
 
