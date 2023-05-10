@@ -1,0 +1,38 @@
+
+["Orbital"]
+Mission_life = 5                         # Mission Lifetime in years
+T_orbit = 5431                           # Orbital Period in seconds
+perc_eclipse = 0.404228                  # Percentage of Orbital Period in Eclipse
+S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERMO SIMULATION
+
+["Power Subsystems"]                     # [[Nomianl, Peak]]
+"Propulsion_P" = [[5, 100]]
+"S&M_P" = [[1.7, 1.7]]
+"ADCS_P" = [[17,25]]
+"TCS_P" = [[17,17]]
+"EPS_P" = [[10,15]]
+"SDH_P" = [[15,20]]
+"COMMS_P" = [[2,40]]                     # Omnidirectional in case DTS
+#"COMMS_P" = [[2,160]]                    # Omnidirectional in case DTS with factor
+"Payload_P" = [[25,25]]
+"Peak Active Prop" = 1000                # [s]
+"Peak Active COMMS" = 900                # [s]
+
+
+["Efficiencies Bat"]                     # Data from SMAD
+n_LiIon = 0.98
+n_NiCd = 0.72
+n_NiH2 = 0.7
+
+["E_density"]                            # Data from SMAD ; UNITS - [Whr/kg]                           
+n_LiIon = 125
+n_NiCd = 60
+n_NiH2 = 30
+
+["Solar_efficiency"]                     # Data from SMAD
+SI = 0.14
+GaAs_MJ = 0.226
+GaAs_ultra = 0.28
+
+["Sun Angle Accuracy"]
+n_theta_rot = 0.707
