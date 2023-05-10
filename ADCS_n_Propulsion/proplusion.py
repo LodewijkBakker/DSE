@@ -1,5 +1,8 @@
 import numpy as np
 
+def prop_mass(dry_mass, I_sp, dV):
+    return dry_mass*(np.e**(dV/(I_sp * 9.81))) - dry_mass
+
 # Environmental constants
 rho = 2.3E-11
 r = (6371.8+300)*10**3
@@ -42,3 +45,4 @@ V_wet = V_s + V_p
 V_ratio = V_wet / l**3 # Volume ratio
 
 print(m_p, m_wet)
+print(prop_mass(50, 1000, 3149))
