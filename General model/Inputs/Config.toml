@@ -11,7 +11,7 @@ u_sun=[1,0,0]
 Cd=2.027
 "A_extended"= 0.19547
 "A_solar"=1.5
-Thrust=1e-3
+Thrust=1e-2
 I_sp=1000
 
 ["Orbital parameters"]
@@ -22,7 +22,7 @@ e=0
 a=6671.8e3
 i=0
 omega_AP=0
-omega_LAN=0.1
+omega_LAN=0
 T=0
 EA=0
 t=0

@@ -41,7 +41,6 @@ def dy_vector(t, Y, mu, g0, Isp, T, t_burn, r_goal, burn_r, r_body):
 
     return dy
 
-
 def reached_orbit(t, Y, mu, g0, Isp, T, t_burn, r_goal, burn_r, r_body):
     """Determine if the spacecraft reaches the destination radius.
 
