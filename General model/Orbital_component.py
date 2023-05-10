@@ -184,11 +184,14 @@ if __name__ == "__main__":
     LAMP = Satellite("Inputs/Config.toml")
     # LAMP.circular_set_up(300e3,LAMP.dry_m+4)
     # print(LAMP.Y0)
-    length=10000
-    LAMP.orbital_el_set_up(10000)
+    length=5431
+    LAMP.orbital_el_set_up(length)
     sol=solve_ivp(LAMP.dy_vector,LAMP.time_range,LAMP.Y0, method="Radau", max_step=1 ,t_eval = LAMP.time_range, rtol = 1)
     LAMP.determine_char(sol.y[:,-1])
     print(f"Final result\n R: {LAMP.R_abs/1e3-LAMP.dick['Natural constants']['Rad Earth']/1e3}km V: {LAMP.V_abs/1e3}km")
     LAMP.Output.to_csv("Outputs/Test1")
+    LAMP.Output["Delta v"]=LAMP.Output["f_aero"]/LAMP.Output["m"]
+
+    print(5*365.25*24*60*60/length*LAMP.Output["Delta v"].sum())
     #Eclipse/Penumbra/E
     # t,x,y,z,vx,vy,vz,Eclipse,Angle to Sun,Thrust,f_aero

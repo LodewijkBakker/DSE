@@ -10,7 +10,7 @@ u_sun=[1,0,0]
 "fuel mass"=4
 Cd=2.027
 "A_extended"= 0.19547
-"A_solar"=1.5
+"A_solar"=1
 Thrust=1e-2
 I_sp=1000
 
