@@ -8,6 +8,7 @@ import numpy as np
 
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
+from shapely import centroid # correct?
 
 from scipy.spatial.transform import Rotation as R
 import multiprocessing as mp
@@ -146,8 +147,19 @@ def _calculate_projected_area(rot_angles, stl_model):
 
     # merge triangles into single polygon
     sub_poly = unary_union(triangles)
-    return [sub_poly.area,rot_angles]
 
+    grav_center = [1, 1, 1]
+    geo_center = centroid(sub_poly)
+    arm = _calculate_arm(rot_angles, grav_center, geo_center)
+
+    return [sub_poly.area, rot_angles]
+
+
+def _calculate_arm(rot_angles, grav_center, geo_center):
+    rot_matrix = R.from_euler('zyx', rot_angles, degrees=True).as_matrix()
+    grav_center_projected = [(rot_matrix.dot(grav_center)[1], rot_matrix.dot(grav_center)[2])]
+    arm = ((grav_center_projected[0] - geo_center[0])**2 + (grav_center_projected[1] - geo_center[1])**2)**0.5
+    return arm
 
 # --- MAIN ---------------------------------------------------------------------+
 
