@@ -12,11 +12,11 @@ S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERM
 "TCS_P" = [[17,17]]
 "EPS_P" = [[10,15]]
 "SDH_P" = [[15,20]]
-"COMMS_P" = [[2,40]]                     # Omnidirectional in case DTS
-#"COMMS_P" = [[2,160]]                    # Omnidirectional in case DTS with factor
+"COMMS_P" = [[2,40]]                    
 "Payload_P" = [[25,25]]
 "Peak Active Prop" = 1000                # [s]
-"Peak Active COMMS" = 900                # [s]
+"Peak Active COMMS" = 600                # [s]
+"Peak Active ADCS" = 9000                # [s]
 
 
 ["Efficiencies Bat"]                     # Data from SMAD
@@ -35,4 +35,6 @@ GaAs_MJ = 0.226
 GaAs_ultra = 0.28
 
 ["Sun Angle Accuracy"]
-n_theta_rot = 0.707
+n_theta_rot = 0.99
+n_theta_fix = 0.6366197724
+n_theta_3rd_wheel = 0.76
