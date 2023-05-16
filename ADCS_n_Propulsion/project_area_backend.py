@@ -9,6 +9,7 @@ import numpy as np
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 from shapely import centroid # correct?
+from shapely import Point
 
 from scipy.spatial.transform import Rotation as R
 import multiprocessing as mp
@@ -85,7 +86,8 @@ def _munge_triangle(v1, v2, v3, min_area=0):
 
 
 def _project_triangle_to_plane(tri_3d, rot_matrix):
-    """PROJECT TRIANGLE TO ARBITRARY PLANE
+    """PROJECT TRIANGLE TO ARBITRARY PLANE -> AFTER ROTATION MATRIX APPLICATION
+     PROJECT ON YZ PLANE
     Parameters
     ----------
     tri_3d : list
@@ -160,11 +162,42 @@ def _calculate_projected_area(rot_angle, stl_model, list_grav_centers):
 
 def _calculate_arm(rot_angle, grav_center, geo_center):
     rot_matrix = R.from_euler('zyx', rot_angle, degrees=True).as_matrix()
-    grav_center_projected = [rot_matrix.dot(grav_center)[1], rot_matrix.dot(grav_center)[2]]
-    print(grav_center_projected)
+    grav_center_projected = rot_matrix.dot(grav_center)
+    #print(grav_center_projected)
+    arm_projected = [0, grav_center_projected[1] - geo_center.x, grav_center_projected[2] - geo_center.y]
+    # geo_center.x is not actually x and neither is y. Reason is because it is projected on
+    # yz axis and shapely thinks this is xy axis
+    #print(arm_projected)
+    rot_matrix_transpose = rot_matrix.transpose()  # test this works
+    arm_body_frame = rot_matrix_transpose.dot(arm_projected)  # matrix multiplication
+
+    #print(grav_center_projected)
     #arm = ((grav_center_projected[0] - geo_center.x)**2 + (grav_center_projected[1] - geo_center.y)**2)**0.5
-    arm = []
-    return arm
+    # arm = []
+    return arm_body_frame
+
+
+def unit_tests():
+    geo_center_test = Point(1, 0)
+    print(_calculate_arm([0, 0, 0], [1, 1, 0], geo_center_test))
+
+    geo_center_test = Point(0, 0)
+    assert(np.all([0, 0, 0] == _calculate_arm([0, 0, 0], [0, 0, 0], geo_center_test)))
+    assert(np.all([0, 1, 0] == _calculate_arm([0, 0, 0], [1, 1, 0], geo_center_test)))
+    # for distance of center of pressure to cg z axis doesn't matter (should be x axis)
+    assert(np.all([0, 1, 0] == _calculate_arm([0, 0, 0], [0, 1, 0], geo_center_test)))
+    assert(np.all([0, 1, 1] == _calculate_arm([0, 0, 0], [0, 1, 1], geo_center_test)))
+
+    # rotated 360 should still be the same
+    assert(np.all(np.isclose([0, 0, 0],_calculate_arm([0, 0, 360], [0, 0, 0], geo_center_test))))
+    assert(np.all(np.isclose([0, 1, 0], _calculate_arm([0, 360, 0], [1, 1, 0], geo_center_test))))
+    # for distance of center of pressure to cg z axis doesn't matter (should be x axis)
+    assert(np.all(np.isclose([0, 1, 0], _calculate_arm([360, 0, 0], [0, 1, 0], geo_center_test))))
+    assert(np.all(np.isclose([0, 1, 1], _calculate_arm([360, 0, 0], [0, 1, 1], geo_center_test))))
+
+
+if __name__ == "__main__":
+    unit_tests()
 
 # --- MAIN ---------------------------------------------------------------------+
 
