@@ -98,6 +98,20 @@ class Solar_Array:
             print("----------------------------------------------\n")
         pass
 
+    def EPS_P(self):
+        ''' Computes the losses and power requirements of EPS based on the power distribution unit'''
+        E_Peak = self.P_ADCS[0][1] * self.T_ADCS + self.P_COMMS[0][1] * self.T_COMMS + self.P_prop[0][1] * self.T_prop \
+               + self.P_SDH[0][1] * self.T_SDH + self.P_pay[0][1] * self.T_pay + self.P_SM[0][1] * self.T_SM  \
+               + self.P_TCS[0][1] * self.T_TCS + self.P_GNS[0][1] * self.T_GNS
+        
+        E_nom = self.P_ADCS[0][0] * (self.T_o - self.T_ADCS) + self.P_COMMS[0][0] * (self.T_o - self.T_COMMS) + self.P_prop[0][0] * (self.T_o - self.T_prop) \
+               + self.P_SDH[0][0] * (self.T_o - self.T_SDH) + self.P_pay[0][0] * (self.T_o - self.T_pay) + self.P_SM[0][0] * (self.T_o - self.T_SM)  \
+               + self.P_TCS[0][0] * (self.T_o - self.T_TCS) + self.P_GNS[0][0] * (self.T_o - self.T_GNS)
+        P_avg = (E_nom+E_Peak) / self.T_o
+        # Power distribution unit efficiency of connversion + losses + EPS consumption
+        n_dis = 0.95
+        return (P_avg / n_dis - P_avg) + 0.15
+
     def E_out(self):
         ''' Function that computes the Energy per Orbit in [Ws]'''
 
@@ -189,10 +203,10 @@ class Solar_Array:
 
             plt.xlabel(r'Cell efficiency [%]')
             plt.ylabel(r'Solar Array Area [$m^2$]')
-            plt.title('Solar Array Area vs. Cell Efficiency')
+            #plt.title('Solar Array Area vs. Cell Efficiency')
             plt.grid()
             plt.legend(loc='upper right')
-            plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 1')
+            #plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 1')
             plt.savefig('./Outputs/SA_Area_I1.png')
             plt.show()
         
@@ -243,10 +257,10 @@ class Solar_Array:
 
             plt.xlabel(r'Cell efficiency [%]')
             plt.ylabel(r'Solar Array Area [$m^2$]')
-            plt.title('Solar Array Area vs. Cell Efficiency')
+            #plt.title('Solar Array Area vs. Cell Efficiency')
             plt.grid()
             plt.legend(loc='upper right')
-            plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 2')
+            #plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 2')
             plt.savefig('./Outputs/SA_Area_I2.png')
             plt.show()
         
@@ -297,10 +311,10 @@ class Solar_Array:
 
                 plt.xlabel(r'Cell efficiency [%]')
                 plt.ylabel(r'Solar Array Area [$m^2$]')
-                plt.title('Solar Array Area vs. Cell Efficiency')
+                #plt.title('Solar Array Area vs. Cell Efficiency')
                 plt.grid()
                 plt.legend(loc='upper right')
-                plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 3')
+                #plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 3')
                 plt.savefig('./Outputs/SA_Area_I3.png')
                 plt.show()
 
@@ -351,10 +365,10 @@ class Solar_Array:
 
                 plt.xlabel(r'Cell efficiency [%]')
                 plt.ylabel(r'Solar Array Area [$m^2$]')
-                plt.title('Solar Array Area vs. Cell Efficiency')
+                #plt.title('Solar Array Area vs. Cell Efficiency')
                 plt.grid()
                 plt.legend(loc='upper right')
-                plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 4')
+                #plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 4')
                 plt.savefig('./Outputs/SA_Area_I4.png')
                 plt.show()
 
@@ -405,10 +419,10 @@ class Solar_Array:
 
                 plt.xlabel(r'Cell efficiency [%]')
                 plt.ylabel(r'Solar Array Area [$m^2$]')
-                plt.title('Solar Array Area vs. Cell Efficiency')
+                #plt.title('Solar Array Area vs. Cell Efficiency')
                 plt.grid()
                 plt.legend(loc='upper right')
-                plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 4')
+                #plt.title(r'Solar Array Area vs. Cell Efficiency, scenario 4')
                 plt.savefig('./Outputs/SA_Area_I5.png')
                 plt.show()
 
@@ -454,7 +468,7 @@ class Solar_Array:
 
         # Ploting Vertical lines in relation to N_c, DOD_Liion = 20%, DOD_Nih2 = 65%, DOD_NiCd = 12% SMAD
         DOD_Liion = 20
-        DOD_Nih2 = 80
+        DOD_Nih2 = 70
         DOD_NiCd = 12
 
         plt.axvline(x=DOD_Liion, color='r', linestyle='--', linewidth=1)
@@ -475,9 +489,92 @@ class Solar_Array:
 
         plt.xlabel(r'DOD [%]')
         plt.ylabel(r'Capacity [Wh]')
-        plt.title('Battery Capacity vs. DOD')
+        # #plt.title('Battery Capacity vs. DOD')
         plt.legend(loc='upper right')
         plt.savefig('./Outputs/Battery_capacity.png')
+        plt.show()
+
+        # Plotting the mass of the battery as a function of weigh specific energy density
+        
+        # Specific energy density of the batteries
+        x_axis = np.linspace(20, 300, 280)
+
+        # Masses using Capcities of the batteries
+    
+        Mass_Li_ion = x1 / x_axis
+        Mass_NiH2 = x2 / x_axis
+        Mass_NiCd = x3 / x_axis
+
+        plt.figure()
+        plt.plot(x_axis, Mass_Li_ion, color='r', linewidth=2, linestyle='-', label='Li-ion')
+        plt.plot(x_axis, Mass_NiH2, color='b', linewidth=2, linestyle='-', label='NiH2')
+        plt.plot(x_axis, Mass_NiCd, color='g', linewidth=2, linestyle='-', label='NiCd')
+
+        # Typical values for the specific energy density of the batteries
+        x_axis_Li_ion = 150
+        x_axis_NiH2 = 80
+        x_axis_NiCd = 50
+
+        plt.axvline(x=x_axis_Li_ion, color='r', linestyle='--', linewidth=1)
+        plt.axvline(x=x_axis_NiH2, color='b', linestyle='--', linewidth=1)
+        plt.axvline(x=x_axis_NiCd, color='g', linestyle='--', linewidth=1)
+
+        # Intercept 
+        y1_mass = np.interp(x_axis_Li_ion, x_axis, Mass_Li_ion)
+        y2_mass = np.interp(x_axis_NiH2, x_axis, Mass_NiH2)
+        y3_mass = np.interp(x_axis_NiCd, x_axis, Mass_NiCd)
+
+        plt.axhline(y=y1_mass, color='r', linestyle='--', linewidth=1)
+        plt.axhline(y=y2_mass, color='b', linestyle='--', linewidth=1)
+        plt.axhline(y=y3_mass, color='g', linestyle='--', linewidth=1)
+
+        # Legend for the -- lines
+        plt.plot([], [], color='black', linewidth=1, linestyle='--', label=r'Typical $E_{sp}$')
+
+        plt.xlabel(r'Specific Energy $E_{sp}$ [Wh/kg]')
+        plt.ylabel(r'Mass [kg]')
+        #plt.title('Battery Mass vs. Energy Density')
+        plt.legend(loc='upper right')
+        plt.savefig('./Outputs/Battery_mass.png')
+        plt.show()
+
+        # Volume of the batteries as a function of the energy density
+        volume_axis = np.linspace(60, 280, 220)     # [Wh/L] = [Wh/U]
+        V_Li_ion = x1 / volume_axis
+        V_NiH2 = x2 / volume_axis
+        V_NiCd = x3 / volume_axis
+
+        # Typical values for the specific energy density of the batteries
+        volume_axis_Li_ion = 210
+        volume_axis_NiH2 = 60
+        volume_axis_NiCd = 150
+
+        # Intercept
+        y1_volume = np.interp(volume_axis_Li_ion, volume_axis, V_Li_ion)
+        y2_volume = np.interp(volume_axis_NiH2, volume_axis, V_NiH2)
+        y3_volume = np.interp(volume_axis_NiCd, volume_axis, V_NiCd)
+
+        plt.figure()
+        plt.plot(volume_axis, V_Li_ion, color='r', linewidth=2, linestyle='-', label='Li-ion')
+        plt.plot(volume_axis, V_NiH2, color='b', linewidth=2, linestyle='-', label='NiH2')
+        plt.plot(volume_axis, V_NiCd, color='g', linewidth=2, linestyle='-', label='NiCd')
+
+        plt.axvline(x=volume_axis_Li_ion, color='r', linestyle='--', linewidth=1)
+        plt.axvline(x=volume_axis_NiH2, color='b', linestyle='--', linewidth=1)
+        plt.axvline(x=volume_axis_NiCd, color='g', linestyle='--', linewidth=1)
+
+        plt.axhline(y=y1_volume, color='r', linestyle='--', linewidth=1)
+        plt.axhline(y=y2_volume, color='b', linestyle='--', linewidth=1)
+        plt.axhline(y=y3_volume, color='g', linestyle='--', linewidth=1)
+
+        # Legend for the -- lines
+        plt.plot([], [], color='black', linewidth=1, linestyle='--', label=r'Typical $\rho_{E}$')
+
+        plt.xlabel(r'Energy Density $\rho_{E}$ [Wh/L]')
+        plt.ylabel(r'Volume [U]')
+        #plt.title('Battery Volume vs. Energy Density')
+        plt.legend(loc='upper right')
+        plt.savefig('./Outputs/Battery_volume.png')
         plt.show()
 
         print('-------------------------------------------------------------------------------------')
@@ -485,9 +582,18 @@ class Solar_Array:
         print(f'                  Capacity idealised (P_bat * t_dis): {Capacity} [Ws]')
         print(f'                  Capacity idealised (P_bat * t_dis): {Capacity_wh} [Wh]')
         print(f'                  Number of cycles: {N_c}')
+        print(f'\tLi-ion battery:')
         print(f'                  Capacity required Li-ion battery: {x1} [Wh]')
+        print(f'                  Mass required Li-ion battery: {y1_mass} [kg]')
+        print(f'                  Volume required Li-ion battery: {y1_volume} [U]')
+        print(f'\tNiH2 battery:')
         print(f'                  Capacity required NiH2 battery: {x2} [Wh]')
+        print(f'                  Mass required NiH2 battery: {y2_mass} [kg]')
+        print(f'                  Volume required NiH2 battery: {y2_volume} [U]')
+        print(f'\tNiCd battery:')
         print(f'                  Capacity required NiCd battery: {x3} [Wh]')
+        print(f'                  Mass required NiCd battery: {y3_mass} [kg]')
+        print(f'                  Volume required NiCd battery: {y3_volume} [U]')
         print('-------------------------------------------------------------------------------------')
         
         pass
