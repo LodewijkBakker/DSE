@@ -17,6 +17,8 @@ def torque_calculator(filename, rot_angles):
     # general parameters:
     mu_earth = 3.986004418e14
     rad_earth = 6371800
+    B_orbit = 50000
+    B_orbit_max = 500000
 
     # satellite values, take out to toml after
     alt_sat = 300000
@@ -32,6 +34,9 @@ def torque_calculator(filename, rot_angles):
     m_telescope = 30
     m_total_cube = 54
     m_bottom_cube = m_total_cube - m_telescope
+
+    A_kg_dipole = 3.5e-3
+    A_dipole = A_kg_dipole * m_total_cube
 
     h_bot_cube = 0.22
     h_tot_cube = 0.34
@@ -51,34 +56,28 @@ def torque_calculator(filename, rot_angles):
     Iyy_cube = (1 / 12) * m_total_cube * (l_tot_cube ** 2 + h_tot_cube ** 2)
     Ixx_cube = (1 / 12) * m_total_cube * (w_tot_cube ** 2 + h_tot_cube ** 2)
 
+    Izz = Izz_combined
+    Iyy = Iyy_combined
+    Ixx = Ixx_combined
     ###########
 
-    # gravity torque
-    # theta = 30 / 360 * (2 * np.pi)  # 30 degree offset
-    # gravity_dist_torque_comb = 3 * mu_earth / (alt_orbit ** 3) * max_I_diff_combined * np.sin(
-    #     theta)
-    # gravity_dist_torque_cube = 3 * mu_earth / (alt_orbit ** 3) * max_I_diff_cube * np.sin(
-    #     theta)
 
-    # Pressure torques
+    #
     for rot_angle in rot_angles:
         res = pab._calculate_projected_area(rot_angle, stl_model_main, list_grav_centers)
-        for single_grav_arm_area in res: # single grav arm is a area * (arm vector cross trajectory)
+        for single_grav_arm_area in res[1]: # single grav arm is a area * (arm vector cross trajectory)
             # Aerodynamic Torque
             t_aero = 0.5 * rho * c_d * v_orbit**2 * single_grav_arm_area
 
+        # gravity gradient
+        gravity_t_constant = 3/2 * mu_earth / (alt_orbit ** 3)
+        # should be checked again this bottom one, again moment in xyz
+        gravity_dist_torque = [gravity_t_constant * (Izz - Iyy) * np.sin(-2*rot_angles[2]), gravity_t_constant * (Izz - Ixx) * np.sin(-2*rot_angles[1]), 0]
 
     # Solar torque, assume worst case per angle doesn't really matter anyway
 
     # Magnetic torque given a certain inclination
 
-    #for rot_angle in rot_angles:
-        # Sum torques per rot angles
-        #t_total =
-
-        # Check instability for all the torques summed, except for the roll angle!!
-
-    # busy_text.config(text="Thanks for your patience it's done!")
 
     return res
 
@@ -103,9 +102,9 @@ def unit_tests():
 
     for rot_angle in rot_angles:
         res = pab._calculate_projected_area(rot_angle, stl_model_main_centered, list_grav_centers)
-        print(res[0], 'centered')
+        print(res, 'centered')
         res = pab._calculate_projected_area(rot_angle, stl_model_main_offset, list_grav_centers)
-        print(res[0], 'offset')
+        print(res, 'offset')
 
 if __name__ == "__main__":
     unit_tests()

@@ -152,48 +152,52 @@ def _calculate_projected_area(rot_angle, stl_model, list_grav_centers):
 
     geo_center = centroid(sub_poly)
 
+    proj_area = sub_poly.area
+
     area_arm_list = []
     for grav_center in list_grav_centers:
-        arm = _calculate_arm(rot_angle, grav_center, geo_center)
-        area_arm_list.append(arm)
+        arm_traj_cross = _calculate_arm(rot_angle, grav_center, geo_center)
+        area_arm_list.append(proj_area*arm_traj_cross)  # gets a cross product of it
 
-    return [sub_poly.area, area_arm_list]
+    return [proj_area, area_arm_list]
 
 
 def _calculate_arm(rot_angle, grav_center, geo_center):
     rot_matrix = R.from_euler('zyx', rot_angle, degrees=True).as_matrix()
-    grav_center_projected = rot_matrix.dot(grav_center)
-    #print(grav_center_projected)
-    arm_projected = [0, grav_center_projected[1] - geo_center.x, grav_center_projected[2] - geo_center.y]
-    # geo_center.x is not actually x and neither is y. Reason is because it is projected on
-    # yz axis and shapely thinks this is xy axis
-    #print(arm_projected)
-    rot_matrix_transpose = rot_matrix.transpose()  # test this works
-    arm_body_frame = rot_matrix_transpose.dot(arm_projected)  # matrix multiplication
+    cg_proj = np.dot(rot_matrix, grav_center)
+    arm = [0, geo_center.x - cg_proj[1], geo_center.y - cg_proj[2]]
+    traj_vector = [-1, 0, 0]
+    cross_arm = np.cross(arm, traj_vector)
+    res = np.dot(rot_matrix.transpose(), cross_arm)
 
-    #print(grav_center_projected)
-    #arm = ((grav_center_projected[0] - geo_center.x)**2 + (grav_center_projected[1] - geo_center.y)**2)**0.5
-    # arm = []
-    return arm_body_frame
+    return res  # returns moments in vectors around x y and z in that order
 
 
 def unit_tests():
-    geo_center_test = Point(1, 0)
-    print(_calculate_arm([0, 0, 0], [1, 1, 0], geo_center_test))
+    cg = [1, 0, 0]
+    cp = Point(0, 0)  # y, z
+    # should only create a moment around y, that is negative
+    rot_angle = [0, 30, 0]
+    res_1 = _calculate_arm(rot_angle, cg, cp)
+    rot_angle = [0, -50, 0]
+    res_2 = _calculate_arm(rot_angle, cg, cp)
 
-    geo_center_test = Point(0, 0)
-    assert(np.all([0, 0, 0] == _calculate_arm([0, 0, 0], [0, 0, 0], geo_center_test)))
-    assert(np.all([0, 1, 0] == _calculate_arm([0, 0, 0], [1, 1, 0], geo_center_test)))
-    # for distance of center of pressure to cg z axis doesn't matter (should be x axis)
-    assert(np.all([0, 1, 0] == _calculate_arm([0, 0, 0], [0, 1, 0], geo_center_test)))
-    assert(np.all([0, 1, 1] == _calculate_arm([0, 0, 0], [0, 1, 1], geo_center_test)))
+    assert(np.all(np.isclose([0, np.sin(-30/180*np.pi), 0], res_1)))
+    assert (np.all(np.isclose([0, np.sin(50/180 * np.pi), 0], res_2)))
 
-    # rotated 360 should still be the same
-    assert(np.all(np.isclose([0, 0, 0],_calculate_arm([0, 0, 360], [0, 0, 0], geo_center_test))))
-    assert(np.all(np.isclose([0, 1, 0], _calculate_arm([0, 360, 0], [1, 1, 0], geo_center_test))))
-    # for distance of center of pressure to cg z axis doesn't matter (should be x axis)
-    assert(np.all(np.isclose([0, 1, 0], _calculate_arm([360, 0, 0], [0, 1, 0], geo_center_test))))
-    assert(np.all(np.isclose([0, 1, 1], _calculate_arm([360, 0, 0], [0, 1, 1], geo_center_test))))
+    cg = [0, 0, 1]  # should create a positive moment around y
+    rot_angle = [0, 0, 0]
+    res_3 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([0, 1, 0], res_3)))
+
+    cg = [0, 1, 0]  # should create a negative moment around z
+    res_4 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([0, 0, -1], res_4)))
+
+    cg = [0, 1, 0]  # should create a negative moment around x, not so this is incorrect!!
+    rot_angle = [0, -90, 0]
+    res_5 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([-1, 0, 0], res_5)))
 
 
 if __name__ == "__main__":
