@@ -11,10 +11,10 @@ S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERM
 "ADCS_P" = [[11,20]]
 "TCS_P" = [[20,20]]
 "EPS_P" = [[10,15]]
-"SDH_P" = [[5,7]]
+"SDH_P" = [[7,20]]
 "COMMS_P" = [[2,40]]                    
 "Payload_P" = [[25,25]]
-"GNS_P" = [[1,2]]
+"GNS_P" = [[2,2]]
 "Peak Active Prop" = 1000                # [s]
 "Peak Active COMMS" = 600                # [s]
 "Peak Active ADCS" = 5431                # [s]
@@ -25,27 +25,8 @@ S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERM
 "Peak Active Pay" = 0                    # [s]
 "Peak Active EPS" = 0                    # [s]
 
-
-["Efficiencies Bat"]                     # Data from SMAD
-n_LiIon = 0.98
-n_NiCd = 0.72
-n_NiH2 = 0.7
-
-["E_density"]                            # Data from SMAD ; UNITS - [Whr/kg]                           
-n_LiIon = 125
-n_NiCd = 60
-n_NiH2 = 30
-
-["Solar_efficiency"]                     # Data from SMAD
-SI = 0.14
-GaAs_MJ = 0.226
-GaAs_ultra = 0.28
-
 ["Cell efficiency"]
-n_cell = 0.3                            # Average form NASA
-Inherent_degradation = 0.72             # SMAD
+Inherent_degradation = 0.88             # SMAD
 cell_degradation = 0.005                # per year NASA
 
-["Sun Angle Accuracy"]
-n_theta_rot = 0.99
-n_theta_fix = 0.6366197724
+
