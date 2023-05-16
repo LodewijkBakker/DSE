@@ -12,12 +12,19 @@ red = fg('red')
 from Solar_Arrays import Solar_Array
 
 # ---------------------------------- Controls -------------------------------------------------------#
-PLOT = True
+PLOT = False
 # ----------------------------------- Main ----------------------------------------------------------#
 
 # Initialise Solar Array
 param_data_path = os.path.join(os.path.dirname(__file__), './Inputs/SA_Config.toml')
 SA = Solar_Array(param_data_path)
+
+
+# EPS power consumption
+EPS_check = SA.EPS_P()
+if abs(EPS_check - SA.P_EPS[0][0]) > 0.1:
+    print(f'{red}ERROR: EPS power consumption is {SA.P_EPS[0][0]} W, but should be {EPS_check} W{white}')
+    exit()
 
 # ---- Scenario Description ---- #
 SA.disp_sc()
