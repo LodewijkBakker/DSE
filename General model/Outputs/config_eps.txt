@@ -69,3 +69,12 @@ Scenario 4 : Average Power to generate per orbit =  192.00347858967294 W
 
 Scenario 5 : Average Power to generate per orbit =  114.39029644632663 W
              An efficiency of 0.30000000000000016 % : Solar panel area 0.3394714107048168 m² 
+-------------------------------------------------------------------------------------
+Battery parameters:
+                  Capacity idealised (P_bat * t_dis): 335814.49072 [Ws]
+                  Capacity idealised (P_bat * t_dis): 93.28180297777777 [Wh]
+                  Number of cycles: 29034.0
+                  Capacity required Li-ion battery: 476.0526868352257 [Wh]
+                  Capacity required NiH2 battery: 137.1828841129787 [Wh]
+                  Capacity required NiCd battery: 971.8485381284357 [Wh]
+-------------------------------------------------------------------------------------
