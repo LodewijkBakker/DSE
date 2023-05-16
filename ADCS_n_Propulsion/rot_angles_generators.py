@@ -55,7 +55,7 @@ def pole_accurate_angles(ng, octant_sel):
     return rot_angles
 
 
-def sphere_fibonacci_grid_points(ng, octant_sel):
+def sphere_fibonacci_grid_points(ng: int):
     # *****************************************************************************80
     #
     # SPHERE_FIBONACCI_GRID_POINTS: Fibonacci spiral gridpoints on a sphere.
@@ -99,10 +99,25 @@ def sphere_fibonacci_grid_points(ng, octant_sel):
         sphi[i] = float(i2) / float(ng)
         cphi[i] = np.sqrt(float(ng + i2) * float(ng - i2)) / float(ng)
 
-    rot_angles = np.zeros((ng, 3))
+    return theta, sphi, cphi
 
+
+def sphere_fib_octant(ng, octant_sel):
+
+    n_select_octant = 0
+    for i in octant_sel:
+        if i:
+            n_select_octant += 1
+
+    if n_select_octant != 0:
+        n_points_fibo = int(8/n_select_octant * ng)
+
+    theta, sphi, cphi = sphere_fibonacci_grid_points(n_points_fibo)
+
+    #rot_angles = np.zeros((n_points_fibo, 3))
+    rot_angles = []
     # transforming points in rotation and discarding if not within range
-    for i in range(0, ng):
+    for i in range(0, n_points_fibo):
         # Cross product of 1,0,0 and point on sphere = vector u
         # Norm of vector u
         # This vector * invcos(vector_u_dot x_axis_vector) (basically vector * angle between
@@ -120,8 +135,8 @@ def sphere_fibonacci_grid_points(ng, octant_sel):
         if in_val_octant(z, octant_sel):  # rot angles still initialised in total!!!
             # rotation vector should be in radians,
             fib_point_angle = np.arccos(np.dot([u1, u2, u3], [1, 0, 0]))
-            z_rot_vector = np.cross([1, 0, 0], [u1, u2, u3]) / np.linalg.norm(
-                z) * fib_point_angle
+            # z_rot_vector = np.cross([1, 0, 0], [u1, u2, u3]) / np.linalg.norm(
+            #     z) * fib_point_angle
 
             q_vector = np.cross([1, 0, 0], [u1, u2, u3])
             q_rot = np.sqrt(np.linalg.norm([1, 0, 0]) * np.linalg.norm([u1, u2, u3])) \
@@ -134,8 +149,26 @@ def sphere_fibonacci_grid_points(ng, octant_sel):
             # rotation_from_rot_vector = R.from_rotvec(z_rot_vector)
             # euler_rotation_z = rotation_from_rot_vector.as_euler('zyx', degrees=True)
             euler_rotation_z = rotation_from_quat.as_euler('zyx', degrees=True)
-            rot_angles[i, 0] = euler_rotation_z[0]
-            rot_angles[i, 1] = euler_rotation_z[1]
-            rot_angles[i, 2] = euler_rotation_z[2]
+            rot_angles.append(euler_rotation_z)
+            #[euler_rotation_z[0], euler_rotation_z[1], euler_rotation_z[2]]
+            # rot_angles[i, 0] = euler_rotation_z[0]
+            # rot_angles[i, 1] = euler_rotation_z[1]
+            # rot_angles[i, 2] = euler_rotation_z[2]
+
+    return np.array(rot_angles)
+
+def sphere_fib_user_angle(ng):
+    # less efficient
+    #
+    yaw_range = [-1, 1]
+    pitch_range = [-1, 1]
+    roll_range = [-31, 31]
+
+    rot_angles = []
+    for i in np.linspace(yaw_range[0], yaw_range[1], 10):
+        for j in np.linspace(pitch_range[0], pitch_range[1], 10):
+            for k in np.linspace(roll_range[0], roll_range[1], 30):
+                rot_angles.append([i, j, k])
 
     return rot_angles
+

@@ -2,6 +2,7 @@ import multiprocessing as mp
 
 import ADCS_n_Propulsion.project_area_backend as pab
 from stl import mesh
+import os
 import numpy as np
 
 def torque_calculator(filename, rot_angles):
@@ -65,7 +66,11 @@ def torque_calculator(filename, rot_angles):
         for single_grav_arm_area in res: # single grav arm is a area * (arm vector cross trajectory)
             # Aerodynamic Torque
             t_aero = 0.5 * rho * c_d * v_orbit**2 * single_grav_arm_area
-            # Solar torque
+
+
+    # Solar torque, assume worst case per angle doesn't really matter anyway
+
+    # Magnetic torque given a certain inclination
 
     #for rot_angle in rot_angles:
         # Sum torques per rot angles
@@ -76,6 +81,34 @@ def torque_calculator(filename, rot_angles):
     # busy_text.config(text="Thanks for your patience it's done!")
 
     return res
+
+
+
+def unit_tests():
+    stl_path = os.getcwd() + '\cube_ascii_centered.stl'  # 2 by 2 by 2 cube
+    stl_model_main_centered = mesh.Mesh.from_file(stl_path)
+
+    stl_path = os.getcwd() + '\cube_ascii_offset.stl'  # 2 by 2 by 2 cube
+    stl_model_main_offset = mesh.Mesh.from_file(stl_path)
+
+    list_grav_centers = [[0, 0, 0], [1, 0, 0]]
+    rot_angles = [[0, 0, 0],
+                  [45, 0, 0],
+                  [0, 45, 0],
+                  [0, 0, 45],
+                  [90, 0, 0],
+                  [0, 90, 0],
+                  [21, 32, 2],
+                  [5, -30, 15]]
+
+    for rot_angle in rot_angles:
+        res = pab._calculate_projected_area(rot_angle, stl_model_main_centered, list_grav_centers)
+        print(res[0], 'centered')
+        res = pab._calculate_projected_area(rot_angle, stl_model_main_offset, list_grav_centers)
+        print(res[0], 'offset')
+
+if __name__ == "__main__":
+    unit_tests()
 
 # Function for opening the
 # file explorer window
