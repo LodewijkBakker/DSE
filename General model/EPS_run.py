@@ -16,9 +16,14 @@ sim_data_path = os.path.join(os.path.dirname(__file__), './Outputs/30_Equatorial
 SA = Solar_Array(config_data_path, sim_data_path)
 
 AS = SA.Array_size()
-print(green + 'Array size = %.5f m^2' % AS + white)
+# print(green + 'Array size = %.5f m^2' % AS + white)
 Xtr = SA.Xtra_AR_from_SA()
-print(Xtr)
+# print(Xtr)
+BAT = SA.E_bat()
+# print(BAT/3600)
+# print('------------------')
+Size_new = SA.Array_size_improved(ALL_FIX=False)
+print(Size_new)
 # SA.plot_SA_efficiency_vs_Array_size()
 # print(SA.Power_SA())
 

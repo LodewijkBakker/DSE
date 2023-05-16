@@ -25,6 +25,7 @@ class Solar_Array:
         self.T_o = self.cst["Orbital"]["T_orbit"]                   
         f_eclipse = self.cst["Orbital"]["perc_eclipse"]
         self.S_flux = self.cst["Orbital"]["S_flux"]
+        self.L = self.cst["Orbital"]["Mission_life"]
 
         # Eclipse & Sun time in idealised cylindrical shadow
         self.T_e = self.T_o * f_eclipse
@@ -50,8 +51,17 @@ class Solar_Array:
         # Battery effciency
         self.B_eff = self.cst["Efficiencies Bat"]["n_LiIon"]
 
-    
+        # Cell efficiencies
+        self.cell_eff = self.cst["Cell efficiency"]["n_cell"]
+        self.Id = self.cst["Cell efficiency"]["Inherent_degradation"]
+        self.cell_degredation = self.cst["Cell efficiency"]["cell_degradation"]
+
+        pass
+
+
+    def Disp_conf(self):
         print("\n------------- Configuration -------------------")
+        print("Mission Life = %.5f years" % self.L)
         print("Orbital Period = %.5f s" % self.T_o)
         print("Eclipse Time = %.5f s" % self.T_e)
         print("Sun Time = %.5f s" % self.T_s)
@@ -74,11 +84,12 @@ class Solar_Array:
         print("Peak Active ADCS Time = %.5f s" % self.T_ADCS)
         print("----------------------------------------------")
         print("Solar Array Efficiency = %.5f" % self.SA_eff)
+        print("Cell Efficiency = %.5f" % self.cell_eff)
+        print("Inherent Degradation = %.5f" % self.Id)
+        print("Cell Degradation = %.5f percent per year" % self.cell_degredation)
         print("Battery Efficiency = %.5f" % self.B_eff)
         print("Angle Accuracy = %.5f" % self.cst["Sun Angle Accuracy"]["n_theta_fix"])
         print("----------------------------------------------")
-
-
 
         pass
 
@@ -86,11 +97,30 @@ class Solar_Array:
         P_nom = self.P_pay[0][0] + self.P_SM[0][0] + self.P_TCS[0][0] +  self.P_EPS[0][0] + self.P_SDH[0][0]
         E_peak = self.P_COMMS[0][1] * self.T_COMMS + self.P_prop[0][1] * self.T_prop + self.P_ADCS[0][1] * self.T_ADCS
         E_nom_f_peak = self.P_COMMS[0][0] * (self.T_o - self.T_COMMS) + self.P_prop[0][0] * (self.T_o - self.T_prop) + self.P_ADCS[0][0] * (self.T_o - self.T_ADCS)
-
         return P_nom * self.T_o + E_peak + E_nom_f_peak
     
+    def E_bat(self):
+       return (1+(1-self.B_eff))* (self.T_e * (self.P_pay[0][0] + self.P_SM[0][0] + self.P_TCS[0][0] +  self.P_EPS[0][0] + self.P_SDH[0][0]) + self.P_COMMS[0][1] * self.T_COMMS + self.P_prop[0][1] * self.T_prop + self.P_ADCS[0][1] * self.T_ADCS)
+
     def Array_size(self):
         return self.E_out() / (self.S_flux * self.SA_eff * self.T_o/2 * self.B_eff * self.cst["Sun Angle Accuracy"]["n_theta_fix"])
+
+    def Array_size_improved(self, ALL_FIX = True):
+        Eo = self.E_out()
+        Po = self.S_flux * self.cell_eff
+        if ALL_FIX:
+            PBOL = Po * self.Id * self.cst["Sun Angle Accuracy"]["n_theta_fix"]
+            PEOL = PBOL * (1-self.cell_degredation)**self.L
+            print(PEOL)
+            return Eo / (PEOL * self.T_o/2)
+        if not ALL_FIX:
+            PBOL = Po * self.Id * (0.5 * self.cst["Sun Angle Accuracy"]["n_theta_fix"] + 0.5 * self.cst["Sun Angle Accuracy"]["n_theta_rot"])
+            PEOL = PBOL * (1-self.cell_degredation)**self.L
+            print(PEOL)
+            return Eo / (PEOL * (self.T_o/2 + 0.5*(self.T_o/2 - self.T_e)))
+        else:
+            print("Error in Array_size_improved")
+            return 0
 
     def plot_SA_efficiency_vs_Array_size(self):
         # Plot SA efficiency vs Array size
@@ -110,6 +140,7 @@ class Solar_Array:
 
         Area_1 = 0.63   # m^2
         E_SA_1 = self.T_o/2 * Area_1 * self.S_flux * self.SA_eff * self.B_eff * self.cst["Sun Angle Accuracy"]["n_theta_fix"]
+        print(self.E_out(), E_SA_1)
         if self.E_out() > E_SA_1:
             xtr_array = (self.E_out() - E_SA_1) / ((self.S_flux * self.SA_eff * self.B_eff) * (self.T_o/2 * 0.99 + (self.T_o-self.T_e)/np.pi))
         else:
