@@ -132,7 +132,7 @@ def _load_stl(stl_model, rot_angles):
     return triangles
 
 
-def _calculate_projected_area(rot_angles, stl_model):
+def _calculate_projected_area(rot_angle, stl_model, list_grav_centers):
     """CALCULATE PROJECTED AREA
     Parameters
     ----------
@@ -143,22 +143,27 @@ def _calculate_projected_area(rot_angles, stl_model):
     float
     """
     # bulk load all triangles from stl
-    triangles = _load_stl(stl_model, rot_angles)
+    triangles = _load_stl(stl_model, rot_angle)
 
     # merge triangles into single polygon
-    sub_poly = unary_union(triangles)
+    sub_poly = unary_union(triangles)  # runtime warning but should still store it correctly?
 
-    grav_center = [1, 1, 1]
     geo_center = centroid(sub_poly)
-    arm = _calculate_arm(rot_angles, grav_center, geo_center)
 
-    return [sub_poly.area, rot_angles]
+    area_arm_list = []
+    for grav_center in list_grav_centers:
+        arm = _calculate_arm(rot_angle, grav_center, geo_center)
+        area_arm_list.append(arm)
+
+    return [sub_poly.area, area_arm_list]
 
 
-def _calculate_arm(rot_angles, grav_center, geo_center):
-    rot_matrix = R.from_euler('zyx', rot_angles, degrees=True).as_matrix()
-    grav_center_projected = [(rot_matrix.dot(grav_center)[1], rot_matrix.dot(grav_center)[2])]
-    arm = ((grav_center_projected[0] - geo_center[0])**2 + (grav_center_projected[1] - geo_center[1])**2)**0.5
+def _calculate_arm(rot_angle, grav_center, geo_center):
+    rot_matrix = R.from_euler('zyx', rot_angle, degrees=True).as_matrix()
+    grav_center_projected = [rot_matrix.dot(grav_center)[1], rot_matrix.dot(grav_center)[2]]
+    print(grav_center_projected)
+    #arm = ((grav_center_projected[0] - geo_center.x)**2 + (grav_center_projected[1] - geo_center.y)**2)**0.5
+    arm = []
     return arm
 
 # --- MAIN ---------------------------------------------------------------------+
