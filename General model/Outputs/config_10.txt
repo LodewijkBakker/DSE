@@ -9,7 +9,7 @@ Propulsion Power = 5.00000 W
 S&M Power = 3.00000 W
 ADCS Power = 2.80000 W
 TCS Power = 9.00000 W
-EPS Power = 4.41438 W
+EPS Power = 4.39800 W
 SDH Power = 7.00000 W
 COMMS Power = 0.10000 W
 Payload Power = 10.00000 W
@@ -17,13 +17,13 @@ GNS Power = 1.00000 W
 ----------------------------------------------
 Peak Active Propulsion Power = 100.00000 W
 Time Propulsion Peak Power = 828.00000 s
-Peak Active COMMS Power = 18.00000 W
+Peak Active COMMS Power = 16.00000 W
 Time COMMS Peak Power = 600.00000 s
 Peak Active ADCS Power = 11.42000 W
 Time ADCS Peak Power = 2000.00000 s
 Peak Active TCS Power = 9.00000 W
 Time TCS Peak Power = 0.00000 s
-Peak Active EPS Power = 4.41438 W
+Peak Active EPS Power = 4.39800 W
 Time EPS Peak Power = 0.00000 s
 Peak Active SDH Power = 20.00000 W
 Time SDH Peak Power = 0.00000 s
@@ -55,35 +55,35 @@ Scenario 3 with incidence angel of 23.5
 Scenario 5 description:
 Constantly in sun with incidence efficiency of 0.99
 --------------------------------------------------------------------------------------------------------------------
-Scenario 1 : Average Power to generate per orbit =  123.90512835794513 W
-             An efficiency of 0.30000000000000016 % : Solar panel area 0.5718187255038438 m² 
+Scenario 1 : Average Power to generate per orbit =  123.43046879027803 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.5696281847842739 m² 
 
-Scenario 2 : Average Power to generate per orbit =  123.90512835794513 W
-             An efficiency of 0.30000000000000016 % : Solar panel area 0.39695448208216383 m² 
+Scenario 2 : Average Power to generate per orbit =  123.43046879027803 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.39543381667189664 m² 
 
-Scenario 3 : Average Power to generate per orbit =  103.98703560921386 W
-             An efficiency of 0.30000000000000016 % : Solar panel area 0.308598078420361 m² 
+Scenario 3 : Average Power to generate per orbit =  103.58867888242315 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.30741589143240394 m² 
 
-Scenario 4 : Average Power to generate per orbit =  103.98703560921386 W
-             An efficiency of 0.30000000000000016 % : Solar panel area 0.3331429490494382 m² 
+Scenario 4 : Average Power to generate per orbit =  103.58867888242315 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.3318667348179309 m² 
 
-Scenario 5 : Average Power to generate per orbit =  61.952564178972565 W
-             An efficiency of 0.30000000000000016 % : Solar panel area 0.1838540943766553 m² 
+Scenario 5 : Average Power to generate per orbit =  61.715234395139014 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.1831497804704662 m² 
 -------------------------------------------------------------------------------------
 Battery parameters:
-                  Capacity idealised (P_bat * t_dis): 232940.0 [Ws]
-                  Capacity idealised (P_bat * t_dis): 64.70555555555555 [Wh]
+                  Capacity idealised (P_bat * t_dis): 230540.0 [Ws]
+                  Capacity idealised (P_bat * t_dis): 64.03888888888889 [Wh]
                   Number of cycles: 29034.0
 	Li-ion battery:
-                  Capacity required Li-ion battery: 330.2171762559773 [Wh]
-                  Mass required Li-ion battery: 2.2014723641940495 [kg]
-                  Volume required Li-ion battery: 1.5724705368162188 [U]
+                  Capacity required Li-ion battery: 326.81492149932603 [Wh]
+                  Mass required Li-ion battery: 2.1787904131591667 [kg]
+                  Volume required Li-ion battery: 1.5562692434000647 [U]
 	NiH2 battery:
-                  Capacity required NiH2 battery: 138.26765994143338 [Wh]
-                  Mass required NiH2 battery: 1.7283918759483534 [kg]
-                  Volume required NiH2 battery: 2.3044609990238896 [U]
+                  Capacity required NiH2 battery: 136.84307685626365 [Wh]
+                  Mass required NiH2 battery: 1.710584112136745 [kg]
+                  Volume required NiH2 battery: 2.280717947604394 [U]
 	NiCd battery:
-                  Capacity required NiCd battery: 770.4335228528439 [Wh]
-                  Mass required NiCd battery: 15.409273847867672 [kg]
-                  Volume required NiCd battery: 5.136279241849295 [U]
+                  Capacity required NiCd battery: 762.4956828303195 [Wh]
+                  Mass required NiCd battery: 15.250510830631978 [kg]
+                  Volume required NiCd battery: 5.083359733905454 [U]
 -------------------------------------------------------------------------------------
