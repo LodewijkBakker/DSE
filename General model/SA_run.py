@@ -22,7 +22,7 @@ SA = Solar_Array(param_data_path)
 
 # EPS power consumption
 EPS_check = SA.EPS_P()
-if abs(EPS_check - SA.P_EPS[0][0]) > 0.1:
+if abs(EPS_check - SA.P_EPS[0][0]) > 0.0001:
     print(f'{red}ERROR: EPS power consumption is {SA.P_EPS[0][0]} W, but should be {EPS_check} W{white}')
     exit()
 

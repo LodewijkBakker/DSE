@@ -109,7 +109,7 @@ class Solar_Array:
                + self.P_TCS[0][0] * (self.T_o - self.T_TCS) + self.P_GNS[0][0] * (self.T_o - self.T_GNS)
         P_avg = (E_nom+E_Peak) / self.T_o
         # Power distribution unit efficiency of connversion + losses + EPS consumption
-        n_dis = 0.95
+        n_dis = 0.95 * 0.98
         return (P_avg / n_dis - P_avg) + 0.15
 
     def E_out(self):
@@ -451,8 +451,8 @@ class Solar_Array:
 
         # Assumed efficienncy of charging, discharging
         n_bat_Liion = 0.98
-        n_bat_Nih2 = 0.85
-        n_bat_NiCd = 0.80
+        n_bat_Nih2 = 0.72
+        n_bat_NiCd = 0.70
 
         # Plotting Capacity as a function of DOD [%]
         DOD = np.linspace(10, 100, 90)
@@ -468,7 +468,7 @@ class Solar_Array:
 
         # Ploting Vertical lines in relation to N_c, DOD_Liion = 20%, DOD_Nih2 = 65%, DOD_NiCd = 12% SMAD
         DOD_Liion = 20
-        DOD_Nih2 = 70
+        DOD_Nih2 = 65
         DOD_NiCd = 12
 
         plt.axvline(x=DOD_Liion, color='r', linestyle='--', linewidth=1)
