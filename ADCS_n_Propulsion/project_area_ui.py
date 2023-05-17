@@ -41,7 +41,7 @@ def update_rot_angles(ng, user_input_angles):
     else:
         ng = int(ng * 8 / n_octant_sel)  # Update ng for the amount, set closest int
         rot_angles = sphere_fib_octant(ng, octant_sel)
-        rot_angles = sphere_fib_user_angle(ng)
+        #rot_angles = sphere_fib_user_angle(ng)
 
     draw_angle_point_rep_canvas(rot_angles, user_input_angles)
 
