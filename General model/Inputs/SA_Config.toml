@@ -6,18 +6,18 @@ perc_eclipse = 0.404228                  # Percentage of Orbital Period in Eclip
 S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERMO SIMULATION
 
 ["Power Subsystems"]                     # [[Nomianl, Peak]]
-"Propulsion_P" = [[5, 100]]
+"Propulsion_P" = [[1, 112]]
 "S&M_P" = [[3, 6]]
 "ADCS_P" = [[2.8,11.42]]
 "TCS_P" = [[9,9]]
-"EPS_P" = [[4.39800,4.39800]]                          # Using distribution unit power consumption and conversion efficiency 0.95 and losses
-#"EPS_P" = [[4.414376, 4.414376]]                      # For non-continuous ops 25 [W]
+"EPS_P" = [[6.931641632028098,6.931641632028098]]    # Using distribution unit power consumption and conversion efficiency 0.95 and losses
+#"EPS_P" = [[5.509709, 5.509709]]                      # For non-continuous ops 25 [W]
 "SDH_P" = [[7,20]]
 "COMMS_P" = [[0.1,16.0]]                    
 "Payload_P" = [[10,10]]                         # Continuously operated
 #"Payload_P" = [[25, 25]]                       # 25 [W] only sun
 "GNS_P" = [[1,1]]
-"Peak Active Prop" = 828                 # [s]
+"Peak Active Prop" = 2577                # [s]
 "Peak Active COMMS" = 600                # [s]
 "Peak Active ADCS" = 2000                # [s]
 "Peak Active SM" = 5                     # [s]

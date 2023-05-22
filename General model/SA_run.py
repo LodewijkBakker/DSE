@@ -73,7 +73,7 @@ print(f'             An efficiency of{green} {Area_5[0]["cell efficiency"][idx_5
 
 
 # ---- Battery sizing ---- #
-Bat = SA.Bat_size_visual()
+Bat = SA.Bat_size_visual(CONT=True)
 
 
 
