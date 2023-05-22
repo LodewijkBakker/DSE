@@ -6,6 +6,7 @@ import os
 import numpy as np
 from rot_angles_generators import sphere_fib_user_angle, sphere_fib_octant
 
+
 def torque_calculator(filename):
     #busy_text = Label(window, text="Don't worry the program is busy", width="50")
     #busy_text.grid(column=0, row=8, columnspan="2")
@@ -124,10 +125,24 @@ def torque_calculator(filename):
             # Magnetic torque given a certain inclination
             t_store_nominal[i, j, 3] = [np.nan, np.nan, np.nan]
 
-    return t_store_extreme, t_store_nominal
+    return t_store_extreme, t_store_nominal, rot_angles
 
 
-def res_parser(t_store_extreme, t_store_nominal):
+def adjust_torque_direction(torque_vector, rotation_vector):
+    adjusted_torque = np.copy(torque_vector)
+    rotation_signs = np.sign(rotation_vector)
+
+    for i in range(1, len(rotation_signs)):  # starting at 1 such to not remove z in any case
+        print(2-i)
+        if rotation_signs[i] == 1:
+            adjusted_torque[2-i] = min(0, adjusted_torque[2-i])  # Set torque to 0 if rotation is positive
+        elif rotation_signs[i] == -1:
+            adjusted_torque[2-i] = max(0, adjusted_torque[2-i])  # Set torque to 0 if rotation is negative
+
+    return adjusted_torque
+
+
+def res_parser(t_store_extreme, t_store_nominal, user_rot_angles):
     # result max torque per disturbance per gravitie center per axis, nominal, also give absolute max
     # result max torque per disturbance per gravitie center per axis, extreme, also give absolute max
     # result max torque per gravity center per axis w/o magnetic, nominal (sun torque is used from max torque extreme case)
@@ -156,13 +171,13 @@ def res_parser(t_store_extreme, t_store_nominal):
     avg_torque_extreme_wo_mag = []  # without magnetic
     for i in range(n_grav_centers):
         # sun always in worst position
-        max_torque_total_extreme_wo_mag = [np.max(np.sum(t_store_extreme[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
-                                           np.max(np.sum(t_store_extreme[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
-                                           np.max(np.sum(t_store_extreme[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]]
+        max_torque_total_extreme_wo_mag.append([np.max(np.sum(t_store_extreme[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
+                                                np.max(np.sum(t_store_extreme[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
+                                                np.max(np.sum(t_store_extreme[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]])
         # sun always in worst position
-        avg_torque_extreme_wo_mag = [np.average(np.sum(t_store_extreme[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
-                                     np.average(np.sum(t_store_extreme[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
-                                     np.average(np.sum(t_store_extreme[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]]
+        avg_torque_extreme_wo_mag.append([np.average(np.sum(t_store_extreme[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
+                                          np.average(np.sum(t_store_extreme[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
+                                          np.average(np.sum(t_store_extreme[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]])
 
     # --------------------------------------------
     # ---------Nominal----------------
@@ -171,6 +186,8 @@ def res_parser(t_store_extreme, t_store_nominal):
     max_torque_per_disturbance_nominal = []
 
     # result max torque per gravity center per axis w/o magnetic, nominal (sun torque is used from max torque extreme case)
+    max_torque_total_nominal_wo_mag = []
+
     for i in range(n_grav_centers):
         max_torque_per_disturbance_f_grav_center_nominal = [[np.max(t_store_nominal[:, :, 0, 0]), np.max(t_store_nominal[:, :, 0, 1]), np.max(t_store_nominal[:, :, 0, 2])],
                                                             [np.max(t_store_nominal[:, :, 1, 0]), np.max(t_store_nominal[:, :, 1, 1]), np.max(t_store_nominal[:, :, 1, 2])],
@@ -178,12 +195,30 @@ def res_parser(t_store_extreme, t_store_nominal):
                                                             [np.max(t_store_nominal[:, :, 3, 0]), np.max(t_store_nominal[:, :, 3, 1]), np.max(t_store_nominal[:, :, 3, 2])]]
         max_torque_per_disturbance_nominal.append(max_torque_per_disturbance_f_grav_center_nominal)
 
-        max_torque_total_nominal_wo_mag = [np.max(np.sum(t_store_extreme[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
-                                           np.max(np.sum(t_store_extreme[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
-                                           np.max(np.sum(t_store_extreme[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]]
+        # sun always in worst position, nominal doesn't really bring sun with it
+        max_torque_total_nominal_wo_mag.append([np.max(np.sum(t_store_nominal[:, i, :2, 0], axis=2)) + max_torque_per_disturbance_extreme[i][2][0],
+                                                np.max(np.sum(t_store_nominal[:, i, :2, 1], axis=2)) + max_torque_per_disturbance_extreme[i][2][1],
+                                                np.max(np.sum(t_store_nominal[:, i, :2, 2], axis=2)) + max_torque_per_disturbance_extreme[i][2][2]])
+
+    # ---------------------------
+    # --------Unstable Nominal -----------
+    # unstable torque per gravity center per axis w/o magnetic nominal (sun torque is used from max torque extreme case)
+    unstable_rot_angles = []
+    unstable_torques_total_nominal = []
+
+    for i, rot_angle in enumerate(user_rot_angles):
+        for j in range(n_grav_centers):
+            total_t_vec = [np.sum(t_store_nominal[i, j, :2, 0]) + max_torque_per_disturbance_extreme[i][2][0],
+                           np.sum(t_store_nominal[i, j, :2, 1]) + max_torque_per_disturbance_extreme[i][2][1],
+                           np.sum(t_store_nominal[i, j, :2, 2]) + max_torque_per_disturbance_extreme[i][2][2]]
+            adjust_total_t_vec = adjust_torque_direction(total_t_vec, rot_angle) # adjust for pitch and yaw stability
+            if np.linalg.norm(adjust_total_t_vec) > 0:
+                unstable_rot_angles.append(rot_angle)
+                unstable_torques_total_nominal.append(adjust_total_t_vec)
 
 
-    return max_torque_per_disturbance_extreme, max_torque_total_extreme_wo_mag, avg_torque_extreme_wo_mag, max_torque_per_disturbance_nominal, max_torque_total_nominal_wo_mag
+    return max_torque_per_disturbance_extreme, max_torque_total_extreme_wo_mag, avg_torque_extreme_wo_mag, \
+        max_torque_per_disturbance_nominal, max_torque_total_nominal_wo_mag
 
 
 def unit_test_parser():
