@@ -153,7 +153,6 @@ def _calculate_projected_area(rot_angle, stl_model, list_grav_centers):
     geo_center = centroid(sub_poly)
 
     proj_area = sub_poly.area
-
     area_arm_list = []
     for grav_center in list_grav_centers:
         arm_traj_cross = _calculate_arm(rot_angle, grav_center, geo_center)
