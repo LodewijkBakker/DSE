@@ -9,6 +9,7 @@ import numpy as np
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 from shapely import centroid # correct?
+from shapely import Point
 
 from scipy.spatial.transform import Rotation as R
 import multiprocessing as mp
@@ -85,7 +86,8 @@ def _munge_triangle(v1, v2, v3, min_area=0):
 
 
 def _project_triangle_to_plane(tri_3d, rot_matrix):
-    """PROJECT TRIANGLE TO ARBITRARY PLANE
+    """PROJECT TRIANGLE TO ARBITRARY PLANE -> AFTER ROTATION MATRIX APPLICATION
+     PROJECT ON YZ PLANE
     Parameters
     ----------
     tri_3d : list
@@ -132,7 +134,7 @@ def _load_stl(stl_model, rot_angles):
     return triangles
 
 
-def _calculate_projected_area(rot_angles, stl_model):
+def _calculate_projected_area(rot_angle, stl_model, list_grav_centers):
     """CALCULATE PROJECTED AREA
     Parameters
     ----------
@@ -143,23 +145,62 @@ def _calculate_projected_area(rot_angles, stl_model):
     float
     """
     # bulk load all triangles from stl
-    triangles = _load_stl(stl_model, rot_angles)
+    triangles = _load_stl(stl_model, rot_angle)
 
     # merge triangles into single polygon
-    sub_poly = unary_union(triangles)
+    sub_poly = unary_union(triangles)  # runtime warning but should still store it correctly?
 
-    grav_center = [1, 1, 1]
     geo_center = centroid(sub_poly)
-    arm = _calculate_arm(rot_angles, grav_center, geo_center)
 
-    return [sub_poly.area, rot_angles]
+    proj_area = sub_poly.area
+    area_arm_list = []
+    for grav_center in list_grav_centers:
+        arm_traj_cross = _calculate_arm(rot_angle, grav_center, geo_center)
+        area_arm_list.append(proj_area*arm_traj_cross)  # gets a cross product of it
+
+    return [proj_area, area_arm_list]
 
 
-def _calculate_arm(rot_angles, grav_center, geo_center):
-    rot_matrix = R.from_euler('zyx', rot_angles, degrees=True).as_matrix()
-    grav_center_projected = [(rot_matrix.dot(grav_center)[1], rot_matrix.dot(grav_center)[2])]
-    arm = ((grav_center_projected[0] - geo_center[0])**2 + (grav_center_projected[1] - geo_center[1])**2)**0.5
-    return arm
+def _calculate_arm(rot_angle, grav_center, geo_center):
+    rot_matrix = R.from_euler('zyx', rot_angle, degrees=True).as_matrix()
+    cg_proj = np.dot(rot_matrix, grav_center)
+    arm = [0, geo_center.x - cg_proj[1], geo_center.y - cg_proj[2]]
+    traj_vector = [-1, 0, 0]
+    cross_arm = np.cross(arm, traj_vector)
+    res = np.dot(rot_matrix.transpose(), cross_arm)
+
+    return res  # returns moments in vectors around x y and z in that order
+
+
+def unit_tests():
+    cg = [1, 0, 0]
+    cp = Point(0, 0)  # y, z
+    # should only create a moment around y, that is negative
+    rot_angle = [0, 30, 0]
+    res_1 = _calculate_arm(rot_angle, cg, cp)
+    rot_angle = [0, -50, 0]
+    res_2 = _calculate_arm(rot_angle, cg, cp)
+
+    assert(np.all(np.isclose([0, np.sin(-30/180*np.pi), 0], res_1)))
+    assert (np.all(np.isclose([0, np.sin(50/180 * np.pi), 0], res_2)))
+
+    cg = [0, 0, 1]  # should create a positive moment around y
+    rot_angle = [0, 0, 0]
+    res_3 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([0, 1, 0], res_3)))
+
+    cg = [0, 1, 0]  # should create a negative moment around z
+    res_4 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([0, 0, -1], res_4)))
+
+    cg = [0, 1, 0]  # should create a negative moment around x, not so this is incorrect!!
+    rot_angle = [0, -90, 0]
+    res_5 = _calculate_arm(rot_angle, cg, cp)
+    assert(np.all(np.isclose([-1, 0, 0], res_5)))
+
+
+if __name__ == "__main__":
+    unit_tests()
 
 # --- MAIN ---------------------------------------------------------------------+
 

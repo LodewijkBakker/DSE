@@ -20,11 +20,12 @@ rho_p = 1.6 # g/cm3 for Xe at 80 bar
 
 v = np.sqrt(mu/r)
 F_d = Cd*0.5*rho*v**2*A_extended # force due to drag
+F_d = 1
 J = F_d*T_life # Total Impulse
 
 # Chosen parameters
-F_t = 0.03
-Isp = 1000
+F_t = 5
+Isp = 3000
 
 print(f"The aerodynamic drag is {np.round(F_d, 6)} N")
 print(f"The total impulse required is {np.round(J, 3)} N s")
@@ -39,7 +40,7 @@ m_wet = m_s + m_p # wet mass of just propulsion system
 m_ratio = m_wet / m_dry # Mass ratio
 
 #Volume of Propulsion System
-V_p = m_p*1000 / rho_p # Volume of propellant
+V_p = m_p / rho_p # Volume of propellant
 V_s = 0.016 # Volume of structure
 V_wet = V_s + V_p
 V_ratio = V_wet / l**3 # Volume ratio
@@ -47,6 +48,6 @@ V_ratio = V_wet / l**3 # Volume ratio
 propellant_mass = prop_mass(54, 3000, 1500)
 print(f'Propellant Mass = {propellant_mass} kg')
 print(f'Propellant Volume = {propellant_mass*1000/rho_p} cm^3')
-print(f'Propellant Mass with Thrust offset = {m_p} kg')
+print(f'Propellant Mass with Thrust offset = {m_p} g')
 print(f'Propellant Volume with Thrust offset = {V_p} cm^3')
 print(m_s)
