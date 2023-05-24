@@ -160,15 +160,16 @@ def sphere_fib_octant(ng, octant_sel):
 def sphere_fib_user_angle(ng):
     # less efficient
     #
-    yaw_range = [-1, 1]
-    pitch_range = [-1, 1]
-    roll_range = [-31, 31]
+    yaw_range = [-0.1, 0.1]
+    pitch_range = [0.1, 0.1]
+    roll_range = [-30, 30]
+    #roll_range = [0, 0]
 
     rot_angles = []
     for i in np.linspace(yaw_range[0], yaw_range[1], 10):
         for j in np.linspace(pitch_range[0], pitch_range[1], 10):
             for k in np.linspace(roll_range[0], roll_range[1], 30):
-                rot_angles.append([i, j, k])
+                rot_angles.append([k, j, i])  # zyx
 
     return rot_angles
 
