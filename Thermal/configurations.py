@@ -16,6 +16,7 @@ Then, you can instantiate a ThermalModel object with the above parameters and so
 """
 
 import numpy as np
+import toml
 from DSE.Thermal.env import Env
 from DSE.Thermal.materials import Material
 from DSE.Thermal.thermal_dyn_sim import ThermalNode, ThermalModel
@@ -175,7 +176,7 @@ from DSE.Thermal.thermal_dyn_sim import ThermalNode, ThermalModel
 #
 #     plt.savefig('TCS_none.png')
 
-def make_TCS():
+def make_TCS(output=None):
     ENV = Env()
 
     nodes = [ThermalNode(0, 'North',
@@ -232,11 +233,16 @@ def make_TCS():
                             [5,10],
                             [5]])
 
-    TM = ThermalModel(nodes, connections, ENV, 10 * ENV.t_orbit, [350] * len(nodes))
+    TM = ThermalModel(nodes, connections, ENV, 10 * ENV.t_orbit, [270] * len(nodes))
     TM.solve()
     TM.plot([6,7,8,9,10,11,12], with_legend=True)
-    for i, node in enumerate(TM.nodes):
-        print(node.name, np.max(TM.solution.y[i][1000:]), np.min(TM.solution.y[i][1000:]))
+
+    if output:
+        res = {node.name: {'max': np.max(TM.solution.y[i][1000:]), 'min': np.min(TM.solution.y[i][1000:])}
+               for i, node in enumerate(TM.nodes)}
+        with open(output, "w") as toml_file:
+            toml.dump(res, toml_file)
+
 
 def make_no_TCS():
     ENV = Env()
@@ -291,12 +297,15 @@ def make_no_TCS():
                             [5],
                             [5]])
 
-    TM = ThermalModel(nodes, connections, ENV, 10 * ENV.t_orbit, [270] * len(nodes))
+    TM = ThermalModel(nodes, connections, ENV, 10 * ENV.t_orbit, [350] * len(nodes))
     TM.solve()
     TM.plot([6,7,8,9,10,11], with_legend=True)
     for i, node in enumerate(TM.nodes):
         print(node.name, np.max(TM.solution.y[i][1000:]), np.min(TM.solution.y[i][1000:]))
 
 
+
+
 if __name__ == '__main__':
-    make_no_TCS()
+    #make_no_TCS()
+    make_TCS('result.toml')

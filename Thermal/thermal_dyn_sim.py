@@ -159,7 +159,7 @@ class ThermalModel:
         sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', max_step=10, vectorized=True)
         self.solution = sol
 
-    def plot(self, node_id=None, with_legend=False):
+    def plot(self, node_id=None, with_legend=False, save=False):
         """
         Plots the temperature of each node over the simulation time,
         can also specify which nodes to plot
@@ -177,8 +177,14 @@ class ThermalModel:
         plt.xlabel('Time [s]')
         plt.ylabel('Temperature [K]')
         # plt.xlim(7*self.env.t_orbit, 9*self.env.t_orbit)
-        plt.savefig('temp_TCS.png')
+        if save:
+            plt.savefig('temp_TCS.png')
         plt.show()
 
     def save_csv(self, filename):
-        np.savetxt(filename, np.transpose(self.solution.y), delimiter=',')
+        if self.solution is not None:
+            np.savetxt(filename, np.transpose(self.solution.y), delimiter=',')
+
+            for i, node in enumerate(self.nodes):
+                print(node.name, np.max(self.solution.y[i][1000:]), np.min(self.solution.y[i][1000:]))
+
