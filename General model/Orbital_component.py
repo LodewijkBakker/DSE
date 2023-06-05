@@ -4,7 +4,8 @@ import toml
 from scipy.integrate import solve_ivp
 from astropy.constants import G, M_earth, R_earth
 import vg
-
+from numba.experimental import jitclass
+from numba import jit
 
 class Satellite:
     def __init__(self, filename):
@@ -28,9 +29,10 @@ class Satellite:
         self.a_earth=self.dick["Natural constants"]["a_earth"]
         self.b_earth=self.dick["Natural constants"]["b_earth"]
         self.Min_drag_config=self.dick["Satellite parameters"]["Min drag"]
-        #print(self.Min_drag_config)
         self.third_panel=self.dick["Satellite parameters"]["Third moving panel"]
         self.counter=0
+        self.A_SP_side=self.dick["Satellite parameters"]["A_SP_side"]
+        self.A_SP_back=self.dick["Satellite parameters"]["A_SP_back"]
 
     def angle_between(self, u1, u2):
         #return np.arctan2(np.linalg.norm((np.cross(u1,u2))), np.dot(u1,u2))
@@ -125,7 +127,7 @@ class Satellite:
 
     def orbital_el_set_up(self, sim_length):
         # t,x,y,z,vx,vy,vz,Eclipse,Angle to Sun,Thrust
-        self.Output = pd.DataFrame(index=range(sim_length), columns=["t","x","y","z","v_x","v_y","v_z","m","SMA","Eclipse","Sun multiplier","SP angle","Thrust","f_aero","third panel"])
+        self.Output = pd.DataFrame(index=range(sim_length), columns=["t","x","y","z","v_x","v_y","v_z","m","SMA","Eclipse","Sun multiplier","SP angle","Thrust","f_aero","third panel","eff_side","eff_back"])
         self.counter=0
         self.time_range = [self.dick["Orbital parameters"]["t"], self.dick["Orbital parameters"]["t"]+sim_length]
         self.time_eval=np.arange(self.dick["Orbital parameters"]["t"], self.dick["Orbital parameters"]["t"]+sim_length)
@@ -139,6 +141,8 @@ class Satellite:
         #print(self.Y0)
         #print("Intial set up: Done\n")
 
+    # @staticmethod
+    # @jit
     def dy_vector(self, t, Y):
         dy = np.empty(7)  # x,y,z, xdot,ydot,zdot ,m
         # Orbital parameters
@@ -152,28 +156,31 @@ class Satellite:
 
         # Consequences of position and orbital parameters
         z_ang=np.pi/2- self.angle_between(self.u_z,R/R_abs)
-        height=R_abs-np.sqrt(((self.a_earth**2*np.cos(z_ang))**2+(self.b_earth**2*np.sin(z_ang))**2)/((self.a_earth*np.cos(z_ang))**2+(self.b_earth*np.sin(z_ang))**2))
+        self.height=R_abs-np.sqrt(((self.a_earth**2*np.cos(z_ang))**2+(self.b_earth**2*np.sin(z_ang))**2)/((self.a_earth*np.cos(z_ang))**2+(self.b_earth*np.sin(z_ang))**2))
         #print(a)
-        rho = 2.30E-11*np.exp((300e3-height)/45.8e3)  # 4.39e-11 maximum
+        rho = 2.30E-11*np.exp((300e3-self.height)/45.8e3)  # 4.39e-11 maximum
+
         if (a <= self.R_min):
             self.thrust = True
         elif (a >= self.R_max):
             self.thrust = False
-        # Calculates cos of angle between sun vector an velocity
 
+        # Calculates cos of angle between sun vector an velocity
         sh_ang = np.pi / 2 - self.angle_between(self.u_sun, R / R_abs)
-        #print(sh_ang)
+
         if (np.cos(sh_ang) * R_abs < self.dick["Natural constants"]["Rad Earth"] and np.dot(self.u_sun,R/R_abs) > 0 ):  # alternatively sin(sh_ang)
             self.shadow = True
             # if (int(t) % 100 <= 5):
             #     sun_multiplier= np.sin(np.pi/6)
             # else:
-            sun_multiplier = np.sin(self.dick["Satellite parameters"]["SP pointing accuracy"])
+            sun_multiplier =abs( np.sin(self.dick["Satellite parameters"]["SP pointing accuracy"]))
             A = self.dick["Satellite parameters"]["A_extended"] + self.A_solar * sun_multiplier + \
             self.dick["Satellite parameters"]["SP side area"]
+
             self.check_third = False
 
             #print(A)
+
         else:
             self.shadow=False
             if (self.Min_drag_config):
@@ -184,14 +191,17 @@ class Satellite:
                 sun_multiplier = np.sin(self.dick["Satellite parameters"]["SP pointing accuracy"])
                 A = self.dick["Satellite parameters"]["A_extended"] + self.A_solar * sun_multiplier + \
                     self.dick["Satellite parameters"]["SP side area"]
-                if (self.third_panel and R[0] >= 0):
-                    self.check_third = True
-                    A+= abs(np.clip(np.dot(self.u_sun, V / V_abs), -1.0, 1.0))*self.dick["Satellite parameters"]["Third panel area"]
+                # if (self.third_panel and R[1] >= 0):
+                #     self.check_third = True
+                #     A+= abs(np.clip(np.dot(self.u_sun, V / V_abs), -1.0, 1.0))*self.dick["Satellite parameters"]["Third panel area"]
             else:
                 sun_multiplier = abs(np.clip(np.dot(self.u_sun, V / V_abs), -1.0, 1.0))
-                A = self.dick["Satellite parameters"]["A_extended"] + self.A_solar * sun_multiplier
+                #print(sun_multiplier)
+                A = self.dick["Satellite parameters"]["A_extended"] + self.A_SP_side * sun_multiplier + self.A_SP_back * abs(np.sin(self.dick["Satellite parameters"]["SP pointing accuracy"]))
+                #print(A)
             self.check_third = False
 
+        abs(np.clip(np.dot(self.u_sun, V / V_abs), -1.0, 1.0))
             #print(A)
 
         # Set up orbital forces
@@ -207,8 +217,21 @@ class Satellite:
             dy[3:6] = -f_aero * V / V_abs / m + Grav
             dy[6] = 0
         #print(f"t:{t} f_aero: {f_aero} Semi-major axis: {a}, Thrust: {self.thrust} Radius: {R_abs} Velocity: {V_abs}")
-
-        self.Output.loc[round(t-self.t0)]=[round(t),R[0],R[1],R[2],V[0],V[1],V[2],m,a,int(self.shadow == True),sun_multiplier,np.pi/2-sh_ang,int(self.thrust == True),f_aero,int(self.check_third == True)]
+        if (self.Min_drag_config):
+            if (np.dot(self.u_sun, R / R_abs) > 0):
+                eff_side=abs(np.clip(np.dot(self.u_sun, R / R_abs), -1.0, 1.0))
+            else:
+                eff_side = 0
+        else:
+            if(self.shadow):
+                eff_side = 0
+            else:
+                eff_side = np.sqrt(1 - abs(np.clip(np.dot(self.u_sun, np.cross(V / V_abs , R / R_abs)), -1.0, 1.0)) ** 2)
+        if (self.shadow):
+            eff_back=0
+        else:
+            eff_back=np.sqrt(1-abs(np.clip(np.dot(self.u_sun, V / V_abs), -1.0, 1.0))**2)
+        self.Output.loc[round(t-self.t0)]=[round(t),R[0],R[1],R[2],V[0],V[1],V[2],m,a,int(self.shadow == True),sun_multiplier,np.pi/2-sh_ang,int(self.thrust == True),f_aero,int(self.check_third == True),eff_side,eff_back]
         return dy
 
     def determine_char(self, Y):
@@ -236,9 +259,6 @@ class Satellite:
         file.write(f"Fuel mass: {round(fuel,2)}\n")
         file.write(f"Maximum aerodynamic force: {round(self.Output['f_aero'].max()*1000,3)}mN\n")
         file.write(f"Average aerodynamic force: {round(self.Output['f_aero'].mean() * 1000, 3)}mN\n")
-        thrust_fraction=self.Output['Thrust'].sum()/self.Output['Thrust'].size
-        file.write(f"Thrust fraction {thrust_fraction}\n")
-        file.write(f"Total time thrusting: {5 * 365.25 * 24 *thrust_fraction}h\n")
         file.write("---Debugging---\n")
         self.determine_char(sol.y[:, -1])
         file.write(
@@ -253,6 +273,8 @@ def average_final_properties(filename,sat_bol,sat_eol,sim_length,sol_bol, sol_eo
 
     file.write("---Setup---\n")
     file.write(f"Propulsion system: {row['Name']} \n")
+    file.write(f"Peak power: {row['Power']}W\n")
+    file.write(f"Solar panel setup {sat_bol.dick['Name']} \n")
     file.write(f"SP Area:{sat_bol.dick['Satellite parameters']['A_solar']}m^2\n")
     file.write(f"Specific impulse: {row['Specific Impulse']}s\n")
     file.write(f"Thrust: {row['Thrust']}mN\n")
@@ -261,19 +283,27 @@ def average_final_properties(filename,sat_bol,sat_eol,sim_length,sol_bol, sol_eo
     sat_eol.Output["Delta v"] = sat_eol.Output["f_aero"] / sat_eol.Output["m"]
     delta_v = 5 * 365.25 * 24 * 60 * 60 / sim_length * (sat_bol.Output['Delta v'].sum()+sat_eol.Output['Delta v'].sum())/2 * 1.2
     file.write(
-        f"Total DeltaV requirement:{round(delta_v, 2)}\n")
+        f"Design Total DeltaV requirement:{round(delta_v, 2)}s\n")
+    file.write(f"Worst-worst case DeltaV requirement: {round(delta_v*1.908696)}s\n")
+
     fuel = (np.exp(delta_v / (sat_bol.I_sp * sat_bol.dick["Natural constants"]['g0'])) - 1) * \
            sat_bol.dick['Satellite parameters']['dry mass']
-    file.write(f"Fuel mass: {round(fuel, 2)}\n")
+    file.write(f"Fuel mass: {round(fuel, 2)}kg\n")
+    file.write(f"Fuel volume: {round(fuel/row['Density'], 2)}U\n")
+    file.write(f"Very prelim. prop. system mass:{round(0.01+1.3*fuel+row['Mass']/1000, 2)}kg\n")
+    file.write(f"Very prelim. prop. system volume: {round((0.01+0.3*fuel)/2.7+row['Volume']+fuel/row['Density'], 2)}U\n")
     file.write(f"Maximum aerodynamic force: {round(max(sat_bol.Output['f_aero'].max(),sat_eol.Output['f_aero'].max()) * 1000, 3)}mN\n")
-    file.write(f"Average aerodynamic force: {round((sat_bol.Output['f_aero'].mean()+sat_eol.Output['f_aero'].mean())/2 * 1000, 3)}mN\n")
-    thrust_fraction = (sat_bol.Output['Thrust'].sum() / sat_bol.Output['Thrust'].size+sat_eol.Output['Thrust'].sum() / sat_eol.Output['Thrust'].size)/2
-
-
-    file.write(f"Thrust fraction {thrust_fraction}\n")
-    file.write(f"Total time thrusting: {5 * 365.25 * 24 * thrust_fraction}h\n")
-    s = sat_bol.Output["Thrust"]
-    file.write(f"Longest continious thrust: {(~s).cumsum()[s].value_counts().max()}s\n")
+    f_m=(sat_bol.Output['f_aero'].mean()+sat_eol.Output['f_aero'].mean())/2
+    file.write(f"Average aerodynamic force: {round(f_m * 1000, 3)}mN\n")
+    burn_time=round(f_m*sat_bol.orbit_time()*3/(sat_bol.T))
+    file.write(f"Time thrusting every 3 orbits average overall: {burn_time}s\n")
+    file.write(
+        f"Time thrusting every 3 orbits maximum: {round(f_m*1.908696 * sat_bol.orbit_time() * 3 / (sat_bol.T))}s\n")
+    file.write(f"Duty cycle: {f_m/(sat_bol.T)}")
+    file.write(f"Duty cycle worst: {f_m*1.908696/ (sat_bol.T)}")
+    file.write(f"Energy spent per 3 orbits(Avg burn*1.5):{burn_time*1.5*row['Power']/3600}Wh")
+    # s = sat_bol.Output["Thrust"]
+    # file.write(f"Longest continious thrust: {(~s).cumsum()[s].value_counts().max()}s\n")
     file.write("---Debugging---\n")
     sat_bol.determine_char(sol_bol.y[:, -1])
     file.write(
@@ -287,22 +317,33 @@ def average_final_properties(filename,sat_bol,sat_eol,sim_length,sol_bol, sol_eo
 
 
 if __name__ == "__main__":
-    LAMP = Satellite("Inputs/Config-1.2.toml")
+    LAMP = Satellite("Inputs/Config-4.toml")
     # LAMP.circular_set_up(300e3,LAMP.dry_m+4)
     # print(LAMP.Y0)
     Orbital_period=LAMP.orbit_time()
-    sim_length=30*Orbital_period
+    sim_length=int(1*Orbital_period)
     LAMP.orbital_el_set_up(sim_length)
     sol=solve_ivp(LAMP.dy_vector,LAMP.time_range,LAMP.Y0, method="Radau", max_step=1 ,t_eval = LAMP.time_range, rtol = 1)
     LAMP.determine_char(sol.y[:,-1])
     print(f"Final result \nR: {LAMP.R_abs/1e3-LAMP.dick['Natural constants']['Rad Earth']/1e3}km V: {LAMP.V_abs/1e3}km")
-    LAMP.Output.to_csv("Outputs/Config_3.csv")
+    LAMP.Output.to_csv("Outputs/Config-4.csv")
     LAMP.Output["Delta v"]=LAMP.Output["f_aero"]/LAMP.Output["m"]
     print(5*365.25*24*60*60/sim_length*LAMP.Output["Delta v"].sum()*1.2)
-    print(LAMP.Output["Eclipse"].sum()/LAMP.Output["Eclipse"].size)
+    LAMP.Output["Ones"] = 1
+    ecl_frac=(LAMP.Output["Eclipse"]).sum()/LAMP.Output["Eclipse"].size
+    print(ecl_frac)
     print(LAMP.Output["third panel"].sum()/LAMP.Output["Eclipse"].size)
     print(LAMP.Output["f_aero"].max())
+    print("Height:",LAMP.height)
     print(LAMP.Output["Thrust"].sum()/LAMP.Output["Thrust"].size)
+    side_eff=LAMP.Output.eff_side*(LAMP.Output["Ones"]-LAMP.Output["Eclipse"])
+    #print(side_eff)
+    if(LAMP.Min_drag_config):
+        print(f"Eff side panel = {LAMP.Output.eff_side.sum()/(sim_length/2)}")
+    else:
+        print(f"Eff side panel = {LAMP.Output.eff_side.sum() / (sim_length* (1-ecl_frac))}")
+    print(f"Eff back panel = {LAMP.Output.eff_back.sum()/(sim_length*(1-ecl_frac))}")
+
     #Eclipse/Penumbra/E
     # t,x,y,z,vx,vy,vz,Eclipse,Angle to Sun,Thrust,f_aero
 

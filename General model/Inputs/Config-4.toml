@@ -1,3 +1,4 @@
+Name="Side panels rotating back panel 2*0.3 long"
 ["Natural constants"]
 mu=3.986004418e14
 g0= 9.80665
@@ -8,28 +9,30 @@ a_earth=6378.1e3
 b_earth=6356.7e3
 
 ["Satellite parameters"]
-"dry mass"=54.0
+"dry mass"=50.3
 "fuel mass"=2.8
 Cd=2.2 #2.027
 "A_extended"= 0.19547
-"A_solar"=1.38
+"A_solar"=0.3182
+"A_SP_side"=0.08223
+"A_SP_back"=0.23100
 Thrust=5e-3
 I_sp=3000
-"SP side area"=0.0016
+"SP side area"=0.0024
 "Third moving panel" = 0
-"Third panel area"=0.221
-"Min drag"= 1 #true=1 or false=0
-"SP pointing accuracy"=0.087 #In radians
+"Third panel area"=0
+"Min drag"= 0 #true=1 or false=0
+"SP pointing accuracy"=0.00087 #In radians
 
 ["Orbital parameters"]
 "Starting alt"=230e3
-"Min alt"=295e3
-"Max alt"=305e3
+"Min alt"=290e3
+"Max alt"=301e3
 e=0
 a=6671.8e3
-i=1.6755
+i=1.5707
 omega_AP=0
-omega_LAN=0
+omega_LAN=0.7854
 T=0
 EA=0
 t=0

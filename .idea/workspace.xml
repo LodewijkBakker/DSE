@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="Orbital simulation update adds storage capability">
+    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="Updates to orbital component">
+      <change afterPath="$PROJECT_DIR$/General model/Deorbiting_visualization.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/General model/Inputs/Propulsion_table2.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/General model/Inputs/Propulsion_table3.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/General model/Orbital_statistics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/General model/Inputs/Config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Inputs/Config.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Inputs/Config-1.1.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Inputs/Config-1.2.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Inputs/Config-2.1.toml" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Inputs/Config-4.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Inputs/Config-2.2.toml" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Inputs/Config-2.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Inputs/Propulsion_table.csv" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Inputs/Propulsion_table.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/General model/Orbital_component.py" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Orbital_component.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Orbital_iterator.py" beforeDir="false" afterPath="$PROJECT_DIR$/General model/Orbital_iterator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Outputs/Test1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/General model/Outputs/Test1.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +52,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -48,6 +60,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Python Projects\DSE\General model\Inputs" />
       <recent name="C:\Users\Lodewijk\Documents\University_Subjects\DSE\DSE\ADCS_n_Propulsion" />
     </key>
   </component>
@@ -66,6 +79,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Deorbiting_visualization" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSE" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/General model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/General model/Deorbiting_visualization.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -118,7 +153,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="orbit_simulator" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Orbital_iterator" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="DSE" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -126,12 +161,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ADCS_n_Propulsion" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/General model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ADCS_n_Propulsion/orbit_simulator.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/General model/Orbital_iterator.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -164,17 +199,19 @@
     </configuration>
     <list>
       <item itemvalue="Python.Config 1" />
-      <item itemvalue="Python.orbit_simulator" />
       <item itemvalue="Python.Orbital drag" />
       <item itemvalue="Python.Orbital_component" />
       <item itemvalue="Python.test" />
+      <item itemvalue="Python.Orbital_iterator" />
+      <item itemvalue="Python.Deorbiting_visualization" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.Orbital_component" />
+        <item itemvalue="Python.Deorbiting_visualization" />
+        <item itemvalue="Python.Orbital_iterator" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.Orbital drag" />
-        <item itemvalue="Python.orbit_simulator" />
       </list>
     </recent_temporary>
   </component>
@@ -191,6 +228,12 @@
       <workItem from="1682930639165" duration="18210000" />
       <workItem from="1683521853969" duration="5099000" />
       <workItem from="1683629609488" duration="35869000" />
+      <workItem from="1684272017559" duration="27033000" />
+      <workItem from="1684701089991" duration="6929000" />
+      <workItem from="1684834887999" duration="17478000" />
+      <workItem from="1685613757006" duration="1006000" />
+      <workItem from="1685615308581" duration="3766000" />
+      <workItem from="1685953526506" duration="6878000" />
     </task>
     <task id="LOCAL-00001" summary="Orbital drag and delta v calculator">
       <created>1682944932474</created>
@@ -245,9 +288,11 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DSE$Orbital_component.coverage" NAME="Orbital_component Coverage Results" MODIFIED="1683724867634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/General model" />
+    <SUITE FILE_PATH="coverage/DSE$Orbital_component.coverage" NAME="Orbital_component Coverage Results" MODIFIED="1685966018944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/General model" />
+    <SUITE FILE_PATH="coverage/DSE$Deorbiting_visualization.coverage" NAME="Deorbiting_visualization Coverage Results" MODIFIED="1684941802740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/General model" />
     <SUITE FILE_PATH="coverage/DSE$orbit_simulator.coverage" NAME="orbit_simulator Coverage Results" MODIFIED="1682933662426" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ADCS_n_Propulsion" />
     <SUITE FILE_PATH="coverage/DSE$Config_1.coverage" NAME="Config 1 Coverage Results" MODIFIED="1682933654802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/DSE$Orbital_iterator.coverage" NAME="Orbital_iterator Coverage Results" MODIFIED="1684938169058" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/General model" />
     <SUITE FILE_PATH="coverage/DSE$test.coverage" NAME="test Coverage Results" MODIFIED="1683708154588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ADCS_n_Propulsion" />
     <SUITE FILE_PATH="coverage/DSE$Orbital_drag.coverage" NAME="Orbital drag Coverage Results" MODIFIED="1683636373647" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ADCS_n_Propulsion" />
   </component>
