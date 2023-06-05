@@ -42,8 +42,8 @@ Area_2 = SA.SA_Area_I2(PLOT)
 P_avg_2 = SA.P_avg(scenario=2)
 print(f'\nScenario 2 : Average Power to generate per orbit = {green}', P_avg_2, f'W{white}')
 # efficiency of 0.3 for comparison
-idx_1 = np.where((Area_2[0]['cell efficiency'] <= 0.3+0.0001) & (Area_2[0]['cell efficiency'] >= 0.3-0.0001))[0][0]
-print(f'             An efficiency of{green} {Area_2[0]["cell efficiency"][idx_1]} % :{white} Solar panel area{green} {Area_2[1]["Area"][idx_1]} m\u00b2 {white}')
+idx_2 = np.where((Area_2[0]['cell efficiency'] <= 0.3+0.0001) & (Area_2[0]['cell efficiency'] >= 0.3-0.0001))[0][0]
+print(f'             An efficiency of{green} {Area_2[0]["cell efficiency"][idx_2]} % :{white} Solar panel area{green} {Area_2[1]["Area"][idx_2]} m\u00b2 {white}')
 
 
 # ---- Scenario 3: See Drawing ---- #
@@ -72,8 +72,78 @@ idx_5 = np.where((Area_5[0]['cell efficiency'] <= 0.3+0.0001) & (Area_5[0]['cell
 print(f'             An efficiency of{green} {Area_5[0]["cell efficiency"][idx_5]} % :{white} Solar panel area{green} {Area_5[1]["Area"][idx_5]} m\u00b2 {white}')
 
 
+# ---- Configuration Computation ---- #
+A_top = 305 * 360 / 1e6
+A_back = 220 * 350 / 1e6
+A_side = 200 * 360 / 1e6
+# Cong. I, Config. II
+A_back_I_II = Area_5[1]['Area'][idx_5]
+A_side_I_II = 0.5 * (Area_1[1]['Area'][idx_1] - A_back_I_II - A_top)
+
+# Cong. III, Config. IV
+A_back_III_IV = Area_5[1]['Area'][idx_5]
+A_side_III_IV = 0.5* (Area_3[1]['Area'][idx_3] - (A_top + A_back_III_IV)*2/np.pi * 0.81)
+
+print(f'Back area required for Cong. I, Config. II = {green} ', A_back_I_II, f'm\u00b2 {white}')
+print(f'Side area required for Cong. I, Config. II = {green} ', A_side_I_II, f'm\u00b2 {white}')
+print(f'Back area required for Cong. III, Config. IV = {green} ', A_back_III_IV, f'm\u00b2 {white}')
+print(f'Side area required for Cong. III, Config. IV = {green} ', A_side_III_IV, f'm\u00b2 {white}')
+
+# ---- Equivalent Folds ---- #
+# Cong. I
+Folds_back_I = A_back_I_II / A_back
+Folds_side_I = A_side_I_II / A_side
+if Folds_back_I > 2:
+    txt_I = f'Required folds for configuration I = {red} {Folds_back_I} {white} > 2'
+else:
+    txt_I = f'Required folds for configuration I = {green} {Folds_back_I} {white} < 2'
+if Folds_side_I > 3:
+    txt_I += f'\nRequired folds for configuration I = {red} {Folds_side_I} {white} > 3'
+else:
+    txt_I += f'\nRequired folds for configuration I = {green} {Folds_side_I} {white} < 3'
+print(txt_I)
+
+# Config. II
+Folds_back_II = A_back_I_II / A_back
+Folds_side_II = A_side_I_II / A_side
+if Folds_back_II > 3:
+    txt_II = f'Required folds for configuration II = {red} {Folds_back_II} {white} > 3'
+else:
+    txt_II = f'Required folds for configuration II = {green} {Folds_back_II} {white} < 3'
+if Folds_side_II > 3:
+    txt_II += f'\nRequired folds for configuration II = {red} {Folds_side_II} {white} > 3'
+else:
+    txt_II += f'\nRequired folds for configuration II = {green} {Folds_side_II} {white} < 3'
+print(txt_II)
+
+# Cong. III
+Folds_back_III = A_back_III_IV / A_back
+Folds_side_III = A_side_III_IV / A_side
+if Folds_back_III > 2:
+    txt_III = f'Required folds for configuration III = {red} {Folds_back_III} {white} > 2'
+else:
+    txt_III = f'Required folds for configuration III = {green} {Folds_back_III} {white} < 2'
+if Folds_side_III > 3:
+    txt_III += f'\nRequired folds for configuration III = {red} {Folds_side_III} {white} > 3'
+else:
+    txt_III += f'\nRequired folds for configuration III = {green} {Folds_side_III} {white} < 3'
+print(txt_III)
+
+# Config. IV
+Folds_back_IV = A_back_III_IV / A_back
+Folds_side_IV = A_side_III_IV / A_side
+if Folds_back_IV > 3:
+    txt_IV = f'Required folds for configuration IV = {red} {Folds_back_IV} {white} > 3'
+else:  
+    txt_IV = f'Required folds for configuration IV = {green} {Folds_back_IV} {white} < 3'
+if Folds_side_IV > 3:
+    txt_IV += f'\nRequired folds for configuration IV = {red} {Folds_side_IV} {white} > 3'
+else:
+    txt_IV += f'\nRequired folds for configuration IV = {green} {Folds_side_IV} {white} < 3'
+print(txt_IV)
+
 # ---- Battery sizing ---- #
-Bat = SA.Bat_size_visual_v2(CONT=False)
+Bat = SA.Bat_size_visual(CONT=True)
 
 
 
