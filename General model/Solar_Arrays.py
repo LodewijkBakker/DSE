@@ -54,6 +54,7 @@ class Solar_Array:
         self.Id = self.cst["Cell efficiency"]["Inherent_degradation"]
         self.Cell_d = self.cst["Cell efficiency"]["cell_degradation"]
         self.Cell_D = (1-self.Cell_d) ** self.L
+        
 
         if PARAM:
             print("------------- Configuration -------------------")
@@ -150,13 +151,13 @@ class Solar_Array:
             print(f"{red}ERROR: Please specify a scenario for the average power computation{white}")
             exit()
         if scenario == 1:
-            return self.E_out(CONT=False) / (self.T_o/2)
+            return self.E_out(CONT=True) / (self.T_o/2)
         if scenario == 2:
-            return self.E_out(CONT=False) / (self.T_o/2)
+            return self.E_out(CONT=True) / (self.T_o/2)
         if scenario == 3 or scenario == 4:
-            return self.E_out(CONT=False) / (self.T_s)
+            return self.E_out(CONT=True) / (self.T_s)
         if scenario == 5:
-            return self.E_out(CONT=False) / (self.T_o)
+            return self.E_out(CONT=True) / (self.T_o)
     
     def disp_sc(self):
         print('--------------------------------------------------------------------------------------------------------------------')
@@ -548,7 +549,10 @@ class Solar_Array:
                     E_peak += P_peak[i] * self.T_e
                     
 
+        # Capacity = E_peak + E_nom      # [Ws] Capacity
         Capacity = E_peak + E_nom      # [Ws] Capacity
+        # Capacity = 280000
+        print(Capacity)
         Capacity_wh = Capacity / 3600      # [Wh] Capacity
 
         # Number of Cycles expected rounded to the upper integer
@@ -564,11 +568,11 @@ class Solar_Array:
         # Plotting Capacity as a function of DOD [%]
         DOD = np.linspace(10, 100, 90)
 
-        C_Liion = Capacity / (DOD/100 * n_bat_Liion)
-        C_Nih2 = Capacity / (DOD/100 * n_bat_Nih2)
-        C_NiCd = Capacity / (DOD/100 * n_bat_NiCd)
-        C_Lipoly = Capacity / (DOD/100 * n_bat_Lipoly)
-        C_LiFe = Capacity / (DOD/100 * n_bat_LiFe)
+        C_Liion =  Capacity / (DOD/100 * n_bat_Liion)
+        C_Nih2 =  Capacity / (DOD/100 * n_bat_Nih2)
+        C_NiCd =  Capacity / (DOD/100 * n_bat_NiCd)
+        C_Lipoly =  Capacity / (DOD/100 * n_bat_Lipoly)
+        C_LiFe =  Capacity / (DOD/100 * n_bat_LiFe)
 
         plt.figure()
         plt.plot(DOD, C_Liion/3600, color='r', linewidth=1.25, linestyle='-', label='Li-ion')
