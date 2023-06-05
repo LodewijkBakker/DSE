@@ -57,14 +57,14 @@ class ThermalModel:
     :param init_temp: list of initial temperature of each node in Kelvin
     """
 
-    def __init__(self, nodes, connections, env, t_sim, init_temp, with_TCS=True):
+    def __init__(self, nodes, connections, env, t_sim, init_temp, sun_shield=True):
         self.nodes: list[ThermalNode] = nodes
         self.connections: list[tuple[int, int]] = connections
         self.env = env
         self.t_sim = t_sim
         self.init_temp = init_temp
         self.solution = None
-        self.TCS = with_TCS
+        self.sun_shield = sun_shield
 
     def Qs(self, t, i):
         """
@@ -121,10 +121,13 @@ class ThermalModel:
             q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
         elif i ==10:   # radiator
-            q = node.area * self.Qs(t, i) * node.absorptivity
+            if self.sun_shield:
+                q = node.area * self.Qs(t, i) * node.absorptivity
+            else:
+                q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
         elif i ==12:   # DST baffle
-            q = (1 + self.env.albedo * node.area) * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
+            q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
         else:      # battery, OBC, DST, propellant
             q = 0
@@ -164,22 +167,23 @@ class ThermalModel:
         Plots the temperature of each node over the simulation time,
         can also specify which nodes to plot
         """
+        plt.plot(self.solution.t, np.mean(self.solution.y[:6], axis=0), label='structure')
         if not node_id:
             for i, node in enumerate(self.nodes):
                 plt.plot(self.solution.t, self.solution.y[i], label=f'{node.name}')
         else:
             for i in node_id:
                 plt.plot(self.solution.t, self.solution.y[i], label=f'{self.nodes[i].name}')
-        plt.plot(self.solution.t, np.mean(self.solution.y[:6], axis=0), label='Mean (struct)')
         if with_legend:
             plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
             plt.subplots_adjust(right=0.74)
         plt.xlabel('Time [s]')
         plt.ylabel('Temperature [K]')
-        # plt.xlim(7*self.env.t_orbit, 9*self.env.t_orbit)
+        plt.xlim(7*self.env.t_orbit, 9*self.env.t_orbit)
         if save:
-            plt.savefig('temp_TCS.png')
+            plt.savefig('temp_no_rad_TCS.png')
         plt.show()
+        plt.close()
 
     def save_csv(self, filename):
         if self.solution is not None:
