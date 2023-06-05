@@ -1,0 +1,44 @@
+["Orbital"]                           # -------------------------------------------------------------
+Mission_life = 5                         # Mission Lifetime in years
+T_orbit = 5431                           # Orbital Period in seconds
+perc_eclipse = 0.404228                  # Percentage of Orbital Period in Eclipse
+S_flux = 1322                            # Solar Flux in W/m^2 - COLD from THERMO SIMULATION
+
+["Cell efficiency"]                   # -------------------------------------------------------------
+Inherent_degradation = 0.88              # SMAD
+cell_degradation = 0.005                 # per year NASA
+
+["Power Subsystems"]                  # [Average, Peak]  ---------- EPS in code ---------------------
+# --- #
+"ADCS_P" = [2.8,11.42]
+"Peak Active ADCS" = 2000                # [s]
+# --- #
+"SDH_P" = [7,20]
+"Peak Active SDH" = 0                    # [s]
+# --- #
+"COMMS_P" = [0.1,16.0]
+"Peak Active COMMS" = 600                # [s]
+# --- #
+"GNS_P" = [1,1]
+"Peak Active GNS" = 0                    # [s]
+# --- #
+"SM_P" = [3, 6]
+"Peak Active SM" = 5                     # [s]
+# --- #
+"TCS_P" = [9,9]
+"Peak Active TCS" = 0                    # [s]
+# --- # Special Case -> Propulsion Subsystem [[Average, Peak],[Average, Peak],...,[Average, Peak]] per engine
+#                    -> Time Peak = [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...], if above To -> use To
+"Prop_P" = [[1, 50], [1, 60], [1, 100], [1, 100], [1, 9]]
+"T_prop" = [[2253.257, 2594.906], [5199.823, 5431.0], [1502.171, 1729.937], [965.681, 1112.102], [5431.0, 5431.0]]
+# --- #
+"EPS_P" = 0.15                          # PCDU [W]
+
+["Payload"]                           # [Average, Peak]  ----------------------------------------------
+"Continuous" = [10, 10]
+"Discontinuous" = [0, 25]
+
+["EPS efficiency"]
+"PCDU" = 0.95
+"Loss" = 0.98
+

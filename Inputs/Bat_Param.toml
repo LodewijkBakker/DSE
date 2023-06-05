@@ -1,0 +1,29 @@
+["LiIon"]
+"efficiency" = 0.98
+"DOD" = 0.2               # 20%
+"E_sp" = 150              # Wh/kg
+"rho_sp" = 210            # Wh/L = Wh/U
+
+["LiPoly"]  
+"efficiency" = 0.95
+"DOD" = 0.2               # 20%
+"E_sp" = 120              # Wh/kg
+"rho_sp" = 169            # Wh/L = Wh/U
+
+["LiFe"]
+"efficiency" = 0.9
+"DOD" = 0.25              # 25%
+"E_sp" = 58               # Wh/kg
+"rho_sp" = 70             # Wh/L = Wh/U
+
+["NiCd"]
+"efficiency" = 0.8
+"DOD" = 0.12              # 12%
+"E_sp" = 50               # Wh/kg
+"rho_sp" = 150            # Wh/L = Wh/U
+
+["NiH2"]
+"efficiency" = 0.85
+"DOD" = 0.65              # 65%
+"E_sp" = 80               # Wh/kg
+"rho_sp" = 60             # Wh/L = Wh/U
