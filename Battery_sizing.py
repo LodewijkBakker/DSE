@@ -248,6 +248,7 @@ class Battery_sizing:
         for i in PATHS:
             if os.path.exists(i):
                 os.remove(i)
+                
 
         # Save data per engine in txt file
         with open(self.path_capacity_per_engine, 'w') as f:

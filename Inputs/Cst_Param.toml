@@ -29,8 +29,8 @@ cell_degradation = 0.005                 # per year NASA
 "Peak Active TCS" = 0                    # [s]
 # --- # Special Case -> Propulsion Subsystem [[Average, Peak],[Average, Peak],...,[Average, Peak]] per engine
 #                    -> Time Peak = [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...], if above To -> use To
-"Prop_P" = [[1, 50], [1, 60], [1, 100], [1, 100], [1, 9]]
-"T_prop" = [[2253.257, 2594.906], [5199.823, 5431.0], [1502.171, 1729.937], [965.681, 1112.102], [5431.0, 5431.0]]
+"Prop_P" = [[1,9], [1,50], [1,65], [1,100], [1,120]]
+"T_prop" = [[5431.0,5431.0], [2253.257,2594.906], [5431.0,5431.0], [965.681, 1112.102], [1126.628,1297.453]]
 # --- #
 "EPS_P" = 0.15                          # PCDU [W]
 

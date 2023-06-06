@@ -162,7 +162,7 @@ class Solar_panel_sizing:
         ''' Function that computes the needed power of the different sizing scenarios A1, A2, A3'''
 
         E_orb = self.E_orbit()
-        _, E_e_np = bat_size.E_eclipse()
+        E_tab_e, E_e_np = bat_size.E_eclipse()
 
         P_area_1 = np.zeros((len(E_orb), len(E_orb[0]))) # [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...]
         P_area_2 = np.zeros((len(E_orb), len(E_orb[0]))) # [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...]
@@ -170,9 +170,9 @@ class Solar_panel_sizing:
 
         for i in range(len(E_orb)):
             for j in range(len(E_orb[0])):
-                P_area_1[i][j] = (E_orb[i][j] + E_e_np) / (self.T_o / 2) 
-                P_area_2[i][j] = (E_orb[i][j] + E_e_np) / (self.T_s) 
-                P_area_3[i][j] = (E_orb[i][j] + E_e_np) / (self.T_o) 
+                P_area_1[i][j] = (E_orb[i][j]) / (self.T_o / 2) + E_tab_e[i][j] / (3*self.T_o/2)
+                P_area_2[i][j] = (E_orb[i][j]) / (self.T_s)  + E_tab_e[i][j] / (3*self.T_s)
+                P_area_3[i][j] = (E_orb[i][j]) / (self.T_o)  + E_tab_e[i][j] / (3*self.T_o)
         
         return P_area_1, P_area_2, P_area_3
     
