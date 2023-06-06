@@ -10,8 +10,11 @@ import toml
 import matplotlib.pyplot as plt
 from colored import fg
 import json
-
+import pandas as pd
+import os
+from tqdm import tqdm
 from Battery_sizing import Battery_sizing
+bat_size = Battery_sizing()
 
 # ---------------------------------- Define spetial characters: -----------------------------------#
 # --- Define Colors --- #
@@ -19,7 +22,6 @@ red = fg('red')
 green = fg('green')
 white = fg('white')
 
-bat_s = Battery_sizing()
 
 # --------------------------------- Solar Panel sizing class: -------------------------------------#
 
@@ -77,19 +79,18 @@ class Solar_panel_sizing:
         self.EPS_P_tab = self.EPS_loss() + self.c_cst["Power Subsystems"]["EPS_P"] # [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...] -> Peak = Average
 
         # --- Define Solar Panel design orbit parameters --- # 
-        self.cos_a1 = 2/np.pi        # Incidence angle efficiency for the different orbits
-        self.cos_a2 = 0.99           # Incidence angle efficiency for the different orbits
-        self.cos_a3 = 0.99           # Incidence angle efficiency for the different orbits
-        self.cos_a4 = None           # Incidence angle efficiency for the different orbits
-        self.cos_a5 = None           # Incidence angle efficiency for the different orbits
+        self.cos_a1 = 2/np.pi               # Incidence angle efficiency for the different orbits
+        self.cos_a2 = 0.99                  # Incidence angle efficiency for the different orbits
+        self.cos_a3 = 0.99                  # Incidence angle efficiency for the different orbits
+        self.cos_a_2xTeto05To = 0.15        # Incidence angle efficiency for the different orbits
+        self.cos_a5 = None                  # Incidence angle efficiency for the different orbits
 
         # --- Define Solar Panel design parameters --- #
-        self.A_top_fold = None            # maximum area available for 1 fold in [m^2]
-        self.A_side_fold = None           # maximum area available for 1 fold in [m^2]
-        self.A_back_fold = None           # maximum area available for 1 fold in [m^2]
+        self.A_back_fold = 220 * 350 / 1e6            # maximum area available for 1 fold in [m^2]
+        self.A_side_fold = 200 * 360 / 1e6           # maximum area available for 1 fold in [m^2]
+        self.A_top_fold = 305 * 360 / 1e6           # maximum area available for 1 fold in [m^2]
 
         self.A_max_tot = self.A_top_fold + 2*3*self.A_side_fold + 3*self.A_back_fold
-
 
     pass
 
@@ -153,13 +154,15 @@ class Solar_panel_sizing:
             E_orb[i][1] = E_a + E_p + self.Prop_tab[i][1] * self.T_prop_tab[i][1] \
                         + (self.T_o - self.T_prop_tab[i][1]) * self.Prop_tab[i][0] \
                         + self.EPS_P_tab[i][1] * self.T_o
-        
+
+
         return E_orb
     
     def P_area(self):
         ''' Function that computes the needed power of the different sizing scenarios A1, A2, A3'''
 
         E_orb = self.E_orbit()
+        _, E_e_np = bat_size.E_eclipse()
 
         P_area_1 = np.zeros((len(E_orb), len(E_orb[0]))) # [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...]
         P_area_2 = np.zeros((len(E_orb), len(E_orb[0]))) # [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...]
@@ -167,9 +170,9 @@ class Solar_panel_sizing:
 
         for i in range(len(E_orb)):
             for j in range(len(E_orb[0])):
-                P_area_1[i][j] = E_orb[i][j] / (self.T_o / 2)
-                P_area_2[i][j] = E_orb[i][j] / (self.T_s)
-                P_area_3[i][j] = E_orb[i][j] / (self.T_o)
+                P_area_1[i][j] = (E_orb[i][j] + E_e_np) / (self.T_o / 2) 
+                P_area_2[i][j] = (E_orb[i][j] + E_e_np) / (self.T_s) 
+                P_area_3[i][j] = (E_orb[i][j] + E_e_np) / (self.T_o) 
         
         return P_area_1, P_area_2, P_area_3
     
@@ -196,7 +199,118 @@ class Solar_panel_sizing:
                     A3[i][j][k] = P_area_3[i][j] / (n_cell[k] * self.S_flux * self.cos_a3 * self.Id * self.Cell_D)
 
         # Computing the back, top, side area required for each configuration and design orbits
+        A_back = A3
+        A_top = self.A_top_fold
+        A_side = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
 
+        # Introducing important ratio's
+        r_to2ts = (self.T_o / 2) / self.T_s
+        r_2xTeto05To = 0.5 * ((self.T_o / 2 - self.T_e)) / self.T_s
+
+
+
+        for i in range(len(P_area_1)):
+            for k in range(len(n_cell)):
+                A_side[i][0][k] = (A1[i][0][k] - A_top - A_back[i][0][k]) / 2
+                A_side[i][1][k] = (A2[i][1][k] - (A_back[i][1][k] + A_top)*(self.cos_a1*r_to2ts) - (A_back[i][1][k] * self.cos_a_2xTeto05To * r_2xTeto05To))/2
+
+        
+        # --- Corresponding Folds --- #
+        back_folds = A_back / self.A_back_fold
+        side_folds = A_side / self.A_side_fold
+        
+
+        # Folds on the side with maximum back area 
+        side_folds_min = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        for i in range(len(P_area_1)):
+            for k in range(len(n_cell)):
+                diff_1 = (3 - back_folds[i][0][k]) / 2            
+                diff_2 = (3 - back_folds[i][1][k]) * (self.cos_a1 / self.cos_a2) / 2
+                if diff_1 > 0:
+                    side_folds_min[i][0][k] = side_folds[i][0][k] - diff_1
+                if diff_2 > 0:
+                    side_folds_min[i][1][k] = side_folds[i][1][k] - diff_2
+                
+
+        # --- Compute the Energy Output for orbit 45 and design orbit scenario scD to check the compliance CHECK --- #
+        E_tot = self.E_orbit()
+
+        E_out_no_max_back = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        BOOL_E_out_no_max_back = -np.ones((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        
+        E_out_no_max_back_scD = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        BOOL_E_out_no_max_back_scD = -np.ones((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+
+        E_out_3_back = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        BOOL_E_out_3_back = -np.ones((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+
+        E_out_3_back_scD = np.zeros((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        BOOL_E_out_3_back_scD = -np.ones((len(P_area_1), len(P_area_1[0]), len(n_cell))) # [[ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], [ConfigI[cells], ConfigII[cells]], ...]
+        
+        for i in range(len(P_area_1)):
+            for k in range(len(n_cell)):
+                # Orbit 45 - x, y  -> back,side
+                E_out_no_max_back[i][0][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (A_back[i][0][k]*0.83*self.T_s + (A_top + 2*A_side[i][0][k])*0.45*self.T_o/2)
+                E_out_no_max_back[i][1][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (A_back[i][1][k]*0.83*self.T_s + (A_top)*0.45*self.T_o/2 + 2*A_side[i][1][k]*0.71*self.T_o/2)
+                if E_out_no_max_back[i][0][k] >= E_tot[i][0]:
+                    BOOL_E_out_no_max_back[i][0][k] = 1
+                if E_out_no_max_back[i][1][k] >= E_tot[i][1]:
+                    BOOL_E_out_no_max_back[i][1][k] = 1
+                
+                # Orbit 45 - 3, y  -> back,side
+                E_out_3_back[i][0][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (3*self.A_back_fold*0.83*self.T_s + (A_top + 2*side_folds_min[i][0][k]*self.A_side_fold)*0.45*self.T_o/2)
+                E_out_3_back[i][1][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (3*self.A_back_fold*0.83*self.T_s + A_top*0.45*self.T_o/2 + 2*side_folds_min[i][1][k]*self.A_side_fold*0.71*self.T_o/2)
+                if E_out_3_back[i][0][k] >= E_tot[i][0]:
+                    BOOL_E_out_3_back[i][0][k] = 1
+                if E_out_3_back[i][1][k] >= E_tot[i][1]:
+                    BOOL_E_out_3_back[i][1][k] = 1
+
+                # Orbit scD - x, y  -> back,side
+                E_out_no_max_back_scD[i][0][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (A_back[i][0][k]*0.99*self.T_s + (A_top + 2*A_side[i][0][k])*2/np.pi*self.T_o/2)
+                E_out_no_max_back_scD[i][1][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (A_back[i][1][k]*0.99*self.T_s + (A_top)*2/np.pi*self.T_o/2 + 2*A_side[i][1][k]*0.99*self.T_o/2)
+                if E_out_no_max_back_scD[i][0][k] >= E_tot[i][0]:
+                    BOOL_E_out_no_max_back_scD[i][0][k] = 1
+                if E_out_no_max_back_scD[i][1][k] >= E_tot[i][1]:
+                    BOOL_E_out_no_max_back_scD[i][1][k] = 1
+                
+                # Orbit scD - 3, y  -> back,side
+                E_out_3_back_scD[i][0][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (3*self.A_back_fold*0.99*self.T_s + (A_top + 2*side_folds_min[i][0][k]*self.A_side_fold)*2/np.pi*self.T_o/2)
+                E_out_3_back_scD[i][1][k] = n_cell[k] * self.S_flux * self.Id * self.Cell_D * (3*self.A_back_fold*0.99*self.T_s + A_top*2/np.pi*self.T_o/2 + 2*side_folds_min[i][1][k]*self.A_side_fold*0.99*self.T_o/2)
+                if E_out_3_back_scD[i][0][k] >= E_tot[i][0]:
+                    BOOL_E_out_3_back_scD[i][0][k] = 1
+                if E_out_3_back_scD[i][1][k] >= E_tot[i][1]:
+                    BOOL_E_out_3_back_scD[i][1][k] = 1
+        
+           # --- DELETE PREVIOUS RESULTS --- #
+        if os.path.exists('./Outputs/Solar_Panels/Solar_Panels.xlsx'):
+            os.remove('./Outputs/Solar_Panels/Solar_Panels.xlsx')
+        # --- Create an empty DataFrame with specified columns --- #
+        df = pd.DataFrame(columns=['Engine', 'Configuration', 'Solar cell Efficiency', 'Back Area [m2]', 'Side Area [m2]', 'Top Area [m2]', 'Back Folds', 'Side Folds','Check E_tot (x back,y sides) ; 45deg','Check E_tot (x back,y sides) ; scD', 'Side Folds based on 3 back folds', 'Check E_tot (3 back,y sides) ; 45deg', 'Check E_tot (3 back,y sides) ; scD'])
+
+        # --- Fill the dataframe with the computed data --- #
+        for i in tqdm(range(len(P_area_1))):
+            for j in range(len(P_area_1[0])):
+                for k in range(len(n_cell)):
+                    data = {
+                        'Engine': i,
+                        'Configuration': j+1,
+                        'Solar cell Efficiency': n_cell[k],
+                        'Back Area [m2]': A_back[i][j][k],
+                        'Side Area [m2]': A_side[i][j][k],
+                        'Top Area [m2]': A_top,
+                        'Back Folds': back_folds[i][j][k],
+                        'Side Folds': side_folds[i][j][k],
+                        'Check E_tot (x back,y sides) ; 45deg': BOOL_E_out_no_max_back[i][j][k],
+                        'Check E_tot (x back,y sides) ; scD': BOOL_E_out_no_max_back_scD[i][j][k],
+                        'Side Folds based on 3 back folds': side_folds_min[i][j][k],
+                        'Check E_tot (3 back,y sides) ; 45deg': BOOL_E_out_3_back[i][j][k],
+                        'Check E_tot (3 back,y sides) ; scD': BOOL_E_out_3_back_scD[i][j][k]
+                    }
+                    # Create a DataFrame from the data and concatenate it to the main DataFrame
+                    df = pd.concat([df, pd.DataFrame(data, index=[0])], ignore_index=True)
+
+        df.to_excel('./Outputs/Solar_Panels/Solar_Panels.xlsx', index=False)
+       
         pass
 
 pass

@@ -10,6 +10,7 @@ import toml
 import matplotlib.pyplot as plt
 from colored import fg
 import json
+import os
 
 # ---------------------------------- Define spetial characters: -----------------------------------#
 # --- Define Colors --- #
@@ -174,6 +175,7 @@ class Battery_sizing:
             if time_peak[i] < self.T_e:
                 E_i += power_p[i] * time_peak[i] + power_a[i] * (self.T_e - time_peak[i])
         
+        E_for_panels = E_i
         # --- Add total energy form Prop & EPS for the different configuration --- #
         # Initialise E_eclipse_tab: [[ConfigI, ConfigII], [ConfigI, ConfigII], [ConfigI, ConfigII], ...]
         E_eclipse_tab = np.zeros((len(self.Prop_tab), len(self.Prop_tab[0])))
@@ -192,14 +194,14 @@ class Battery_sizing:
             if time_prop_peak[i][1] < self.T_e:
                 E_eclipse_tab[i][1] = E_i + self.Prop_tab[i][1] * time_prop_peak[i][1] + self.EPS_P_tab[i][1] * self.T_e \
                                     + self.Prop_tab[i][0] * (self.T_e - time_prop_peak[i][1])
-        return E_eclipse_tab
+        return E_eclipse_tab, E_for_panels
 
     def Bat_sizing(self):
         ''' Function that computes the battery sizing for the different scenarios & different batteries,
             the output is saved in ./Outputs/Batteries/ '''
         
         # --- Required energy for eclipse --- #
-        E_eclipse_tab = self.E_eclipse()
+        E_eclipse_tab, _ = self.E_eclipse()
 
         # --- Required capacity per battery and per configuration --- #
         # Initialise the Capacity per configuration fro the types of battery
@@ -235,6 +237,18 @@ class Battery_sizing:
 
         # --- Save data --- #
         # ---------------------------------------------- Capacity ---------------------------------------------- #
+
+                # --- DELETE PREVIOUS OUTPUT FILES --- #
+        PATHS = [self.path_capacity_per_battery,
+            self.path_capacity_per_engine,
+            self.path_mass_per_battery,
+            self.path_mass_per_engine,
+            self.path_volume_per_battery,
+            self.path_volume_per_engine]
+        for i in PATHS:
+            if os.path.exists(i):
+                os.remove(i)
+
         # Save data per engine in txt file
         with open(self.path_capacity_per_engine, 'w') as f:
             f.write(f'# Capacity in [Wh] per engine for the different batteries\n')
@@ -261,7 +275,7 @@ class Battery_sizing:
         with open(self.path_mass_per_engine, 'w') as f:
             f.write(f'# Mass in [kg] per engine for the different batteries\n')
             f.write(f'# Structure -> [Configuration I, Configuration II]\n\n')
-            for i in range(len(self.Prop_tab)):
+            for i in (range(len(self.Prop_tab))):
                 f.write(f'["Engine_{i}"]\n')
                 f.write(f'LiIon = {[float(C_engine[f"Engine_{i}"][0]["LiIon"][0])/Esp[0], float(C_engine[f"Engine_{i}"][0]["LiIon"][1])/Esp[0]]}\n')
                 f.write(f'LiPoly = {[float(C_engine[f"Engine_{i}"][1]["LiPoly"][0])/Esp[1], float(C_engine[f"Engine_{i}"][1]["LiPoly"][1])/Esp[1]]}\n')
@@ -273,7 +287,7 @@ class Battery_sizing:
         with open(self.path_mass_per_battery, 'w') as f:
             f.write(f'# Mass in [kg] per battery type for the different engines\n')
             f.write(f'# Structure -> [Configuration I, Configuration II]\n')
-            for i in range(len(names)):
+            for i in (range(len(names))):
                 f.write(f'\n["{names[i]}"]\n')
                 for j in range(len(self.Prop_tab)):
                     f.write(f'Engine_{j} = {[float(C_bat[names[i]][j][f"Engine_{j}"][0])/Esp[i], float(C_bat[names[i]][j][f"Engine_{j}"][1])/Esp[i]]}\n')
@@ -295,7 +309,7 @@ class Battery_sizing:
         with open(self.path_volume_per_battery, 'w') as f:
             f.write(f'# Volume in [U] per battery type for the different engines\n')
             f.write(f'# Structure -> [Configuration I, Configuration II]\n')
-            for i in range(len(names)):
+            for i in (range(len(names))):
                 f.write(f'\n["{names[i]}"]\n')
                 for j in range(len(self.Prop_tab)):
                     f.write(f'Engine_{j} = {[float(C_bat[names[i]][j][f"Engine_{j}"][0])/(rhosp[i]), float(C_bat[names[i]][j][f"Engine_{j}"][1])/(rhosp[i])]}\n')
