@@ -9,3 +9,4 @@ class Env:
         self.v_orbit = ((self.mu_earth/self.orbit_alt)**0.5)
         self.t_orbit = 2*np.pi*self.orbit_alt/self.v_orbit
         self.f_orbit = 0.404
+        self.albedo = 0.3

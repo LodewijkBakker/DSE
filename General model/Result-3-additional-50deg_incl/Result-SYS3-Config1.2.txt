@@ -1,0 +1,123 @@
+---Setup---
+Propulsion system: 2x Electromagnetic Propulsion Radio Frequency Thruster BIT-3 
+Peak power: 112W
+Solar panel setup Side panels fixed back panel 3*0.3 long 
+SP Area:0.56m^2
+Specific impulse: 3200s
+Thrust: 2.7mN
+---Results---
+Design Total DeltaV requirement:1102.9s
+Worst-worst case DeltaV requirement: 2105s
+Fuel mass: 1.8kg
+Fuel volume: 0.36U
+Very prelim. prop. system mass:2.75kg
+Very prelim. prop. system volume: 3.8U
+Maximum aerodynamic force: 0.344mN
+Average aerodynamic force: 0.301mN
+Time thrusting every 3 orbits average overall: 2038s
+Time thrusting every 3 orbits maximum: 4390s
+Energy spent per 3 orbits(Avg burn*1.5):95.10666666666667WhThrust fraction 0.0
+Total time thrusting: 0.0h
+Longest continious thrust: 16270s
+---Debugging---
+Final result 
+R: 299.8399981897792km V: 7.72952068356062km
+Eclipse fraction in orbit: 0.40424093423478796
+Third panel full efficiency fraction: 0.0
+------------- Configuration -------------------
+Mission Life = 5.00000 years
+Orbital Period = 5431.00000 s
+Eclipse Time = 2195.36227 s
+Sun Time = 3235.63773 s
+Solar Flux = 1322.000000 W/m^2
+ ----------------------------------------------
+Propulsion Power = 1.00000 W
+S&M Power = 3.00000 W
+ADCS Power = 2.80000 W
+TCS Power = 9.00000 W
+EPS Power = 6.11519 W
+SDH Power = 7.00000 W
+COMMS Power = 0.10000 W
+Payload Power = 10.00000 W
+GNS Power = 1.00000 W
+----------------------------------------------
+Peak Active Propulsion Power = 112.00000 W
+Time Propulsion Peak Power = 2038.00000 s
+Peak Active COMMS Power = 16.00000 W
+Time COMMS Peak Power = 600.00000 s
+Peak Active ADCS Power = 11.42000 W
+Time ADCS Peak Power = 2000.00000 s
+Peak Active TCS Power = 9.00000 W
+Time TCS Peak Power = 0.00000 s
+Peak Active EPS Power = 6.11519 W
+Time EPS Peak Power = 0.00000 s
+Peak Active SDH Power = 20.00000 W
+Time SDH Peak Power = 0.00000 s
+Peak Active Payload Power = 10.00000 W
+Time Payload Peak Power = 0.00000 s
+Peak Active S&M Power = 6.00000 W
+Time S&M Peak Power = 5.00000 s
+Peak Active GNS Power = 1.00000 W
+Time GNS Peak Power = 0.00000 s
+----------------------------------------------
+Inherent Degradation = 0.88000
+Cell Degradation = 0.00500
+Cell Degradation over Mission Life = 0.97525
+----------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------
+Scenario 1 description:
+The power generation only occurs during half the orbit, the assumed incidence angle efficiency is 2/pi
+--------------------------------------------------------------------------------------------------------------------
+Scenario 2 description:
+The power generation occurs during half the orbit, the assumed incidence angle is 23.5 degrees
+--------------------------------------------------------------------------------------------------------------------
+Scenario 3 description:
+The power generation occurs during the entire sun orbit period, the assumed incidence efficiency is 0.99
+--------------------------------------------------------------------------------------------------------------------
+Scenario 4 description:
+Scenario 3 with incidence angel of 23.5
+--------------------------------------------------------------------------------------------------------------------
+Scenario 5 description:
+Constantly in sun with incidence efficiency of 0.99
+--------------------------------------------------------------------------------------------------------------------
+Scenario 1 : Average Power to generate per orbit =  173.20400950425622 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.7993316925572487 m² 
+
+Scenario 2 : Average Power to generate per orbit =  173.20400950425622 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.5548931573574171 m² 
+
+Scenario 3 : Average Power to generate per orbit =  145.36098499447456 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.43138185816897245 m² 
+
+Scenario 4 : Average Power to generate per orbit =  145.36098499447456 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.46569254459542997 m² 
+
+Scenario 5 : Average Power to generate per orbit =  86.60200475212811 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.2570052324050451 m² 
+-------------------------------------------------------------------------------------
+Battery parameters:
+                  Capacity idealised (P_bat * t_dis): 340860.8346019787 [Ws]
+                  Capacity idealised (P_bat * t_dis): 94.68356516721632 [Wh]
+                  Number of cycles: 29034.0
+	Li-ion battery:
+                  Capacity required Li-ion battery: 483.2064149502924 [Wh]
+                  Mass required Li-ion battery: 3.221411983396475 [kg]
+                  Volume required Li-ion battery: 2.3009943314424217 [U]
+	NiH2 battery:
+                  Capacity required NiH2 battery: 171.38279271911318 [Wh]
+                  Mass required NiH2 battery: 2.1423420830187303 [kg]
+                  Volume required NiH2 battery: 2.8563798786518864 [U]
+	NiCd battery:
+                  Capacity required NiCd battery: 986.4526783907556 [Wh]
+                  Mass required NiCd battery: 19.729826141260798 [kg]
+                  Volume required NiCd battery: 6.5764225787107105 [U]
+	Lipoly battery:
+                  Capacity required Lipoly battery: 498.4655648960912 [Wh]
+                  Mass required Lipoly battery: 4.153946572874884 [kg]
+                  Volume required Lipoly battery: 2.9495264373521146 [U]
+	LiFe battery:
+                  Capacity required LiFe battery: 420.9141462311987 [Wh]
+                  Mass required LiFe battery: 7.257398574441857 [kg]
+                  Volume required LiFe battery: 6.01311367431987 [U]
+-------------------------------------------------------------------------------------

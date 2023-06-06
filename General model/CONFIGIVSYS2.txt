@@ -1,0 +1,97 @@
+------------- Configuration -------------------
+Mission Life = 5.00000 years
+Orbital Period = 5431.00000 s
+Eclipse Time = 2195.36227 s
+Sun Time = 3235.63773 s
+Solar Flux = 1322.000000 W/m^2
+ ----------------------------------------------
+Propulsion Power = 1.00000 W
+S&M Power = 3.00000 W
+ADCS Power = 2.80000 W
+TCS Power = 9.00000 W
+EPS Power = 4.77344 W
+SDH Power = 7.00000 W
+COMMS Power = 0.10000 W
+Payload Power = 25.00000 W
+GNS Power = 1.00000 W
+----------------------------------------------
+Peak Active Propulsion Power = 100.00000 W
+Time Propulsion Peak Power = 469.00000 s
+Peak Active COMMS Power = 16.00000 W
+Time COMMS Peak Power = 600.00000 s
+Peak Active ADCS Power = 11.42000 W
+Time ADCS Peak Power = 2000.00000 s
+Peak Active TCS Power = 9.00000 W
+Time TCS Peak Power = 0.00000 s
+Peak Active EPS Power = 4.77344 W
+Time EPS Peak Power = 0.00000 s
+Peak Active SDH Power = 20.00000 W
+Time SDH Peak Power = 0.00000 s
+Peak Active Payload Power = 25.00000 W
+Time Payload Peak Power = 0.00000 s
+Peak Active S&M Power = 6.00000 W
+Time S&M Peak Power = 5.00000 s
+Peak Active GNS Power = 1.00000 W
+Time GNS Peak Power = 0.00000 s
+----------------------------------------------
+Inherent Degradation = 0.88000
+Cell Degradation = 0.00500
+Cell Degradation over Mission Life = 0.97525
+----------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------
+Scenario 1 description:
+The power generation only occurs during half the orbit, the assumed incidence angle efficiency is 2/pi
+--------------------------------------------------------------------------------------------------------------------
+Scenario 2 description:
+The power generation occurs during half the orbit, the assumed incidence angle is 23.5 degrees
+--------------------------------------------------------------------------------------------------------------------
+Scenario 3 description:
+The power generation occurs during the entire sun orbit period, the assumed incidence efficiency is 0.99
+--------------------------------------------------------------------------------------------------------------------
+Scenario 4 description:
+Scenario 3 with incidence angel of 23.5
+--------------------------------------------------------------------------------------------------------------------
+Scenario 5 description:
+Constantly in sun with incidence efficiency of 0.99
+--------------------------------------------------------------------------------------------------------------------
+Scenario 1 : Average Power to generate per orbit =  114.10142093626104 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.5265748880826423 m² 
+
+Scenario 2 : Average Power to generate per orbit =  114.10142093626104 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.3655463744950646 m² 
+
+Scenario 3 : Average Power to generate per orbit =  95.7593013235441 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.28418096742728605 m² 
+
+Scenario 4 : Average Power to generate per orbit =  95.7593013235441 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.3067837817949355 m² 
+
+Scenario 5 : Average Power to generate per orbit =  57.05071046813052 W
+             An efficiency of 0.30000000000000016 % : Solar panel area 0.16930706332608908 m² 
+-------------------------------------------------------------------------------------
+Battery parameters:
+                  Capacity idealised (P_bat * t_dis): 136174.59336805393 [Ws]
+                  Capacity idealised (P_bat * t_dis): 37.826275935570536 [Wh]
+                  Number of cycles: 29034.0
+	Li-ion battery:
+                  Capacity required Li-ion battery: 193.04194084229715 [Wh]
+                  Mass required Li-ion battery: 1.2869606079038938 [kg]
+                  Volume required Li-ion battery: 0.9192518929088781 [U]
+	NiH2 battery:
+                  Capacity required NiH2 battery: 68.46777259129328 [Wh]
+                  Mass required NiH2 battery: 0.8558699985318047 [kg]
+                  Volume required NiH2 battery: 1.1411295431882214 [U]
+	NiCd battery:
+                  Capacity required NiCd battery: 394.08984171955393 [Wh]
+                  Mass required NiCd battery: 7.882105479046415 [kg]
+                  Volume required NiCd battery: 2.6272941316890766 [U]
+	Lipoly battery:
+                  Capacity required Lipoly battery: 199.13800213205394 [Wh]
+                  Mass required Lipoly battery: 1.6595100639660725 [kg]
+                  Volume required Lipoly battery: 1.1783417819291389 [U]
+	LiFe battery:
+                  Capacity required LiFe battery: 168.15605340174898 [Wh]
+                  Mass required LiFe battery: 2.8993454203634603 [kg]
+                  Volume required LiFe battery: 2.402251084177916 [U]
+-------------------------------------------------------------------------------------
