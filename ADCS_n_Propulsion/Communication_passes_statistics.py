@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 import matplotlib.pyplot as plt
-lat=90
+lat=60
 filename=f"90d_lat{lat}"
 with open("Orbital pass data/"+filename+".txt") as f:
     count=0
@@ -29,7 +29,7 @@ plt.hist(data,bins=15,range=[5,90])
 plt.title(f"Distribution of tracking passes over 90 days [Lat {lat}°]")
 x_limits = plt.xlim()  # Get the x-limits of the histogram
 x_center = (x_limits[1] - x_limits[0]) / 2
-plt.text(x_center, -160, f'Total number of passes: {int(len(data))}',size=12, ha='center')
+plt.text(x_center, -169, f'Total number of passes: {int(len(data))}',size=12, ha='center')
 # Adjust the plot layout
 plt.tight_layout()
 plt.savefig("Orbital_pass_graphs/hist_"+filename+".png",dpi=400)

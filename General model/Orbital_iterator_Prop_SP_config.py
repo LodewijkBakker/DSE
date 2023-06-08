@@ -1,10 +1,8 @@
 from Orbital_component import Satellite, average_final_properties
 import numpy as np
-import pandas as pd
 import toml
 from scipy.integrate import solve_ivp
-from astropy.constants import G, M_earth, R_earth
-import vg
+
 import pandas as pd
 LAMP = Satellite("Inputs/Config-2.toml")
 Orbital_period=LAMP.orbit_time()
@@ -14,7 +12,7 @@ sim_length=int(3*Orbital_period)
 df=pd.read_csv("Inputs/Propulsion_table4.csv")
 for i,row in df.iterrows():
     for a in range(1,3):
-            #Satellite BOL conditions
+            #Satellite BOL conditionsConfig-2.toml
             inp_file=toml.load(f"Inputs/Config-{a*2}.toml")
             inp_file['Satellite parameters']['I_sp']=float(row['Specific Impulse'])
             inp_file['Satellite parameters']['Thrust'] = float(row['Thrust']/1000)

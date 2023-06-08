@@ -13,11 +13,11 @@ b_earth=6356.7e3
 "fuel mass"=2.8
 Cd=2.2 #2.027
 "A_extended"= 0.19547
-"A_SP_side"=0.2016
+"A_SP_side"=0.20304
 "A_SP_back"=0.23100
 Thrust=5e-3
 I_sp=3000
-"SP Frontal Area"=0.0014
+"SP Frontal Area"=0.00141
 "Third moving panel" = 0
 "Third panel area"=0
 "Min drag"= 0 #true=1 or false=0
