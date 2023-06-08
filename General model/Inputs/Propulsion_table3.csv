@@ -1,0 +1,5 @@
+Name,Mass,Power,Specific Impulse,Thrust,Density,Volume
+Electromagnetic Propulsion Radio Frequency Thruster RIT-10 Evo -Xe,440,145,3000,5,1.6,3.640999071
+Electrostatic Propulsion Hall Effect Thruster  HET-100,400,100,1000,12,1.6,0.331830724
+HIGH POWER Halo Hall-Effect Thruster,750,450,1400,30,1.6,0.22682299
+2x Electromagnetic Propulsion Radio Frequency Thruster NPT30-I2,2400,120,2500,2.2,4.94,1.953792
