@@ -25,7 +25,8 @@ The function Tdot(t, T) defines the differential equation to be solved by solve(
 import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
-from DSE.Thermal.materials import Material
+from DSE.Thermal.materials import Material, Coating
+from DSE.Thermal.esatan_reader import extract_Q_data, interpolate_points
 
 
 class ThermalNode:
@@ -33,15 +34,15 @@ class ThermalNode:
     This class initializes a thermal node, taking in a node id and a dictionary of parameters.
     """
 
-    def __init__(self, node_id, name, params: dict, mat: Material):
+    def __init__(self, node_id, name, params: dict, mat: Material, coat: Coating):
         self.node_id = node_id
         self.name = name
         self.area = params['area']
         self.radiation_area = params['radiation_area']
         self.contact_area = params['contact_area']
         self.mass = params['mass']
-        self.absorptivity = mat.absorptivity
-        self.emissivity = mat.emissivity
+        self.absorptivity = coat.absorptivity
+        self.emissivity = coat.emissivity
         self.thermal_conductivity = mat.thermal_conductivity
         self.thermal_capacitance = mat.thermal_capacitance
         self.heat_generated = params['heat_generated']
@@ -57,14 +58,18 @@ class ThermalModel:
     :param init_temp: list of initial temperature of each node in Kelvin
     """
 
-    def __init__(self, nodes, connections, env, t_sim, init_temp, sun_shield=True):
+    def __init__(self, nodes, connections, env, init_temp, n_orbits=1, sun_shield=True, unit='K', ESATAN=True):
         self.nodes: list[ThermalNode] = nodes
         self.connections: list[tuple[int, int]] = connections
         self.env = env
-        self.t_sim = t_sim
+        self.n_orbits = n_orbits
+        self.t_sim = self.n_orbits * self.env.t_orbit - 1
         self.init_temp = init_temp
         self.solution = None
         self.sun_shield = sun_shield
+        self.unit = unit
+        self.ESATAN = ESATAN
+        self.Q_ESATAN = list(interpolate_points(extract_Q_data()[0], extract_Q_data()[1], self.env.t_orbit, self.n_orbits).values())
 
     def Qs(self, t, i):
         """
@@ -117,7 +122,7 @@ class ThermalModel:
         elif i==3:    # -v facing
             q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
-        elif i ==7:   # solar panel
+        elif i in [7, 13, 14]:   # solar panel
             q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
         elif i ==10:   # radiator
@@ -134,6 +139,18 @@ class ThermalModel:
         return q
 
 
+    def plotting_Q(self):
+        Q = np.empty((len(self.nodes), self.env.t_orbit))
+        for t in range(0, self.env.t_orbit):
+            for i in range(len(self.nodes)):
+                Q[i, t] = self.Qin(t, i, self.nodes[i])
+        for i in range(len(self.nodes)):
+            plt.plot(Q[i, :], label=self.nodes[i].name)
+        plt.legend()
+        plt.show()
+        plt.close()
+
+
     def Tdot(self, t, T):
         """
         Calculates the temperature derivative of each node at a given time, for solve_ivp to solve temperature
@@ -148,8 +165,12 @@ class ThermalModel:
             else:        # normal conductive heat transfer between nodes
                 cond = sum([node.thermal_conductivity * node.contact_area[connect] * (T[connect] - T[i]) for connect in self.connections[i]])
 
-            Q[i] = (self.Qin(t, i, node) + node.heat_generated + cond) - \
-                      node.radiation_area * node.emissivity * self.env.sigma_boltzmann * (T[i] ** 4)
+            if not self.ESATAN:
+                Q[i] = (self.Qin(t, i, node) + node.heat_generated + cond) - \
+                          node.radiation_area * node.emissivity * self.env.sigma_boltzmann * (T[i] ** 4)
+            else:
+                Q[i] = (self.Q_ESATAN[i][int(t)] + node.heat_generated + cond) - \
+                          node.radiation_area * node.emissivity * self.env.sigma_boltzmann * (T[i] ** 4)
 
             Tdot[i] = Q[i] / (node.thermal_capacitance * node.mass)
 
@@ -159,6 +180,7 @@ class ThermalModel:
         """
         Solves the temperature of each node over the simulation time
         """
+        self.plotting_Q()
         sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', max_step=10, vectorized=True)
         self.solution = sol
 
@@ -167,19 +189,30 @@ class ThermalModel:
         Plots the temperature of each node over the simulation time,
         can also specify which nodes to plot
         """
-        plt.plot(self.solution.t, np.mean(self.solution.y[:6], axis=0), label='structure')
-        if not node_id:
-            for i, node in enumerate(self.nodes):
-                plt.plot(self.solution.t, self.solution.y[i], label=f'{node.name}')
+        if self.unit != 'K':
+            plt.plot(self.solution.t, np.mean(self.solution.y[:6]-273, axis=0), label='structure')
+            if not node_id:
+                for i, node in enumerate(self.nodes):
+                    plt.plot(self.solution.t, self.solution.y[i]-273, label=f'{node.name}')
+            else:
+                for i in node_id:
+                    plt.plot(self.solution.t, self.solution.y[i]-273, label=f'{self.nodes[i].name}')
         else:
-            for i in node_id:
-                plt.plot(self.solution.t, self.solution.y[i], label=f'{self.nodes[i].name}')
+            # plt.plot(self.solution.t, np.mean(self.solution.y[:6], axis=0), label='structure')
+            if not node_id:
+                for i, node in enumerate(self.nodes):
+                    plt.plot(self.solution.t, self.solution.y[i], label=f'{node.name}')
+            else:
+                for i in node_id:
+                    plt.plot(self.solution.t, self.solution.y[i], label=f'{self.nodes[i].name}')
+
         if with_legend:
             plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
             plt.subplots_adjust(right=0.74)
         plt.xlabel('Time [s]')
-        plt.ylabel('Temperature [K]')
-        plt.xlim(7*self.env.t_orbit, 9*self.env.t_orbit)
+        plt.ylabel(f'Temperature [{self.unit}]')
+        plt.xlim(8*self.env.t_orbit, 9*self.env.t_orbit)
+        # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
         if save:
             plt.savefig('temp_no_rad_TCS.png')
         plt.show()
