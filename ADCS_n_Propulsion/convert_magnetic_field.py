@@ -42,6 +42,21 @@ ax[1].plot(y)
 ax[2].plot(z)
 plt.show()
 
-print('average', np.average(x), np.average(y), np.average(z))
+print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
 print('max', np.max(x), np.max(y), np.max(z))
 print('min', np.min(x), np.min(y), np.min(z))
+
+
+
+#nano tesla absolute avg 
+#avg torque per axis + nano tesla
+#Dipole moment = t / n
+
+# dipole moment * absolute nanotesla for every axis at every time step 
+# new different torque given single value for each axis
+# per timestep ->  torque given - torque possible magnetorquer
+# lijst van times 
+# lijst van torque given - torque possible 
+# simpson integrtor 
+
+
