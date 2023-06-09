@@ -36,21 +36,39 @@ x = BF[:, 0]
 y = BF[:, 1]
 z = BF[:, 2]
 
+#Turn arrays to absolute values
+yaw = np.absolute(x)
+roll = np.absolute(y)
+pitch = np.absolute(z)
+
 fig, ax = plt.subplots(3)
-ax[0].plot(x)
-ax[1].plot(y)
-ax[2].plot(z)
+ax[0].plot(yaw)
+ax[1].plot(roll)
+ax[2].plot(pitch)
 plt.show()
 
-print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
-print('max', np.max(x), np.max(y), np.max(z))
-print('min', np.min(x), np.min(y), np.min(z))
+#torque for roll , pitch, yaw
+torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
 
 
+#Average Dipole Moment
+dip_moment = np.divide(torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
 
-#nano tesla absolute avg 
-#avg torque per axis + nano tesla
-#Dipole moment = t / n
+
+#avg torque per timestep
+
+# new_torque = 
+
+# print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
+# print('max', np.max(x), np.max(y), np.max(z))
+# print('min', np.min(x), np.min(y), np.min(z))
+print(dip_moment)
+# print(new_torque)
+
+
+#nano tesla absolute avg $
+#avg torque per axis + nano tesla $
+#Dipole moment = t / n $
 
 # dipole moment * absolute nanotesla for every axis at every time step 
 # new different torque given single value for each axis
