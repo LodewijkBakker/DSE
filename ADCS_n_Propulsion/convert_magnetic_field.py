@@ -66,9 +66,9 @@ avg_torque_pitch = list(map(lambda entry: entry * dip_moment[1], z))
 #get given array a , b , c
 # new_torque = a - yaw , b-roll, c-pitch
 
-result_a = list(map(lambda a, avg_torque_yaw: a - avg_torque_yaw, arrayA, avg_torque_yaw))
-result_b = list(map(lambda b, avg_torque_roll: b - avg_torque_roll, arrayB, avg_torque_roll))
-result_c = list(map(lambda c, avg_torque_pitch: c - avg_torque_pitch, arrayC, avg_torque_pitch))
+result_a = list(map(lambda a, yaw: a - yaw, arrayA, avg_torque_yaw))
+result_b = list(map(lambda b, roll: b - roll, arrayB, avg_torque_roll))
+result_c = list(map(lambda c, pitch: c - pitch, arrayC, avg_torque_pitch))
 
 
 # print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
