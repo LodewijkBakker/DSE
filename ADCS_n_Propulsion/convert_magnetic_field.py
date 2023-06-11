@@ -54,10 +54,22 @@ torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
 #Average Dipole Moment
 dip_moment = np.divide(torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
 
-
 #avg torque per timestep
+avg_torque_yaw = list(map(lambda entry: entry * dip_moment[2], x))
+avg_torque_roll = list(map(lambda entry: entry * dip_moment[0], y))
+avg_torque_pitch = list(map(lambda entry: entry * dip_moment[1], z))
 
-# new_torque = 
+# print(avg_torque_yaw)
+# print(avg_torque_roll)
+# print(avg_torque_pitch)
+
+#get given array a , b , c
+# new_torque = a - yaw , b-roll, c-pitch
+
+result_a = list(map(lambda a, avg_torque_yaw: a - avg_torque_yaw, arrayA, avg_torque_yaw))
+result_b = list(map(lambda b, avg_torque_roll: b - avg_torque_roll, arrayB, avg_torque_roll))
+result_c = list(map(lambda c, avg_torque_pitch: c - avg_torque_pitch, arrayC, avg_torque_pitch))
+
 
 # print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
 # print('max', np.max(x), np.max(y), np.max(z))
@@ -70,11 +82,13 @@ print(dip_moment)
 #avg torque per axis + nano tesla $
 #Dipole moment = t / n $
 
-# dipole moment * absolute nanotesla for every axis at every time step 
-# new different torque given single value for each axis
-# per timestep ->  torque given - torque possible magnetorquer
-# lijst van times 
-# lijst van torque given - torque possible 
-# simpson integrtor 
+# dipole moment * absolute nanotesla for every axis at every time step $
+
+# new different torque given single value for each axis $
+# per timestep ->  torque given - torque possible magnetorquer $
+
+# lijst van times ?
+# lijst van torque given - torque possible ?
+# simpson integrtor ?
 
 
