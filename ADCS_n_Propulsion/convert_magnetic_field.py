@@ -3,12 +3,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import integrate
 
+"""
+Time step - 30s
+N_orbits - 30
+"""
 
-F = np.array(pd.read_csv('intensity.csv').columns.values).astype(float)
-I = np.array(pd.read_csv('inclination.csv').columns.values).astype(float) * np.pi / 180
-D = np.array(pd.read_csv('declination.csv').columns.values).astype(float) * np.pi / 180
+F = np.array(pd.read_csv('mag_res/intensity.csv').columns.values).astype(float)
+I = np.array(pd.read_csv('mag_res/inclination.csv').columns.values).astype(float) * np.pi / 180
+D = np.array(pd.read_csv('mag_res/declination.csv').columns.values).astype(float) * np.pi / 180
 FID = np.array([F, I, D]).T
-LLA = np.array(pd.read_csv('lla.csv').values)   # latitide, longitude, altitude
+LLA = np.array(pd.read_csv('mag_res/lla.csv').values)   # latitide, longitude, altitude
 
 BF = []
 FID_cart = []
