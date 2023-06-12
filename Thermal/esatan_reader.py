@@ -3,20 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def extract_Q_data() -> tuple[dict, np.ndarray]:
+def extract_Q_data(filename) -> tuple[dict, np.ndarray]:
     """
-    Converts from ESATAN heat flux data (excel file) to a dictionary of Q values
+    Converts from ESATAN heat flux data (excel file) to a dictionary of Q values for the thermal simulation
     """
-    filename = 'data.xlsx'
+
     wb = openpyxl.load_workbook(filename)
-    ws = wb['data']
+    ws = wb['radiation_report']
     Q_ESA = {}
     Q_TCS = {}
     times = np.array([int(x[0].value) for x in ws['B'+str(8):'B'+str(38)]])
 
-    for i in range(1, 493):
+    for i in range(1, 693):
         Q_ESA[i] = np.array([x[0].value for x in ws['C'+str(38*i-30):'C'+str(38*i)]])
-        times = np.array([int(x[0].value) for x in ws['B'+str(8):'B'+str(38)]])
 
     DST_inst_box = range(1,7)
     batteries = range(7, 13)
@@ -27,28 +26,23 @@ def extract_Q_data() -> tuple[dict, np.ndarray]:
     DST_baffle = range(121, 161)
     prop_tank_1 = range(161, 167)
     prop_tank_2 = range(167, 173)
-    Zenith = range(173, 203)
-    Radiator = range(203, 231)
-    North = range(231, 279)
-    East = range(279, 327)
-    South = range(327, 355)
-    West = range(355, 403)
-    solar_panel_3 = range(403, 433)
-    solar_panel_2 = range(433, 463)
-    solar_panel_1 = range(463, 493)
+    Zenith = range(173, 243)
+    Radiator = range(243, 291)
+    North = range(291, 339)
+    East = range(339, 387)
+    South = range(387, 435)
+    West = range(435, 483)
+    solar_panel_3 = range(483, 553)
+    solar_panel_2 = range(553, 623)
+    solar_panel_1 = range(623, 693)
 
-    components = [North, East, South, West, Zenith, Nadir, batteries, solar_panel_1, OBC, prop_tank_1, Radiator, DST_inst_box, DST_baffle, solar_panel_2, solar_panel_3]
-    component_names = ['North', 'East', 'South', 'West', 'Zenith', 'Nadir', 'batteries', 'solar_panel_1', 'OBC', 'prop_tank_1', 'Radiator', 'DST_inst_box', 'DST_baffle', 'solar_panel_2', 'solar_panel_3']
+    components = [North, East, South, West, Zenith, Nadir, batteries, solar_panel_1, OBC, prop_tank_1, Radiator, DST_inst_box, DST_baffle, solar_panel_2, solar_panel_3, West]
+    component_names = ['North', 'East', 'South', 'West', 'Zenith', 'Nadir', 'batteries', 'solar_panel_1', 'OBC', 'prop_tank_1', 'Radiator', 'DST_inst_box', 'DST_baffle', 'solar_panel_2', 'solar_panel_3', 'propulsion']
 
     for i, comp in enumerate(components):
         Q_TCS[component_names[i]] = np.mean([Q_ESA[x] for x in comp], axis=0)
-
-    for key, arr in Q_TCS.items():
-        plt.plot(arr, label=key)
-    plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
-    plt.show()
-
-    print(Q_TCS['Radiator'])
+        if component_names[i] == 'propulsion':
+            Q_TCS[component_names[i]] *= 0.8
 
     return Q_TCS, times
 

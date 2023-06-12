@@ -58,7 +58,7 @@ class ThermalModel:
     :param init_temp: list of initial temperature of each node in Kelvin
     """
 
-    def __init__(self, nodes, connections, env, init_temp, n_orbits=1, sun_shield=True, unit='K', ESATAN=True):
+    def __init__(self, nodes, connections, env, init_temp, n_orbits=1, sun_shield=True, unit='K', ESATAN=True, Q_ESATAN=None):
         self.nodes: list[ThermalNode] = nodes
         self.connections: list[tuple[int, int]] = connections
         self.env = env
@@ -69,7 +69,7 @@ class ThermalModel:
         self.sun_shield = sun_shield
         self.unit = unit
         self.ESATAN = ESATAN
-        self.Q_ESATAN = list(interpolate_points(extract_Q_data()[0], extract_Q_data()[1], self.env.t_orbit, self.n_orbits).values())
+        self.Q_ESATAN = Q_ESATAN
 
     def Qs(self, t, i):
         """
@@ -122,7 +122,7 @@ class ThermalModel:
         elif i==3:    # -v facing
             q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
-        elif i in [7, 13, 14]:   # solar panel
+        elif i in [7, 13, 14]:   # solar panels
             q = (1 + self.env.albedo) * node.area * self.Qs(t, i) * node.absorptivity + node.emissivity * node.area * self.Qir(t,i)
 
         elif i ==10:   # radiator
@@ -136,6 +136,7 @@ class ThermalModel:
 
         else:      # battery, OBC, DST, propellant
             q = 0
+
         return q
 
 
@@ -180,17 +181,17 @@ class ThermalModel:
         """
         Solves the temperature of each node over the simulation time
         """
-        self.plotting_Q()
+        # self.plotting_Q()
         sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', max_step=10, vectorized=True)
         self.solution = sol
 
-    def plot(self, node_id=None, with_legend=False, save=False):
+    def plot(self, node_id=None, with_legend=False, save=None):
         """
         Plots the temperature of each node over the simulation time,
         can also specify which nodes to plot
         """
         if self.unit != 'K':
-            plt.plot(self.solution.t, np.mean(self.solution.y[:6]-273, axis=0), label='structure')
+            # plt.plot(self.solution.t, np.mean(self.solution.y[:6]-273, axis=0), label='structure')
             if not node_id:
                 for i, node in enumerate(self.nodes):
                     plt.plot(self.solution.t, self.solution.y[i]-273, label=f'{node.name}')
@@ -212,16 +213,12 @@ class ThermalModel:
         plt.xlabel('Time [s]')
         plt.ylabel(f'Temperature [{self.unit}]')
         plt.xlim(8*self.env.t_orbit, 9*self.env.t_orbit)
-        # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
+        plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
         if save:
-            plt.savefig('temp_no_rad_TCS.png')
+            plt.savefig(save)
         plt.show()
         plt.close()
 
     def save_csv(self, filename):
         if self.solution is not None:
             np.savetxt(filename, np.transpose(self.solution.y), delimiter=',')
-
-            for i, node in enumerate(self.nodes):
-                print(node.name, np.max(self.solution.y[i][1000:]), np.min(self.solution.y[i][1000:]))
-
