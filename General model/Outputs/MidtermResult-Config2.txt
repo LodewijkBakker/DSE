@@ -1,0 +1,23 @@
+---Setup---
+Propulsion system: PSAC/SPC 
+Peak power: 50W
+Solar panel setup Side panels fixed back panel 2*0.3 long 
+SP Area:0.619m^2
+Specific impulse: 1000s
+Thrust: 3mN
+---Results---
+Design Total DeltaV requirement:967.3s
+Worst-worst case DeltaV requirement: 1846s
+Fuel mass: 5.21kg
+Fuel volume: 3.26U
+Very prelim. prop. system mass:7.09kg
+Very prelim. prop. system volume: 3.96U
+Maximum aerodynamic force: 0.346mN
+Average aerodynamic force: 0.277mN
+Time thrusting every 3 orbits average overall: 1503s
+Time thrusting every 3 orbits maximum: 2869s
+Duty cycle: 0.09238391350568963Duty cycle worst: 0.17633280617265576Energy spent per 3 orbits(Avg burn*1.5):31.3125Wh---Debugging---
+Final result 
+R: 299.8672044454215km V: 7.729504923078519km
+Eclipse fraction in orbit: 0.3622618315918869
+Third panel full efficiency fraction: 0.0
