@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import integrate
+from scipy.signal import find_peaks
 
 """
 Time step - 30s
@@ -52,11 +53,11 @@ yaw = np.absolute(x)
 roll = np.absolute(y)
 pitch = np.absolute(z)
 
-fig, ax = plt.subplots(3)
-ax[1].plot(roll)
-ax[2].plot(pitch)
-ax[0].plot(yaw)
-plt.show()
+# fig, ax = plt.subplots(3)
+# ax[1].plot(roll)
+# ax[2].plot(pitch)
+# ax[0].plot(yaw)
+# plt.show()
 
 #torque for roll , pitch, yaw HAS TO BE POSITIVE
 entry_torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
@@ -71,9 +72,9 @@ magn_torque_pitch = list(map(lambda entry: (1e-9 * entry) * dip_moment[1], pitch
 magn_torque_yaw = list(map(lambda entry: (1e-9 * entry) * dip_moment[2], yaw))
 
 
-print(np.average(magn_torque_yaw), 'mty')
-print(np.average(magn_torque_roll))
-print(np.average(magn_torque_pitch))
+# print(np.average(magn_torque_yaw), 'mty')
+# print(np.average(magn_torque_roll))
+# print(np.average(magn_torque_pitch))
 # print(magn_torque_yaw)
 # print(magn_torque_roll)
 # print(magn_torque_pitch)
@@ -110,15 +111,49 @@ angular_momentum_pitch = integrate.cumtrapz(result_torque_left_pitch)
 angular_momentum_yaw = integrate.cumtrapz(result_torque_left_yaw)
 
 
+pitch_peaks, _ = find_peaks(-angular_momentum_pitch, height=0)
+plt.plot(angular_momentum_pitch)
+plt.plot(pitch_peaks, angular_momentum_pitch[pitch_peaks], "x")
+plt.plot(np.zeros_like(angular_momentum_pitch), "--", color="gray")
+plt.show()
+
+for i in range(0, len(pitch_peaks)):  
+    print(pitch_peaks[i])
+    if angular_momentum_pitch[pitch_peaks[i]] < 0:
+        print(angular_momentum_pitch[pitch_peaks[i]])
+        angular_momentum_pitch[pitch_peaks[i]:] -= angular_momentum_pitch[pitch_peaks[i]]
+    # ideally use representative length, 
+    # not pitch yaw or something specifically
+
+plt.plot(angular_momentum_pitch)
+plt.show()
+
+
+modified_X = []
+for i in range(len(angular_momentum_pitch)):
+    if angular_momentum_pitch[i] >= 0:
+        modified_X.append(angular_momentum_pitch[i])
+    else:
+        modified_X.append(0)
+
+plt.plot(angular_momentum_pitch, label="pitch")
+plt.plot(modified_X, label="mod _pitch")
+plt.xlabel('Index')
+plt.ylabel('Value')
+plt.title('Modified Plot of X')
+leg = plt.legend(loc='upper right')
+plt.show()
+
 average_test = [np.average(angular_momentum_roll), np.average(angular_momentum_pitch), np.average(angular_momentum_yaw)]
+
 
 # print(average_test)
 # print(angular_momentum_roll)
 # plt.plot(angular_momentum_roll, label="roll") 
-plt.plot(angular_momentum_pitch, label="pitch")
+# plt.plot(angular_momentum_pitch, label="pitch")
 # plt.plot(angular_momentum_yaw, label="yaw")
-leg = plt.legend(loc='upper right')
-plt.show()
+# leg = plt.legend(loc='upper right')
+# plt.show()
 
 
 
