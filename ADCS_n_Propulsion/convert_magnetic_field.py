@@ -61,8 +61,7 @@ pitch = np.absolute(z)
 
 #torque for roll , pitch, yaw HAS TO BE POSITIVE
 entry_torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
-
-
+  
 #Average Dipole Moment
 dip_moment = np.divide(entry_torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
 
@@ -106,55 +105,98 @@ result_torque_left_yaw = list(map(lambda a, yaw: a - yaw, entry_yaw_torque_cont,
 # plt.show()
 
 #Integration
+
 angular_momentum_roll = integrate.cumtrapz(result_torque_left_roll)
 angular_momentum_pitch = integrate.cumtrapz(result_torque_left_pitch)
 angular_momentum_yaw = integrate.cumtrapz(result_torque_left_yaw)
 
+# Find The peaks at minimum points under 0
 
+roll_peaks, _ = find_peaks(-angular_momentum_roll, height=0)
 pitch_peaks, _ = find_peaks(-angular_momentum_pitch, height=0)
-plt.plot(angular_momentum_pitch)
-plt.plot(pitch_peaks, angular_momentum_pitch[pitch_peaks], "x")
-plt.plot(np.zeros_like(angular_momentum_pitch), "--", color="gray")
-plt.show()
+yaw_peaks, _ = find_peaks(-angular_momentum_yaw, height=0)
+
+# plt.plot(angular_momentum_roll)
+# plt.plot(roll_peaks, angular_momentum_roll[roll_peaks], "x")
+# plt.plot(np.zeros_like(angular_momentum_roll), "--", color="gray")
+# plt.show()
+
+# plt.plot(angular_momentum_pitch)
+# plt.plot(pitch_peaks, angular_momentum_pitch[pitch_peaks], "x")
+# plt.plot(np.zeros_like(angular_momentum_pitch), "--", color="gray")
+# plt.show()
+
+# plt.plot(angular_momentum_yaw)
+# plt.plot(yaw_peaks, angular_momentum_yaw[yaw_peaks], "x")
+# plt.plot(np.zeros_like(angular_momentum_yaw), "--", color="gray")
+# plt.show()
+
+# Add the positive slopes
+
+for i in range(0, len(roll_peaks)):  
+    # print(roll_peaks[i])
+    if angular_momentum_roll[roll_peaks[i]] < 0:
+        # print(angular_momentum_roll[roll_peaks[i]])
+        angular_momentum_roll[roll_peaks[i]:] -= angular_momentum_roll[roll_peaks[i]]
+    # ideally use representative length, 
+    # not pitch yaw or something specifically
 
 for i in range(0, len(pitch_peaks)):  
-    print(pitch_peaks[i])
+    # print(pitch_peaks[i])
     if angular_momentum_pitch[pitch_peaks[i]] < 0:
-        print(angular_momentum_pitch[pitch_peaks[i]])
+        # print(angular_momentum_pitch[pitch_peaks[i]])
         angular_momentum_pitch[pitch_peaks[i]:] -= angular_momentum_pitch[pitch_peaks[i]]
     # ideally use representative length, 
     # not pitch yaw or something specifically
 
-plt.plot(angular_momentum_pitch)
-plt.show()
+for i in range(0, len(yaw_peaks)):  
+    # print(yaw_peaks[i])
+    if angular_momentum_yaw[yaw_peaks[i]] < 0:
+        # print(angular_momentum_yaw[yaw_peaks[i]])
+        angular_momentum_yaw[yaw_peaks[i]:] -= angular_momentum_yaw[yaw_peaks[i]]
+    # ideally use representative length, 
+    # not pitch yaw or something specifically
 
 
-modified_X = []
+#To ensure no negative values 
+
+modified_roll = []
+for i in range(len(angular_momentum_roll)):
+    if angular_momentum_roll[i] >= 0:
+        modified_roll.append(angular_momentum_roll[i])
+    else:
+        modified_roll.append(0)
+
+modified_pitch = []
 for i in range(len(angular_momentum_pitch)):
     if angular_momentum_pitch[i] >= 0:
-        modified_X.append(angular_momentum_pitch[i])
+        modified_pitch.append(angular_momentum_pitch[i])
     else:
-        modified_X.append(0)
+        modified_pitch.append(0)
+
+modified_yaw = []
+for i in range(len(angular_momentum_yaw)):
+    if angular_momentum_yaw[i] >= 0:
+        modified_yaw.append(angular_momentum_yaw[i])
+    else:
+        modified_yaw.append(0)
+
+plt.plot(angular_momentum_roll, label="roll")
+plt.plot(modified_roll, label="mod_roll")
+leg = plt.legend(loc='upper right')
+plt.show()
 
 plt.plot(angular_momentum_pitch, label="pitch")
-plt.plot(modified_X, label="mod _pitch")
-plt.xlabel('Index')
-plt.ylabel('Value')
-plt.title('Modified Plot of X')
+plt.plot(modified_pitch, label="mod _pitch")
+leg = plt.legend(loc='upper right')
+plt.show()
+
+plt.plot(angular_momentum_yaw, label="yaw")
+plt.plot(modified_yaw, label="mod_yaw")
 leg = plt.legend(loc='upper right')
 plt.show()
 
 average_test = [np.average(angular_momentum_roll), np.average(angular_momentum_pitch), np.average(angular_momentum_yaw)]
-
-
-# print(average_test)
-# print(angular_momentum_roll)
-# plt.plot(angular_momentum_roll, label="roll") 
-# plt.plot(angular_momentum_pitch, label="pitch")
-# plt.plot(angular_momentum_yaw, label="yaw")
-# leg = plt.legend(loc='upper right')
-# plt.show()
-
 
 
 #print(angular_momentum_yaw*1000, angular_momentum_roll*1000, angular_momentum_pitch*1000, 'Angular momentum yaw roll pitch mNms')
@@ -168,19 +210,5 @@ average_test = [np.average(angular_momentum_roll), np.average(angular_momentum_p
 # print(result_c)
 # print(magn_torque_yaw[0])
 # print(arrayA[0])
-
-
-#nano tesla absolute avg $
-#avg torque per axis + nano tesla $
-#Dipole moment = t / n $
-
-# dipole moment * absolute nanotesla for every axis at every time step $
-
-# new different torque given single value for each axis $
-# per timestep ->  torque given - torque possible magnetorquer $
-
-# lijst van times ?
-# lijst van torque given - torque possible ?
-# simpson integrtor ?
 
 
