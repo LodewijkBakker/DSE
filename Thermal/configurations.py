@@ -99,11 +99,8 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
     TM = ThermalModel(nodes, connections, ENV, [270] * len(nodes), n_orbits=10, unit=unit, ESATAN=True, Q_ESATAN=Q)
     TM.solve()
     if plot:
-        TM.plot([3,4,5,6,7,8,10,11,12,15], with_legend=True, save=file)
-        plt.plot(np.arange(0, 10*Env().t_orbit, 10), np.ones(Env().t_orbit)*t_solver(0, 0.8, 0.016, 0.035), 'k--')
-        plt.plot(np.arange(0, 10 * Env().t_orbit, 10), np.ones(Env().t_orbit) * t_solver(0, 1.8, 0.044, 0.035), 'k--')
-        plt.show()
-        plt.close()
+        TM.plot([0,1,2,3,4,5,6,7,8,10,11,12,13,14,15], with_legend=True, save=file)
+        TM.plotting_Q()
 
     if output:
         res = {node.name: {'max': np.max(TM.solution.y[i][3000:]), 'min': np.min(TM.solution.y[i][3000:])}
@@ -347,23 +344,14 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
 #         plt.savefig('nice_plots_1.svg')
 #     plt.show()
 
-def t_solver(Qin, Qgen, A, e):
-    return ((Qin + Qgen)/ (A*e*5.67*10**-8))**0.25
-
 if __name__ == '__main__':
     AN15 = prepare_heat_flows(interpolate_points(heat_flows(), Env().t_orbit, 10))
 
-    # plt.plot(AN15[5])
-    # plt.xlim(8 * Env().t_orbit, 9 * Env().t_orbit)
-    # plt.show()
-    # plt.close()
-
-
-    # for i, arr in enumerate(AN15):
-    #     plt.plot(arr, label=f'{i}')
-    #     plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
-    #     plt.legend(loc='center right')
-    # plt.show()
-    # plt.close()
+    for i, arr in enumerate(AN15):
+        plt.plot(arr, label=f'{i}')
+        plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
+        plt.legend(loc='center right')
+    plt.show()
+    plt.close()
 
     make_TCS('results/TCS1.toml', plot=True, Q=AN15, file='results/TCS15.png')

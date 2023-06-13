@@ -54,7 +54,7 @@ def prepare_heat_flows(Q: dict):
     Q_res['solar_panel_1'] = Q['back_solar_top'] + Q['back_solar_bottom']
     Q_res['OBC'] = np.zeros(len(Q['north']))
     Q_res['propellant'] = np.zeros(len(Q['north']))
-    Q_res['radiator'] = Q['radiator']
+    Q_res['radiator'] = Q['radiator'] * 2
     Q_res['DST box'] = np.zeros(len(Q['north']))
     Q_res['DST baffle'] = Q['baffle_inner'] + Q['baffle_outer']
     Q_res['solar_panel_2'] = Q['side_solar_1_top'] + Q['side_solar_1_bottom']
