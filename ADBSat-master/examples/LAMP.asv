@@ -79,7 +79,7 @@ get_config_torque_csv(config_4_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIII-Bfvi-Sf0';
 modNames = {'CIII-Bfv46-Sf0', 'CIII-Bfv61-Sf0', 'CIII-Bfv72-Sf0', 'CIII-Bfv80-Sf0', 'CIII-Bfv83-Sf0'};
-config_5_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sf0\\CIII-Bfvi-Sf0.csv';
+config_5_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sf0.csv';
 get_config_torque_csv(config_5_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Ffhi-Sfi';
@@ -91,70 +91,70 @@ get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 % CI-Br-Sf12
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf12';
 modNames = {'CI-Br0-Sf12', 'CI-Br30-Sf12', 'CI-Br60-Sf12', 'CI-Br90-Sf12'};
-config_7_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf12\\CIV-Br-Sf12.csv';
-get_config_torque_csv(config_7_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf12.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf46';
 modNames = {'CI-Br0-Sf46', 'CI-Br30-Sf46', 'CI-Br60-Sf46', 'CI-Br90-Sf46'};
-config_8_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf46\\CIV-Br-Sf46.csv';
-get_config_torque_csv(config_8_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf46.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf61';
 modNames = {'CI-Br0-Sf61', 'CI-Br30-Sf61', 'CI-Br60-Sf61', 'CI-Br90-Sf61'};
-config_9_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf61\\CIV-Br-Sf61.csv';
-get_config_torque_csv(config_9_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf61.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf71';
 modNames = {'CI-Br0-Sf72', 'CI-Br30-Sf72', 'CI-Br60-Sf72', 'CI-Br90-Sf72'};
-config_10_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf72\\CIV-Br-Sf72.csv';
-get_config_torque_csv(config_10_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf72.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf80';
 modNames = {'CI-Br0-Sf80', 'CI-Br30-Sf80', 'CI-Br60-Sf80', 'CI-Br90-Sf80'};
-config_11_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf80\\CIV-Br-Sf80.csv';
-get_config_torque_csv(config_11_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf70.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CI-Br-Sfi\\CI-Br-Sf83';
 modNames = {'CI-Br0-Sf83', 'CI-Br30-Sf83', 'CI-Br60-Sf83', 'CI-Br90-Sf83'};
-config_12_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf83\\CIV-Br-Sf83.csv';
-get_config_torque_csv(config_12_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sf83.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 
 % CIV-Fr-Sfi
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf0';
 modNames = {'CIV-Fr0-Sf0', 'CIV-Fr30-Sf0', 'CIV-Fr60-Sf0', 'CIV-Fr90-Sf0'};
-config_13_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf0\\CIV-Ffhi-Sf0.csv';
-get_config_torque_csv(config_13_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf0.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf12';
 modNames = {'CIV-Fr-Sf12', 'CIV-Fr30-Sf12', 'CIV-Fr60-Sf12', 'CIV-Fr90-Sf12'};
-config_14_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf12\\CIV-Ffhi-Sf12.csv';
-get_config_torque_csv(config_14_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf12.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf46';
 modNames = {'CIV-Fr0-Sf46', 'CIV-Fr30-Sf46', 'CIV-Fr60-Sf46', 'CIV-Fr90-Sf46'};
-config_15_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf46\\CIV-Ffhi-Sf46.csv';
-get_config_torque_csv(config_15_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf46.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf61';
 modNames = {'CIV-Fr0-Sf61', 'CIV-Fr30-Sf61', 'CIV-Fr60-Sf61', 'CIV-Fr90-Sf61'};
-config_16_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf61\\CIV-Fr-Sf61.csv';
-get_config_torque_csv(config_16_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf61.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf71';
 modNames = {'CIV-Fr0-Sf72', 'CIV-Fr30-Sf72', 'CIV-Fr60-Sf72', 'CIV-Fr90-Sf72'};
-config_17_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf72\\CIV-Fr-Sf72.csv';
-get_config_torque_csv(config_17_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf72.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf80';
 modNames = {'CIV-Fr0-Sf80', 'CIV-Fr30-Sf80', 'CIV-Fr60-Sf80', 'CIV-Fr90-Sf80'};
-config_18_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf80\\CIV-Fr-Sf80.csv';
-get_config_torque_csv(config_18_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf70.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf83';
 modNames = {'CIV-Fr0-Sf83', 'CIV-Fr30-Sf83', 'CIV-Fr60-Sf83', 'CIV-Fr90-Sf83'};
-config_19_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf83\\CIV-Fr-Sf83.csv';
-get_config_torque_csv(config_19_loc, cg_s, inparam, modNames, modGeneral)
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sff83.csv';
+get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 
 
 
