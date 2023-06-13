@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Material:
     def __init__(self, params=None):
         if params is not None:
@@ -16,7 +19,7 @@ def aluminium() -> 'Material':
     return Material({'thermal_conductivity': 239, 'thermal_capacitance': 897})
 
 def OSR_mat() -> 'Material':
-    return Material({'thermal_conductivity': 4000, 'thermal_capacitance': 897})
+    return Material({'thermal_conductivity': 1000, 'thermal_capacitance': 897})
 
 def battery() -> 'Material':
     return Material({'thermal_conductivity': 20, 'thermal_capacitance': 1000})
@@ -33,11 +36,14 @@ def PCB() -> 'Material':
 def hastealloy():
     return Material({'thermal_conductivity': 10.5, 'thermal_capacitance': 427})
 
+def low_conductance_tape():
+    return Material({'thermal_conductivity': 3, 'thermal_capacitance': 1000})
+
 
 
 # COATINGS
 def white_paint() -> 'Coating':
-    return Coating({'absorptivity': 0.06, 'emissivity': 0.88})
+    return Coating({'absorptivity': 0.17, 'emissivity': 0.92})
 
 def black_paint() -> 'Coating':
     return Coating({'absorptivity': 0.94, 'emissivity': 0.94})
@@ -52,11 +58,11 @@ def bare_solar_panel() -> 'Coating':
     return Coating({'absorptivity': 0.42, 'emissivity': 0.52})
 
 def coated_solar_panel() -> 'Coating':
-    return Coating({'absorptivity': 0.42, 'emissivity': 0.83})
+    return Coating({'absorptivity': np.mean([0.06, 0.42]), 'emissivity': np.mean([0.52, 0.88])})
 
 def OSR_coat() -> 'Coating':
     return Coating({'absorptivity': 0.06, 'emissivity': 0.9})
 
 def thermal_tape_1() -> 'Coating':
-    return Coating({'absorptivity': 0.4, 'emissivity': 0.62})
+    return Coating({'absorptivity': 0.2, 'emissivity': 0.3})
 
