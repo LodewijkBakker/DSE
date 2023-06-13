@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from DSE.Thermal.env import Env
 from DSE.Thermal.materials import *
 from DSE.Thermal.thermal_dyn_sim import ThermalNode, ThermalModel
-from DSE.Thermal.esatan_reader import extract_Q_data, interpolate_points
+from DSE.Thermal.esatan_reader import heat_flows, interpolate_points, prepare_heat_flows
 
 
 def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
@@ -40,31 +40,31 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
                                'radiation_area': 0.35 * 0.22}, aluminium(), white_paint()),
              ThermalNode(4, 'Zenith',    # this is actually Zenith, leave as structure for plotting purposes
                               {'area': 0.35 * 0.36, 'contact_area': [0.22*0.003, 0.22*0.003, 0.22*0.003, 0.22*0.003, 0, 0], 'mass': 0.3, 'heat_generated': 0,
-                               'radiation_area': 0.35 * 0.36}, aluminium(), white_paint()),
+                               'radiation_area': 0.35 * 0.36}, aluminium(), coated_solar_panel()),
              ThermalNode(5, 'Nadir',
-                              {'area': 0.35 * 0.36, 'contact_area': [0.22*0.003, 0.22*0.003, 0.22*0.003, 0.22*0.003, 0, 0, 0,0,0,0,0,0, 0.003], 'mass': 0.3, 'heat_generated': 0,
+                              {'area': 0.35 * 0.36, 'contact_area': [0.22*0.003, 0.22*0.003, 0.22*0.003, 0.22*0.003,0,0,0,0,0,0,0,0,0,0,0,0.1*0.1], 'mass': 0.3, 'heat_generated': 0,
                                'radiation_area': 0.35 * 0.36}, aluminium(), white_paint()),
              ThermalNode(6, 'battery',
-                              {'area': 0, 'contact_area': [0,0,0,0,0.2*0.2*0.5,0,0], 'mass': 2.5, 'heat_generated': 4,
-                               'radiation_area': 0.2*0.2*6}, battery(), bare_Al()),
+                              {'area': 0, 'contact_area': [0,0,0,0,0,0,0,0,0.2*0.2], 'mass': 2.5, 'heat_generated': 4,
+                               'radiation_area': 0.2*0.2*5}, battery(), MLI_coat()),
              ThermalNode(7, 'solar_panel_1',
                               {'area': 0.35*0.66, 'contact_area': [], 'mass': 1.5, 'heat_generated': 0,
                                'radiation_area': 0.35*0.66*2}, solar_panel(), coated_solar_panel()),
              ThermalNode(8, 'OBC',
                               {'area': 0, 'contact_area': [0,0,0,0,0.1*0.1*0.5,0,0], 'mass': 0.25, 'heat_generated': 5,
-                               'radiation_area': 0.1*0.1*3}, PCB(), thermal_tape_1()),
+                               'radiation_area': 0.1*0.1*3}, PCB(), MLI_coat()),
              ThermalNode(9, 'propellant',
-                              {'area': 0, 'contact_area': [0,0,0,0,0,0,0,0,0], 'mass': 5, 'heat_generated': 4,
+                              {'area': 0, 'contact_area': [], 'mass': 5, 'heat_generated': 0,
                                'radiation_area': 0.1}, hastealloy(), MLI_coat()),
              ThermalNode(10, 'radiator',
-                              {'area': 0.35*0.22, 'contact_area': [], 'mass': 0.6, 'heat_generated': 0,
-                               'radiation_area': 0.35*0.22}, OSR_mat(), OSR_coat()),
+                              {'area': 0.35*0.11, 'contact_area': [], 'mass': 0.6, 'heat_generated': 0,
+                               'radiation_area': 0.35*0.11}, OSR_mat(), OSR_coat()),
              ThermalNode(11, 'DST box',
                               {'area': 0, 'contact_area': [0,0,0,0,0,0.19*0.12,0,0,0,0,0.01,0.01, 0.01], 'mass': 5, 'heat_generated': 2,
                                'radiation_area': 0.11}, aluminium(), MLI_coat()),
              ThermalNode(12, 'DST baffle',
-                             {'area': 0.36/2, 'contact_area': [0,0,0,0,0,0.55], 'mass': 25, 'heat_generated': 0,
-                              'radiation_area': 0.36*1.5}, aluminium(), MLI_coat()),
+                             {'area': 0.37, 'contact_area': [0,0,0,0,0,0.1], 'mass': 25, 'heat_generated': 0,
+                              'radiation_area': 0.36*2}, aluminium(), white_paint()),
              ThermalNode(13, 'solar_panel_2',
                          {'area': 0.5*0.35, 'contact_area': [], 'mass': 1.2, 'heat_generated': 0,
                           'radiation_area': 0.5*0.35*2}, solar_panel(), coated_solar_panel()),
@@ -72,35 +72,41 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
                          {'area': 0.5*0.35, 'contact_area': [], 'mass': 1.2, 'heat_generated': 0,
                           'radiation_area': 0.5*0.35*2}, solar_panel(), coated_solar_panel()),
              ThermalNode(15, 'propulsion',
-                         {'area': 0, 'contact_area': [0,0,0,0,0,0.08*0.08], 'mass': 1.7, 'heat_generated': 0,
-                          'radiation_area': 0.08*0.08*5}, aluminium(), MLI_coat())]
+                         {'area': 0, 'contact_area': [0,0,0,0.01,0,0.01], 'mass': 1.7, 'heat_generated': 2,
+                          'radiation_area': 0.08*0.08*5}, low_conductance_tape(), bare_Al()),
+             ThermalNode(16, 'pipes',
+                         {'area': 0, 'contact_area': [], 'mass': 0.45, 'heat_generated': 0.8,
+                          'radiation_area': 0.016}, aluminium(), MLI_coat())]
 
-    connections = np.array([[1,3,4,5],
-                            [0,2,4,5],
-                            [1,3,4,5],
-                            [0,2,4,5],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [4],
-                            [],
-                            [4],
-                            [4],
-                            [],
-                            [10,12],
-                            [5],
-                            [],
-                            [],
-                            [5]])
+    connections = np.array([[1,3,4,5],  # 0
+                            [0,2,4,5],  # 1
+                            [1,3,4,5],  # 2
+                            [0,2,4,5],  # 3
+                            [0,1,2,3],  # 4
+                            [0,1,2,3],  # 5
+                            [8],        # 6
+                            [],         # 7
+                            [4],        # 8
+                            [],         # 9
+                            [],         # 10
+                            [10,12],    # 11
+                            [5],        # 12
+                            [],         # 13
+                            [],         # 14
+                            [3,5],      # 15
+                            []])        # 16
 
     TM = ThermalModel(nodes, connections, ENV, [270] * len(nodes), n_orbits=10, unit=unit, ESATAN=True, Q_ESATAN=Q)
     TM.solve()
     if plot:
-        TM.plot(with_legend=True, save=file)
-
-    TM.save_csv('results/output_45.csv')
+        TM.plot([3,4,5,6,7,8,10,11,12,15], with_legend=True, save=file)
+        plt.plot(np.arange(0, 10*Env().t_orbit, 10), np.ones(Env().t_orbit)*t_solver(0, 0.8, 0.016, 0.035), 'k--')
+        plt.plot(np.arange(0, 10 * Env().t_orbit, 10), np.ones(Env().t_orbit) * t_solver(0, 1.8, 0.044, 0.035), 'k--')
+        plt.show()
+        plt.close()
 
     if output:
-        res = {node.name: {'max': np.max(TM.solution.y[i][1000:]), 'min': np.min(TM.solution.y[i][1000:])}
+        res = {node.name: {'max': np.max(TM.solution.y[i][3000:]), 'min': np.min(TM.solution.y[i][3000:])}
                for i, node in enumerate(TM.nodes)}
         with open(output, "w") as toml_file:
             toml.dump(res, toml_file)
@@ -341,32 +347,23 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
 #         plt.savefig('nice_plots_1.svg')
 #     plt.show()
 
+def t_solver(Qin, Qgen, A, e):
+    return ((Qin + Qgen)/ (A*e*5.67*10**-8))**0.25
 
 if __name__ == '__main__':
-    i0 = list(interpolate_points(extract_Q_data(filename='radiation_results/radiation_report_0.xlsx')[0], extract_Q_data(filename='radiation_results/radiation_report_0.xlsx')[1], Env().t_orbit, 10).values())
-    i15 = list(interpolate_points(extract_Q_data(filename='radiation_results/radiation_report_15.xlsx')[0], extract_Q_data(filename='radiation_results/radiation_report_15.xlsx')[1], Env().t_orbit, 10).values())
-    i90 = list(interpolate_points(extract_Q_data(filename='radiation_results/radiation_report_90.xlsx')[0], extract_Q_data(filename='radiation_results/radiation_report_90.xlsx')[1], Env().t_orbit, 10).values())
+    AN15 = prepare_heat_flows(interpolate_points(heat_flows(), Env().t_orbit, 10))
 
-    for arr in i0:
-        plt.plot(arr)
-        plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
-    plt.show()
-    plt.close()
-
-    for arr in i15:
-        plt.plot(arr)
-        plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
-    plt.show()
-    plt.close()
-
-    for arr in i90:
-        plt.plot(arr)
-        plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
-    plt.show()
-    plt.close()
-
-    make_TCS('results/TCS1.toml', plot=True, Q=i15, file='results/TCS15.png')
-    # make_TCS('results/TCS2.toml', plot=True, Q=i0, file='results/TCS0.png')
-    # make_TCS('results/TCS3.toml', plot=True, Q=i90, file='results/TCS90.png')
+    # plt.plot(AN15[5])
+    # plt.xlim(8 * Env().t_orbit, 9 * Env().t_orbit)
+    # plt.show()
+    # plt.close()
 
 
+    # for i, arr in enumerate(AN15):
+    #     plt.plot(arr, label=f'{i}')
+    #     plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
+    #     plt.legend(loc='center right')
+    # plt.show()
+    # plt.close()
+
+    make_TCS('results/TCS1.toml', plot=True, Q=AN15, file='results/TCS15.png')

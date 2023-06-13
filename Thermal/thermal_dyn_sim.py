@@ -26,7 +26,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 from DSE.Thermal.materials import Material, Coating
-from DSE.Thermal.esatan_reader import extract_Q_data, interpolate_points
+from DSE.Thermal.esatan_reader import heat_flows, interpolate_points, prepare_heat_flows
 
 
 class ThermalNode:
@@ -212,12 +212,11 @@ class ThermalModel:
             plt.subplots_adjust(right=0.74)
         plt.xlabel('Time [s]')
         plt.ylabel(f'Temperature [{self.unit}]')
-        plt.xlim(8*self.env.t_orbit, 9*self.env.t_orbit)
-        plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
+        # plt.xlim(8*self.env.t_orbit, 9*self.env.t_orbit)
+        # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
         if save:
             plt.savefig(save)
-        plt.show()
-        plt.close()
+
 
     def save_csv(self, filename):
         if self.solution is not None:
