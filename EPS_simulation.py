@@ -27,9 +27,9 @@ class EPS_Simulation_:
         
         # --- Load Geommetry considerations, efficiency consideration EPS --- #
         self.A_back_panel = 220 * 350 / 1e6     # [m^2] for 1 fold
-        self.A_side_panel = 200 * 360 / 1e6     # [m^2] for 1 fold
-        self.A_top_panel_max = 305 * 360 / 1e6      # [m^2] for 1 fold
-        self.A_top_panel_ant = (305-100-40) * (360-100-40) / 1e6      # [m^2] for 1 fold (- antenna size)
+        self.A_side_panel = 200 * 356 / 1e6     # [m^2] for 1 fold
+        self.A_top_panel_max = 329 * 359 / 1e6      # [m^2] for 1 fold
+        self.A_top_panel_ant = (329-100-40) * (349-100-40) / 1e6      # [m^2] for 1 fold (- antenna size)
         self.n_pcdu = 0.96                                      # Pumpkin
         self.n_harness = 0.98                                   
         self.n_bat = 0.98                                       # Li-Ion NASA, SMAD
@@ -470,9 +470,31 @@ class EPS_Simulation_:
         if (self.n_pcdu * charge) < abs(discharge):
             pass
         else:
+            # Define the battery capacity used from the propulsion battery during sun operations only if in discharge
+            midpoint_prop = math.floor((845)/2)
+            if ltan == 6:
+                mid_point_sun0 = math.floor(len(self.Payload_sun_6h)/2)
+                temp_start = mid_point_sun0 - midpoint_prop
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
+                    C_needed_prop_sun = 0
+            elif ltan == 9:
+                mid_point_sun0 = math.floor(len(self.Payload_sun_9h)/2)
+                temp_start = mid_point_sun0 - midpoint_prop
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
+                    C_needed_prop_sun = 0
+            elif ltan == 12:
+                mid_point_sun0 = math.floor(len(self.Payload_sun_12h)/2)
+                temp_start = mid_point_sun0 - midpoint_prop
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
+                    C_needed_prop_sun = 0
+
+        
             # Compute the total needed capacity for operations of propulsion battery
             # Battery Li-Ion operates for 10 000 cycles - > 50% DOD: SOURCE - Analysis of On-Board Photovoltaics for a Battery Electric Bus and Their Impact on Battery Lifespan - Scientific Figure on ResearchGate. Available from: https://www.researchgate.net/figure/Depth-of-discharge-versus-cycle-life-of-the-lithium-ion-battery_fig4_318292540 [accessed 14 Jun, 2023]
-            C_needed_prop = self.Prop_peak_power * 845                              # [Ws]
+            C_needed_prop = self.Prop_peak_power * 845 + abs(C_needed_prop_sun)     # [Ws]
             C_BOL_prop = C_needed_prop / (0.5 * self.n_bat)                         # [Ws]
             M_prop_bat = (C_BOL_prop / 3600) / self.Esp_liion                       # [kg] = [Ws / 3600] / [Wh/kg] = Wh / Wh/kg
             V_prop_bat = (C_BOL_prop / 3600) / self.rhosp_liion                     # [U] = [Ws / 3600] / [Wh/L] = Wh / Wh/U
