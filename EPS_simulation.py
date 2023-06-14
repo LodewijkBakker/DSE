@@ -32,7 +32,8 @@ class EPS_Simulation_:
         self.A_top_panel_ant = (305-100-40) * (360-100-40) / 1e6      # [m^2] for 1 fold (- antenna size)
         self.n_pcdu = 0.96                                      # Pumpkin
         self.n_harness = 0.98                                   
-        self.n_bat = 0.98                                       # Li-Ion NASA charge/discharge
+        self.n_bat_discharge = 0.98                             # Li-Ion NASA 
+        self.n_bat_charge = 0.98                                # Li-Ion NASA
         self.n_cell = 0.32                                      # 32% NASA
         # --- TESTED CONFIGURATION --- #
         self.num_back_folds = 3
@@ -446,6 +447,15 @@ class EPS_Simulation_:
             exit()
         return array[idx_interest[0][0]]
     
+    
+    def battery_size_computations(self, battery_array_cd):
+        '''
+            Function which takes in the battery charge discharge state array and computes feasability based on the charge, discharge states.
+            Then computes the capacity, mass and volume. Also checks 
+        '''
+
+        pass
+    
     def EPS_simulation_run(self):
         '''
             All the results of the EPS simulation are stored in ./Outputs/EPS_simulation. This function runs the
@@ -605,12 +615,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_6h, label='Power Generation')
                 plt.plot(battery_6h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/6h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_6h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_6h, 'Power Generation': power_intake_6h, 'Battery Contribution (Charge/Discharge)': battery_6h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/6h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
                 # --- 9h orbit --- #
                 power_consumption_9h = self.Power_need(ltan=9, payload_cont=True)
@@ -628,12 +638,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_9h, label='Power Generation')
                 plt.plot(battery_9h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/9h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_9h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_9h, 'Power Generation': power_intake_9h, 'Battery Contribution (Charge/Discharge)': battery_9h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/9h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
                 # --- 12h orbit --- #
                 power_consumption_12h = self.Power_need(ltan=12, payload_cont=True)
@@ -651,12 +661,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_12h, label='Power Generation')
                 plt.plot(battery_12h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/12h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_12h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_12h, 'Power Generation': power_intake_12h, 'Battery Contribution (Charge/Discharge)': battery_12h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/12h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Continuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
         # ------------------------------------------------------------------------------------------------------------- #
         # ============================== Discontinuous Payload Operations ============================================= #
@@ -689,12 +699,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_6h, label='Power Generation')
                 plt.plot(battery_6h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/6h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_6h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_6h, 'Power Generation': power_intake_6h, 'Battery Contribution (Charge/Discharge)': battery_6h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/6h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
                 # --- 9h orbit --- #
                 power_consumption_9h = self.Power_need(ltan=9, payload_cont=False)
@@ -712,12 +722,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_9h, label='Power Generation')
                 plt.plot(battery_9h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/9h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_9h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_9h, 'Power Generation': power_intake_9h, 'Battery Contribution (Charge/Discharge)': battery_9h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/9h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
                 # --- 12h orbit --- #
                 power_consumption_12h = self.Power_need(ltan=12, payload_cont=False)
@@ -735,12 +745,12 @@ class EPS_Simulation_:
                 plt.plot(power_intake_12h, label='Power Generation')
                 plt.plot(battery_12h_contribution, label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
-                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/12h/'+config_name+':Folds_per_side'+str(j)+'.png')
+                plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
 
                 # saving csv data: power_consumption, power_intake, battery_12h_contribution. saved vertically
                 df = pd.DataFrame({'Power Consumption': power_consumption_12h, 'Power Generation': power_intake_12h, 'Battery Contribution (Charge/Discharge)': battery_12h_contribution})
-                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/12h/'+config_name+':Folds_per_side'+str(j)+'.csv', index=False)
+                df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
         pass
     
