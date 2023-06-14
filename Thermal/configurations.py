@@ -104,7 +104,7 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
         for i in [7, 13, 14]:
             plt.plot(TM.solution.y[i])
         plt.title('Solar Panel Temperatues')
-        plt.show()
+        plt.savefig('plots/solar_temps.png')
         plt.close()
 
     if plot:
@@ -122,11 +122,16 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
 
 if __name__ == '__main__':
     AN15 = prepare_heat_flows(interpolate_points(heat_flows(), Env().t_orbit, 10))
-    for i, arr in enumerate(AN15):
-        plt.plot(arr, label=f'{i}')
+    l = ['North', 'East', 'South', 'West', 'Zenith', 'Nadir', 'Batteries', 'Solar panel 1', 'OBC', 'propellant tanks',
+         'raditator', 'DST box', 'DST baffle', 'solar panel 2', 'solar panel 3', 'thruster', 'propellant lines']
+    idx = [0,1,2,3,4,5,7,10,12,13,14]
+    for i in idx:
+        plt.plot(AN15[i], label=f'{l[i]}')
         plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
-        plt.legend(loc='center right')
-    plt.show()
+        plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
+        plt.subplots_adjust(right=0.74)
+    plt.title('ESATAN Heat Values')
+    plt.savefig('plots/ESATAN_Q_vals')
     plt.close()
 
     make_TCS('results/TCS1.toml', plot=True, Q=AN15, file='plots/TCS15.png')

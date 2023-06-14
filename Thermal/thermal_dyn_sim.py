@@ -221,9 +221,10 @@ class ThermalModel:
         plt.ylabel(f'Temperature [{self.unit}]')
         plt.xlim(7*self.env.t_orbit, 10*self.env.t_orbit)
         # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
+        plt.title('Nodal Temperatues')
         if save:
             plt.savefig(save)
-        plt.show()
+        # plt.show()
         plt.close()
 
     def save_csv(self, filename):
