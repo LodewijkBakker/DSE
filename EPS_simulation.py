@@ -115,7 +115,7 @@ class EPS_Simulation_:
         # --- Orbtial Powers --- #
         # Non continuous scenarios
 
-        self.Prop_peak_power = 121 * np.ones(845)                                  # [W] array of T_prop_peak values standby power 0W -> heating and thermal maintenance considered in thermal already
+        self.Prop_peak_power = 121                                   # [W] array of T_prop_peak values standby power 0W -> heating and thermal maintenance considered in thermal already
 
 
         ## Orbital Efficiency get data from CSV
@@ -152,6 +152,8 @@ class EPS_Simulation_:
         
         if payload_cont:
             Base_Power_continuous += self.Payload_cont * np.ones(6*self.T_orbit) # [W]
+            if ltan == 6:
+                Base_Power_continuous -= 5 * np.ones(6*self.T_orbit) # [W] COnstraining 12h to 5W continuously
         
         if not payload_cont:
             if ltan == 6:
