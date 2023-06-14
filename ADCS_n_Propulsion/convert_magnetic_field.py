@@ -50,11 +50,11 @@ z = np.interp(np.linspace(0, len(z), num=1000), np.arange(0, len(z)), z)
 mag_field = np.array([np.absolute(x), np.absolute(y), np.absolute(z)])
 
 
-# fig, ax = plt.subplots(3)
-# ax[1].plot(roll)
-# ax[2].plot(pitch)
-# ax[0].plot(yaw)
-# plt.show()
+fig, ax = plt.subplots(3)
+ax[1].plot(roll)
+ax[2].plot(pitch)
+ax[0].plot(yaw)
+plt.show()
 
 def avg_torque_calc():
     # torque for roll , pitch, yaw HAS TO BE POSITIVE
@@ -96,7 +96,6 @@ def sizing_dipole(mag_field, avg_torque, I_sat):
     # print(dip_moment, 'Dip used for calculation')
 
     return dip_moment
-
 
 avg_torque = avg_torque_calc()
 I_sat = np.array([0.33, 0.42, 0.72])  # moment of inertia of the satellite
@@ -164,6 +163,12 @@ def angular_momentum_realism_creator(angular_momentum):
         # ideally use representative length,
         # not pitch yaw or something specifically
 
+# Find Maximum 
+max_roll = np.max(angular_momentum_roll)
+max_pitch = np.max(angular_momentum_pitch)
+max_yaw = np.max(angular_momentum_yaw)
+
+print(max_roll, max_pitch, max_yaw, "Roll, Pitch, Yaw")
 
     #To ensure no negative values
 
