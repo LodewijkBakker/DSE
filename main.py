@@ -25,14 +25,15 @@ mag_dipole = 0
 w_used = 20  # power used
 mag_dist_torque = 0
 
-largest_arm = 0.01
+largest_arm = 0.1
 a_largest_frontal_area = 1
 
 q_sun_max = 1414
 #a_albedo = 0.14  # beta angle dependent 0.14 for < 30 0.19 above
-c_light = 299,792,458  # [m/s] https://physics.nist.gov/cgi-bin/cuu/Value?c
+c_light = 299792458  # [m/s] https://physics.nist.gov/cgi-bin/cuu/Value?c
 a_reflectivity = 0.9
-f_solar_radiation = q_sun_max*c_light*a_reflectivity*a_frontal
+f_solar_radiation = q_sun_max/c_light*a_reflectivity*a_frontal
+print(f_solar_radiation)
 sun_dist_torque = f_solar_radiation*largest_arm
 
 f_aero = rho*a_largest_frontal_area*c_d_satellite*v_orbit**2
