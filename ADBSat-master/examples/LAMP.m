@@ -161,15 +161,15 @@ get_config_torque_csv(config_19_loc, cg_s, inparam, modNames, modGeneral)
 function get_config_torque_csv(config_loc, cg_s, inparam, modNames, modGeneral)
     ADBSat_path = ADBSat_dynpath;
     config_f_id = fopen(config_loc,'w');
-    fprintf(config_f_id, 'case, max torque roll, max torque pitch, max torque yaw, max unstable torque pitch, max unstable torque yaw, max torque roll prop, max torque pitch prop, max torque yaw prop, max unstable torque pitch prop, max unstable torque yaw prop\n');
-    [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop] = configs_torque_calculator(ADBSat_path, modNames, modGeneral, cg_s, inparam, config_f_id);
+    fprintf(config_f_id, 'case, max torque roll, max torque pitch, max torque yaw, max unstable torque pitch, max unstable torque yaw, max torque roll prop, max torque pitch prop, max torque yaw prop, max unstable torque pitch prop, max unstable torque yaw prop, max average roll torque all, max average pitch torque all, max average yaw torque all, max roll torque all, max pitch torque all, max yaw torque all\n');
+    [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop, abs_t_m_avg_r, abs_t_m_avg_p, abs_t_m_avg_y, abs_t_m_all_r, abs_t_m_all_p, abs_t_m_all_y] = configs_torque_calculator(ADBSat_path, modNames, modGeneral, cg_s, inparam, config_f_id);
     fprintf(config_f_id, 'absolute maximums\n');
-    formatEnd = '%8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f \n';
-    fprintf(config_f_id, formatEnd, abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop);
+    formatEnd = '%8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f \n';
+    fprintf(config_f_id, formatEnd, abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop, abs_t_m_avg_r, abs_t_m_avg_p, abs_t_m_avg_y, abs_t_m_all_r, abs_t_m_all_p, abs_t_m_all_y);
     fclose(config_f_id);
 end
 
-function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop] = configs_torque_calculator(ADBSat_path, modNames, modGeneral, cg_s, inparam, config_1_f_id)
+function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_prop, abs_t_m_p_prop, abs_t_m_y_prop, abs_t_m_p_u_prop, abs_t_m_y_u_prop, abs_t_m_avg_r, abs_t_m_avg_p, abs_t_m_avg_y, abs_t_m_all_r, abs_t_m_all_p, abs_t_m_all_y] = configs_torque_calculator(ADBSat_path, modNames, modGeneral, cg_s, inparam, config_1_f_id)
     abs_t_m_r = 0; % absolute torque max roll
     abs_t_m_p = 0; % absolute torque max pitch
     abs_t_m_y = 0; % absolute torque max yaw
@@ -184,7 +184,14 @@ function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_p
     abs_t_m_p_u_prop = 0; % absolute torque max pitch unstable for propulsion on
     abs_t_m_y_u_prop = 0; % absolute torque max yaw unstable for propulsion on
 
-    formatRes = '%s, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f \n';
+    abs_t_m_avg_r = 0;
+    abs_t_m_avg_p = 0;
+    abs_t_m_avg_y = 0;
+    abs_t_m_all_r = 0;
+    abs_t_m_all_p = 0;
+    abs_t_m_all_y = 0;
+
+    formatRes = '%s, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f, %8.8f \n';
 
     for modName_el = modNames
         modName = char(modName_el);
@@ -193,14 +200,14 @@ function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_p
         modOut = fullfile(ADBSat_path,'inou','models');
         resOut = fullfile(ADBSat_path,'inou','results', modName);
     
-        [t_m_r, t_m_p, t_m_y, t_m_p_u, t_m_y_u, t_m_r_prop, t_m_p_prop, t_m_y_prop, t_m_p_u_prop, t_m_y_u_prop] = calc_adcs_torques(cg_s, inparam, modIn, modOut, resOut);
+        [t_m_r, t_m_p, t_m_y, t_m_p_u, t_m_y_u, t_m_r_prop, t_m_p_prop, t_m_y_prop, t_m_p_u_prop, t_m_y_u_prop, t_m_avg_r, t_m_avg_p, t_m_avg_y, t_m_all_r, t_m_all_p, t_m_all_y] = calc_adcs_torques(cg_s, inparam, modIn, modOut, resOut);
         % display(t_m_r)
         % display(t_m_p)
         % display(t_m_y)
         % display(t_m_p_u)
         % display(t_m_y_u)
     
-        fprintf(config_1_f_id, formatRes, modName, t_m_r, t_m_p, t_m_y, t_m_p_u, t_m_y_u, t_m_r_prop, t_m_p_prop, t_m_y_prop, t_m_p_u_prop, t_m_y_u_prop);
+        fprintf(config_1_f_id, formatRes, modName, t_m_r, t_m_p, t_m_y, t_m_p_u, t_m_y_u, t_m_r_prop, t_m_p_prop, t_m_y_prop, t_m_p_u_prop, t_m_y_u_prop,  t_m_avg_r, t_m_avg_p, t_m_avg_y, t_m_all_r, t_m_all_p, t_m_all_y);
 
         abs_t_m_r = max(abs_t_m_r, t_m_r);
         abs_t_m_p = max(abs_t_m_p, t_m_p); % 3!!!!!!! around z here because either wrong model or wrong program
@@ -216,11 +223,18 @@ function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_p
         abs_t_m_p_u_prop = max(abs_t_m_p_u_prop, t_m_p_u_prop);
         abs_t_m_y_u_prop = max(abs_t_m_y_u_prop, t_m_y_u_prop);
 
+        abs_t_m_avg_r = max(abs_t_m_avg_r, t_m_avg_r);
+        abs_t_m_avg_p = max(abs_t_m_avg_p, t_m_avg_p);
+        abs_t_m_avg_y = max(abs_t_m_avg_y, t_m_avg_p);
+
+        abs_t_m_all_r = max(abs_t_m_all_r, t_m_avg_r);
+        abs_t_m_all_p = max(abs_t_m_all_p, t_m_avg_p);
+        abs_t_m_all_y = max(abs_t_m_all_y, t_m_avg_y);
 
     end
 end
 
-function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, max_p_roll, max_p_pitch, max_p_yaw, max_p_pitch_unstable, max_p_yaw_unstable] = calc_adcs_torques(cg_s, inparam, modIn, modOut, resOut)
+function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, max_p_roll, max_p_pitch, max_p_yaw, max_p_pitch_unstable, max_p_yaw_unstable, max_avg_roll, max_avg_pitch, max_avg_yaw, max_all_roll, max_all_pitch, max_all_yaw] = calc_adcs_torques(cg_s, inparam, modIn, modOut, resOut)
     
     shadow = 1;
 
@@ -246,6 +260,24 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
     max_p_roll_unstable = 0; % roll
     max_p_pitch_unstable = 0; % pitch
     max_p_yaw_unstable = 0; % yaw
+
+    % average but over all positions!
+    max_avg_roll = 0;
+    max_avg_pitch = 0;
+    max_avg_yaw = 0;
+
+    n_fib = 200;
+    all_roll_list = zeros(n_fib);
+    all_pitch_list = zeros(n_fib);
+    all_yaw_list = zeros(n_fib);
+
+    max_all_roll = 0;
+    max_all_pitch = 0;
+    max_all_yaw = 0;
+
+
+    % only has to be calculated once but for clarity its put here
+    xg = sphere_fibonacci_grid_points(n_fib);
 
     % function to calculate stuff
     for cg_i = 1:numel(cg_s)
@@ -298,7 +330,26 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
         end
 
         % Avg case
+        for j = 1:n_fib
+            [aos, aoa] = aos_aoa_converter(xg(j));
+            fileOut = calc_coeff(modOut_imp, resOut, deg2rad(aos), deg2rad(aoa), inparam, shadow, solar, 1, 0); 
+            Cm_B = load(fileOut, "Cm_B").Cm_B;
+            % Converter to aerodynamic torque!!
+            rho = 5.33e-11;
+            v_sat = 7729; % drago m/s
+            M_b = 0.5* rho * Cm_B * load(fileOut, "AreaRef").AreaRef * v_sat^2;  % should be the actual torque calculation TODO
+            [roll_torque_all, pitch_torque_all, yaw_torque_all, ~, ~] = secondary_torques(M_b, aoa, aos); % dont really need unstable
+            all_roll_list(j) = roll_torque_all;
+            all_pitch_list(j) = pitch_torque_all;
+            all_yaw_list(j) = yaw_torque_all;
 
+            max_all_roll = max(max_all_roll, roll_torque_all);
+            max_all_pitch = max(max_all_pitch, pitch_torque_all);
+            max_all_yaw = max(max_all_yaw, yaw_torque_all);
+        end
+        max_avg_roll = max(max_avg_roll, mean(all_roll_list));
+        max_avg_pitch = max(max_avg_pitch, mean(all_pitch_list));
+        max_avg_yaw = max(max_avg_yaw, mean(all_yaw_list));
     end
 end 
 
@@ -394,7 +445,7 @@ function [t_roll_torque, t_pitch_torque, t_yaw_torque, t_pitch_unstable, t_yaw_u
     % p_torque_yaw = a*rad_offset + a*random_angle_offset - b*thrust;  % 
 end
 
-function [aos, aoa] = sphere_fibonacci_grid_points ( ng )
+function xg = sphere_fibonacci_grid_points ( ng )
 
 %*****************************************************************************80
 %
@@ -439,24 +490,16 @@ function [aos, aoa] = sphere_fibonacci_grid_points ( ng )
   xg(1:ng,1) = cphi .* sin ( theta );
   xg(1:ng,2) = cphi .* cos ( theta );
   xg(1:ng,3) = sphi;
-    
-  [aos, aoa] = aos_aoa_converter(xg);
    
 end
 
 
-function [aos, aoa] = aos_aoa_converter(xg)
+function [aos, aoa] = aos_aoa_converter(x)
     % two circles
     % s_vector = [-1, 0, 0]  % xyz
-    aos = zeros(1, length(xg));
-    aoa = zeros(1, length(xg));
-
-    for i = 1:length(xg)
-        [azimuth, elevation, ~] = cart2sph(xg(i, 1), xg(i, 2), xg(i, 3));
-        aos(i) = azimuth;
-        aoa(i) = elevation;
-    end
-    
+    [azimuth, elevation, ~] = cart2sph(x(1), x(2), x(3));
+    aos = azimuth;
+    aoa = elevation;
 end
 % zero torque at precise cg 0.1765479 and angle 9.63194
 
