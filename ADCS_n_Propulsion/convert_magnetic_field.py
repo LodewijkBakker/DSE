@@ -60,10 +60,20 @@ ax[0].plot(yaw)
 plt.show()
 
 #torque for roll , pitch, yaw HAS TO BE POSITIVE
-entry_torque = np.array([1.06e-5, 7.41e-5, 7.84e-6])
+entry_torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
   
 #Average Dipole Moment
 dip_moment = np.divide(entry_torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
+print(dip_moment)
+# Different detumbling magn_torque creater
+non_conservative_entry_torque = entry_torque  # when fields don't cancel out like gravity torque
+detumbling_speed = 200/180*np.pi  # 200 deg/s
+t_orbits_detumbling = 40*5423  # time available for detumbling until deorbit
+i_sat = 1.4  # moment of inertia of the satellite
+det_torque = non_conservative_entry_torque + detumbling_speed/t_orbits_detumbling * i_sat
+dip_moment = np.divide(det_torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
+print(dip_moment)
+
 
 #avg torque per timestep
 magn_torque_roll = list(map(lambda entry: (1e-9 * entry) * dip_moment[0], roll))
@@ -205,7 +215,7 @@ max_yaw = np.max(angular_momentum_yaw)
 
 print(max_roll, max_pitch, max_yaw, "Roll, Pitch, Yaw")
 
-#print(angular_momentum_yaw*1000, angular_momentum_roll*1000, angular_momentum_pitch*1000, 'Angular momentum yaw roll pitch mNms')
+print(np.max(angular_momentum_yaw)*1000, np.max(angular_momentum_roll)*1000, np.max(angular_momentum_pitch)*1000, 'Angular momentum yaw roll pitch mNms')
 
 # print('average', np.average(x), np.average(y), np.average(z)) #nanotesla
 # print('max', np.max(x), np.max(y), np.max(z))

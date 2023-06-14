@@ -26,7 +26,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 from DSE.Thermal.materials import Material, Coating
-from DSE.Thermal.esatan_reader import extract_Q_data, interpolate_points
+from DSE.Thermal.esatan_reader import heat_flows, interpolate_points, prepare_heat_flows
 
 
 class ThermalNode:
@@ -185,6 +185,9 @@ class ThermalModel:
         sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', max_step=10, vectorized=True)
         self.solution = sol
 
+    def t_solver(self, Qin, Qgen, A, e):
+        return ((Qin + Qgen) / (A * e * 5.67 * 10 ** -8)) ** 0.25
+
     def plot(self, node_id=None, with_legend=False, save=None):
         """
         Plots the temperature of each node over the simulation time,
@@ -206,14 +209,18 @@ class ThermalModel:
             else:
                 for i in node_id:
                     plt.plot(self.solution.t, self.solution.y[i], label=f'{self.nodes[i].name}')
+            plt.plot(self.solution.t, np.ones(len(self.solution.t)) * self.t_solver(0, 0.8, 0.016, 0.035),
+                     label='pipes')
+            plt.plot(self.solution.t, np.ones(len(self.solution.t)) * self.t_solver(0, 1.35, 0.035, 0.035),
+                     label='propellant')
 
         if with_legend:
             plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
             plt.subplots_adjust(right=0.74)
         plt.xlabel('Time [s]')
         plt.ylabel(f'Temperature [{self.unit}]')
-        plt.xlim(8*self.env.t_orbit, 9*self.env.t_orbit)
-        plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
+        plt.xlim(7*self.env.t_orbit, 10*self.env.t_orbit)
+        # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
         if save:
             plt.savefig(save)
         plt.show()
