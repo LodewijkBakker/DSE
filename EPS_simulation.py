@@ -32,9 +32,10 @@ class EPS_Simulation_:
         self.A_top_panel_ant = (305-100-40) * (360-100-40) / 1e6      # [m^2] for 1 fold (- antenna size)
         self.n_pcdu = 0.96                                      # Pumpkin
         self.n_harness = 0.98                                   
-        self.n_bat_discharge = 0.98                             # Li-Ion NASA 
-        self.n_bat_charge = 0.98                                # Li-Ion NASA
+        self.n_bat = 0.98                                       # Li-Ion NASA, SMAD
         self.n_cell = 0.32                                      # 32% NASA
+        self.Esp_liion = 150                                    # [Wh/kg] NASA      
+        self.rhosp_liion = 210                                  # [Wh/U] NASA
         # --- TESTED CONFIGURATION --- #
         self.num_back_folds = 3
         # self.num_side_folds = 2.5       # per side
@@ -448,13 +449,51 @@ class EPS_Simulation_:
         return array[idx_interest[0][0]]
     
     
-    def battery_size_computations(self, battery_array_cd):
+    def battery_size_computations(self, battery_array_cd, name, side_id,ltan, Pay_continuous=True):
         '''
             Function which takes in the battery charge discharge state array and computes feasability based on the charge, discharge states.
-            Then computes the capacity, mass and volume. Also checks 
+            Then computes the capacity, mass and volume. Also checks if the charge, discharge cycle work in more depth.
+
+            Parameters:
+                battery_array_cd (array)    -> Array containing the charge, discharge states of the battery
+                name (string)               -> Name of the configuration analysed
+                side_id (int)               -> number of side panels
+                Pay_continuous (bool)       -> True if the payload is always on, False if the payload is on only during eclipse
+
+            returns:
+                array (array)               -> Array containing [Configuration, Capacity_prop, Mass_prop, Volume_prop, Capacity_remaining, Mass_remaining, Volume_remaining]
         '''
 
-        pass
+        # Check if feasable at all 
+        charge = np.sum(positive for positive in battery_array_cd if positive > 0)
+        discharge = np.sum(negative for negative in battery_array_cd if negative < 0)
+        if (self.n_pcdu * charge) < abs(discharge):
+            pass
+        else:
+            # Compute the total needed capacity for operations of propulsion battery
+            # Battery Li-Ion operates for 10 000 cycles - > 50% DOD: SOURCE - Analysis of On-Board Photovoltaics for a Battery Electric Bus and Their Impact on Battery Lifespan - Scientific Figure on ResearchGate. Available from: https://www.researchgate.net/figure/Depth-of-discharge-versus-cycle-life-of-the-lithium-ion-battery_fig4_318292540 [accessed 14 Jun, 2023]
+            C_needed_prop = self.Prop_peak_power * 845                              # [Ws]
+            C_BOL_prop = C_needed_prop / (0.5 * self.n_bat)                         # [Ws]
+            M_prop_bat = (C_BOL_prop / 3600) / self.Esp_liion                       # [kg] = [Ws / 3600] / [Wh/kg] = Wh / Wh/kg
+            V_prop_bat = (C_BOL_prop / 3600) / self.rhosp_liion                     # [U] = [Ws / 3600] / [Wh/L] = Wh / Wh/U
+
+            # Compute the remaining battrey power need for non-propulsion operations
+            # Battery Li-Ion operates for 30 000 cycles - > 20% DOD: SOURCE - Analysis of On-Board Photovoltaics for a Battery Electric Bus and Their Impact on Battery Lifespan - Scientific Figure on ResearchGate. Available from: https://www.researchgate.net/figure/Depth-of-discharge-versus-cycle-life-of-the-lithium-ion-battery_fig4_318292540 [accessed 14 Jun, 2023]
+
+            C_remainimg = (abs(discharge) - C_needed_prop)/6 # Per orbit
+            C_BOL_remain = C_remainimg / (0.2 * self.n_bat)                         # [Ws]
+            M_remain_bat = (C_BOL_remain / 3600) / self.Esp_liion                    # [kg] = [Ws / 3600] / [Wh/kg] = Wh / Wh/kg
+            V_remain_bat = (C_BOL_remain / 3600) / self.rhosp_liion                  # [U] = [Ws / 3600] / [Wh/L] = Wh / Wh/U
+
+            M_total = M_prop_bat + M_remain_bat
+            V_total = V_prop_bat + V_remain_bat
+
+            if (M_prop_bat + M_remain_bat) > 2 or (V_prop_bat + V_remain_bat) > 1.5:
+                pass
+            else:
+                txt = name +'_Folds_per_side'+str(side_id) + 'Pay_continuous_' + str(Pay_continuous) + 'ltan_' + str(ltan) 
+                return [txt, C_BOL_prop/3600, M_prop_bat, V_prop_bat, C_BOL_remain/3600, M_remain_bat, V_remain_bat, M_total, V_total]
+                
     
     def EPS_simulation_run(self):
         '''
@@ -581,8 +620,13 @@ class EPS_Simulation_:
         
         
 
-        
+        # ------------------------------------------------------------------------------------------------------------- #
+        # ================================ Battery Consideration Path ================================================= #
 
+        if not os.path.exists('./Outputs/EPS_simulation/Battery_CSV'):
+            os.makedirs('./Outputs/EPS_simulation/Battery_CSV')
+        
+        battery_array_csv = [['Config', 'C_BOL_prop', 'M_prop_bat', 'V_prop_bat', 'C_BOL_remain', 'M_remain_bat', 'V_remain_bat', 'M_total', 'V_total'],]
 
         # ------------------------------------------------------------------------------------------------------------- #
         # =============================== Continuous Payload Operations =============================================== #
@@ -609,6 +653,10 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_6h_contribution = power_intake_6h - power_consumption_6h
+                temp_bat_6 = self.battery_size_computations(battery_array_cd=battery_6h_contribution, name=config_name, side_id= j, ltan=6, Pay_continuous=True)
+                
+                if temp_bat_6 != None:
+                    battery_array_csv.append(temp_bat_6)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_6h_contribution.
                 plt.plot(power_consumption_6h, label='Power Consumption')
@@ -632,6 +680,10 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_9h_contribution = power_intake_9h - power_consumption_9h
+                temp_bat_9 = self.battery_size_computations(battery_array_cd=battery_9h_contribution, name=config_name, side_id= j, ltan=9, Pay_continuous=True)
+                
+                if temp_bat_9 != None:
+                    battery_array_csv.append(temp_bat_9)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_9h_contribution.
                 plt.plot(power_consumption_9h, label='Power Consumption')
@@ -655,6 +707,10 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_12h_contribution = power_intake_12h - power_consumption_12h
+                temp_bat_12 = self.battery_size_computations(battery_array_cd=battery_12h_contribution, name=config_name, side_id= j, ltan=12, Pay_continuous=True)
+
+                if temp_bat_12 != None:
+                    battery_array_csv.append(temp_bat_12)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_12h_contribution.
                 plt.plot(power_consumption_12h, label='Power Consumption')
@@ -693,6 +749,10 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_6h_contribution = power_intake_6h - power_consumption_6h
+                temp_bat_6 = self.battery_size_computations(battery_array_cd=battery_6h_contribution, name=config_name, side_id= j, ltan=6, Pay_continuous=False)
+
+                if temp_bat_6 != None:
+                    battery_array_csv.append(temp_bat_6)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_6h_contribution.
                 plt.plot(power_consumption_6h, label='Power Consumption')
@@ -716,6 +776,11 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_9h_contribution = power_intake_9h - power_consumption_9h
+                temp_bat_9 = self.battery_size_computations(battery_array_cd=battery_9h_contribution, name=config_name, side_id= j, ltan=9, Pay_continuous=False)
+
+                if temp_bat_9 != None:
+                    battery_array_csv.append(temp_bat_9)
+
 
                 # saving plot data: plotting power_consumption, power_intake, battery_9h_contribution.
                 plt.plot(power_consumption_9h, label='Power Consumption')
@@ -739,6 +804,10 @@ class EPS_Simulation_:
                     exit()
                 # Battery discharge, charge status
                 battery_12h_contribution = power_intake_12h - power_consumption_12h
+                temp_bat_12 = self.battery_size_computations(battery_array_cd=battery_12h_contribution, name=config_name, side_id= j, ltan=12, Pay_continuous=False)
+
+                if temp_bat_12 != None:
+                    battery_array_csv.append(temp_bat_12)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_12h_contribution.
                 plt.plot(power_consumption_12h, label='Power Consumption')
@@ -752,6 +821,10 @@ class EPS_Simulation_:
                 df = pd.DataFrame({'Power Consumption': power_consumption_12h, 'Power Generation': power_intake_12h, 'Battery Contribution (Charge/Discharge)': battery_12h_contribution})
                 df.to_csv('./Outputs/EPS_simulation/CSV/Discontinuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.csv', index=False)
 
+            # Save the battery array csv as each entry one row in the csv file and each [0][i] one column
+            df = pd.DataFrame(battery_array_csv)
+            df.to_csv('./Outputs/EPS_simulation/Battery_CSV/battery_sizings.csv', index=False, header=False)
+            
         pass
     
     pass
