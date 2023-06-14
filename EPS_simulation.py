@@ -198,7 +198,7 @@ class EPS_Simulation_:
 
             # eclipse contribution
             mid_point_eclipse0 = math.floor(int(self.eclipse_ratio_9h * self.T_orbit)/2)
-            temp_start = 3*self.T_orbit + mid_point_eclipse0 - mid_point_prop
+            temp_start = 4*self.T_orbit - mid_point_eclipse0 - mid_point_prop
             Base_Power_continuous[temp_start:temp_start+len(Prop_power)] += Prop_power
         
         elif ltan == 12:
@@ -213,7 +213,7 @@ class EPS_Simulation_:
 
             # eclipse contribution
             mid_point_eclipse0 = math.floor(int(self.eclipse_ratio_12h * self.T_orbit)/2)
-            temp_start = 3*self.T_orbit + mid_point_eclipse0 - mid_point_prop
+            temp_start = 4*self.T_orbit - mid_point_eclipse0 - mid_point_prop
             Base_Power_continuous[temp_start:temp_start+len(Prop_power)] += Prop_power
 
         # --- Insering EPS PCDU and harness losses --- #
