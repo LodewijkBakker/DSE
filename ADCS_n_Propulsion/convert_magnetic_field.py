@@ -53,14 +53,14 @@ yaw = np.absolute(x)
 roll = np.absolute(y)
 pitch = np.absolute(z)
 
-# fig, ax = plt.subplots(3)
-# ax[1].plot(roll)
-# ax[2].plot(pitch)
-# ax[0].plot(yaw)
-# plt.show()
+fig, ax = plt.subplots(3)
+ax[1].plot(roll)
+ax[2].plot(pitch)
+ax[0].plot(yaw)
+plt.show()
 
 #torque for roll , pitch, yaw HAS TO BE POSITIVE
-entry_torque = np.array([1.06e-5, 8.73e-5, 5.4e-6])
+entry_torque = np.array([1.06e-5, 7.41e-5, 7.84e-6])
   
 #Average Dipole Moment
 dip_moment = np.divide(entry_torque, 1e-9 * np.array([np.average(roll), np.average(pitch), np.average(yaw)]))
@@ -198,6 +198,12 @@ plt.show()
 
 average_test = [np.average(angular_momentum_roll), np.average(angular_momentum_pitch), np.average(angular_momentum_yaw)]
 
+# Find Maximum 
+max_roll = np.max(angular_momentum_roll)
+max_pitch = np.max(angular_momentum_pitch)
+max_yaw = np.max(angular_momentum_yaw)
+
+print(max_roll, max_pitch, max_yaw, "Roll, Pitch, Yaw")
 
 #print(angular_momentum_yaw*1000, angular_momentum_roll*1000, angular_momentum_pitch*1000, 'Angular momentum yaw roll pitch mNms')
 
