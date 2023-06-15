@@ -72,7 +72,7 @@ def mag_field_creator():
     # plt.show()
     # plt.plot(mag_field[:, 2])
     # plt.show()
-    return mag_field, time_step
+    return mag_field, 30/time_step
 
 
 def avg_torque_calc(nom_torque: np.ndarray, prop_torque: np.ndarray, t_prop_on: float, t_repeat_prop: float):
@@ -170,7 +170,7 @@ def get_sizing_from_angular_momentum(angular_momentum: np.ndarray):
     return max_angular_momentum
 
 
-def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray, time_step: float):
+def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray):
     # @jit(nopython=True)
     def res_torques_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray):
         """
@@ -272,8 +272,10 @@ def sizing_cmg(max_angular_momentum, r_wheel=0.02, sizing_angular_momentum=None)
     delta_angular_velocity = 2500*2*np.pi/60  # from statistics
     #r_range = 0.02  # actually 0.015 - 0.025
     inertia_needed = sizing_angular_momentum/delta_angular_velocity # correct
-    n_cmg = 4
+
     m_disk = inertia_needed/r_wheel**2
+
+    n_cmg = 4
     m_full = n_cmg * (1+2/3) * m_disk
     v_cmg = m_full*rho_cmg  # [u]
     p_cmg = m_full*5.36
@@ -291,6 +293,9 @@ def sizing_magnetorquer(dip_moment, print_mag=False):
         # SQRT(2)*54*3.5*10^-3 is for spacecraft dipole
         design_dip_moment_axis = safety_factor*dip_moment_axis*magnetorquer_magnetometer_t + (2**0.5)*54*3.5*10**(-3)
         assert(dip_moment_axis > 0)
+        # from statistics
+        m_magnetorquer += dip_moment_axis*0.015
+        v_magnetorquer += m_magnetorquer*2.1  # U/kg
         m_magnetorquer += design_dip_moment_axis*0.015
         v_magnetorquer += design_dip_moment_axis*0.015*2.1  # U/kg
         p_magnetorquer += design_dip_moment_axis*0.114 + 0.303  # statistics
@@ -306,7 +311,7 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
 
     def calc_adcs_size(dip_moment, r_wheel=0.025):
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
-                                                                dip_moment, time_step)
+                                                                dip_moment)
         # print(design_max_angular_momentum_Nms*1000)
         m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
         m2, v2, p2 = sizing_magnetorquer(dip_moment)
