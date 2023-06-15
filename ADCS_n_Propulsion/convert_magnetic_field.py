@@ -5,7 +5,7 @@ from scipy import integrate
 from scipy.signal import find_peaks
 from tqdm import tqdm
 from time import perf_counter
-
+from scipy.optimize import minimize
 
 def mag_field_creator():
     """
@@ -292,33 +292,29 @@ def sizing_magnetorquer(dip_moment):
 
 
 def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
-    r_range = np.linspace(0.015, 0.025, 5)
-    dip_moment_roll = np.linspace(dip_moment_orig[0], dip_moment_orig[0]+15, 10)
-    dip_moment_pitch = np.linspace(dip_moment_orig[1], dip_moment_orig[0]+15, 10)
-    dip_moment_yaw = np.linspace(dip_moment_orig[2], dip_moment_orig[0]+15, 10)
+    r_range = np.linspace(0.015, 0.025, 2)
 
-    dip_min = dip_moment_orig
-    m_total_min = [np.inf, np.inf, np.inf]  # total mass, mass cmg, mass magnetorquer
-    v_total_min = [np.inf, np.inf, np.inf]  # total volume, volume cmg, volume magnetorquer
-    for r in r_range:
-        m_total_min = [np.inf, np.inf, np.inf]  # total mass, mass cmg, mass magnetorquer
-        v_total_min = [np.inf, np.inf, np.inf]  # total volume, volume cmg, volume magnetorquer
-        for dip_moment_roll_i in tqdm(dip_moment_roll, disable=False):
-            for dip_moment_pitch_j in dip_moment_pitch:
-                for dip_moment_yaw_k in dip_moment_yaw:
-                    dip_moment = np.array([dip_moment_roll_i, dip_moment_pitch_j, dip_moment_yaw_k])
-                    design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque, dip_moment, time_step)
-                    #print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
-                    m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r)
-                    m2, v2 = sizing_magnetorquer([dip_moment_roll_i, dip_moment_pitch_j, dip_moment_yaw_k])
-                    m_total = m1 + m2
-                    v_total = v1 + v2
-                    if m_total_min[0] > m_total:
-                        m_total_min = [m_total, m1, m2]
-                        v_total_min = [v_total, v1, v2]
-                        dip_min = dip_moment
+    def calc_adcs_size(dip_moment, r_wheel=0.025):
+        design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
+                                                                dip_moment, time_step)
+        # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
+        m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
+        m2, v2 = sizing_magnetorquer(dip_moment)
+        m_total = m1 + m2
 
-        print(dip_min, m_total_min, v_total_min, r)
+        return m_total
+
+    for r_wheel_input in r_range:
+        dip_optimize = minimize(calc_adcs_size, dip_moment_orig, args=(r_wheel_input,), bounds=((dip_moment_orig[0], dip_moment_orig[0]+20), (dip_moment_orig[1], dip_moment_orig[1]+20), (dip_moment_orig[2], dip_moment_orig[2]+20)))
+        design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
+                                                                dip_optimize.x, time_step)
+        # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
+        m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input)
+        m2, v2 = sizing_magnetorquer(dip_optimize.x)
+        print(m1, v1)
+        print(m2, v2)
+
+
 
 if __name__ == "__main__":
 
@@ -371,6 +367,7 @@ if __name__ == "__main__":
     prop_torque_1 = np.array([1.75E-05,	8.22E-05, 2.30E-05])
     avg_torque = avg_torque_calc(nom_torque_1, prop_torque_1, t_prop_on, t_repeat_prop)
     I_sat = np.array([0.33, 0.42, 0.72])  # moment of inertia of the satellite
+    t_orbits_detumbling = 40 * 5423
     dip_moment_1 = sizing_dipole(mag_field, avg_torque, I_sat, t_orbits_detumbling)
     print(dip_moment_1, 'dip start')
     optimum_sizer(dip_moment_1, avg_torque, mag_field, time_step)
