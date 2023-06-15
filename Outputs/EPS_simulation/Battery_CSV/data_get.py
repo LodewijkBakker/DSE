@@ -25,7 +25,8 @@ import csv
 df = pd.read_csv('./battery_sizings.csv')
 
 # Filter the DataFrame based on the condition
-condition = df['Config'].str.contains('1.5') & (df['Config'].str.contains('12') | df['Config'].str.contains('9') | df['Config'].str.contains('6')) & df['Config'].str.contains('_i_Folds')
+# condition = df['Config'].str.contains('1.5') & (df['Config'].str.contains('12') | df['Config'].str.contains('9') | df['Config'].str.contains('6')) & df['Config'].str.contains('_i_Folds')
+condition = df['Config'].str.contains('CIV-Ff') & df['Config'].str.contains('1.3')
 filtered_df = df[condition]
 
 # Write the filtered DataFrame back to the CSV file
