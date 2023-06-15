@@ -231,13 +231,14 @@ class ThermalModel:
             plt.subplots_adjust(right=0.74)
         plt.xlabel('Time [s]')
         plt.ylabel(f'Temperature [{self.unit}]')
-        plt.xlim(7*self.env.t_orbit, 10*self.env.t_orbit)
+        plt.xlim(9*self.env.t_orbit, 10*self.env.t_orbit)
         # plt.xticks(np.arange(8*self.env.t_orbit, 9*self.env.t_orbit, 1000), np.arange(0, int(self.env.t_orbit), 1000))
         plt.title('Nodal Temperatues')
         if save:
             plt.savefig(save)
         # plt.show()
         plt.close()
+        print('CMG', self.t_solver(0, 0.1, 0.06, 0.035))
 
     def save_csv(self, filename):
         if self.solution is not None:
