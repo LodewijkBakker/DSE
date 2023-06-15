@@ -122,6 +122,7 @@ def make_TCS(output=None, plot=False, unit='K', Q=None, file=None):
 
 if __name__ == '__main__':
     AN15 = prepare_heat_flows(interpolate_points(heat_flows(), Env().t_orbit, 10))
+    print(AN15)
     l = ['North', 'East', 'South', 'West', 'Zenith', 'Nadir', 'Batteries', 'Solar panel 1', 'OBC', 'propellant tanks',
          'raditator', 'DST box', 'DST baffle', 'solar panel 2', 'solar panel 3', 'thruster', 'propellant lines']
     idx = [0,1,2,3,4,5,7,10,12,13,14]

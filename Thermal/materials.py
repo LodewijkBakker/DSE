@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Material:
     def __init__(self, params=None):
         if params is not None:
@@ -58,7 +55,7 @@ def bare_solar_panel() -> 'Coating':
     return Coating({'absorptivity': 0.42, 'emissivity': 0.52})
 
 def coated_solar_panel() -> 'Coating':
-    return Coating({'absorptivity': np.mean([0.06, 0.42]), 'emissivity': np.mean([0.52, 0.88])})
+    return Coating({'absorptivity': (0.06 + 0.42)/2, 'emissivity': (0.52 + 0.88)/2})
 
 def OSR_coat() -> 'Coating':
     return Coating({'absorptivity': 0.06, 'emissivity': 0.9})

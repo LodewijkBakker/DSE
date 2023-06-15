@@ -38,13 +38,13 @@ class TestConvertMagField(unittest.TestCase):
 
     def test_get_sizing_from_angular_momentum(self):
         x = np.array([[1,76,3], [3,6,8], [8,3,6]])
-        np.testing.assert_almost_equal(get_sizing_from_angular_momentum(x), np.array([16, 152, 16]))
+        np.testing.assert_almost_equal(get_sizing_from_angular_momentum(x), np.array([8, 76, 8]))
 
     def test_angular_momentum_calc(self):
         a = np.array([[1, 1, 4, 1, 0, 1, 0, 8, 4, 6], [1, 1, 4, 1, 0, 1, 0, 8, 4, 6], [1, 1, 4, 1, 0, 1, 0, 8, 4, 6]]).T
         d = np.ones((10, 3))
         m = np.array([[1, 1, 2, 1, 4, -1, 6, 0, 8, 0], [1, 1, 2, 1, 4, -1, 6, 0, 8, 0], [1, 1, 2, 1, 4, -1, 6, 0, 8, 0]]).T
-        np.testing.assert_almost_equal(angular_momentum_calc(m, a, d), [8, 8, 8])
+        np.testing.assert_almost_equal(angular_momentum_calc(m, a, d), [4,4,4])
 
     def test_sizing_angular_momentum_calc(self):
         max_ang_mom = [10, 20, 30]

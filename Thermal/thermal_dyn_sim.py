@@ -78,6 +78,7 @@ class ThermalModel:
         self.unit = unit
         self.ESATAN = ESATAN
         self.Q_ESATAN = Q_ESATAN
+        self.Tdot_arr = [[] for i in range(len(self.nodes))]
 
     def Qs(self, t, i):
         """
@@ -183,6 +184,7 @@ class ThermalModel:
                           node.radiation_area * node.emissivity * self.env.sigma_boltzmann * (T[i] ** 4)
 
             Tdot[i] = Q[i] / (node.thermal_capacitance * node.mass)
+            self.Tdot_arr[i].append(Tdot[i])
 
         return Tdot
 
@@ -191,7 +193,8 @@ class ThermalModel:
         Solves the temperature of each node over the simulation time
         """
         # self.plotting_Q()
-        sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', max_step=10, vectorized=True)
+        sol = solve_ivp(self.Tdot, (0, self.t_sim), self.init_temp, method='RK45', t_eval=np.arange(0, self.t_sim+1, 1),
+                        vectorized=True)
         self.solution = sol
 
     def t_solver(self, Qin, Qgen, A_rad, emissivity):
