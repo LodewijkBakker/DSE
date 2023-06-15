@@ -82,7 +82,7 @@ def avg_torque_calc(nom_torque: np.ndarray, prop_torque: np.ndarray, t_prop_on: 
     avg_torque = np.maximum(nom_torque, avg_torque_w_p)  # should still be high even if t propulsion brings it down
     return avg_torque
 
-def sizing_dipole(mag_field: np.ndarray, avg_torque: np.ndarray, I_sat: np.ndarray, t_orbits_detumbling: float):
+def sizing_minimum_dipole(mag_field: np.ndarray, avg_torque: np.ndarray, I_sat: np.ndarray, t_orbits_detumbling: float):
     """
     sizes the dipole of the magnetic torquer
     :param mag_field: roll, pitch yaw magnetic field in [tesla]
@@ -292,12 +292,12 @@ def sizing_magnetorquer(dip_moment):
 
 
 def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
-    r_range = np.linspace(0.015, 0.025, 2)
+    r_range = np.linspace(0.015, 0.025, 5)
 
     def calc_adcs_size(dip_moment, r_wheel=0.025):
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
                                                                 dip_moment, time_step)
-        #print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
+        # print(design_max_angular_momentum_Nms*1000)
         m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
         m2, v2 = sizing_magnetorquer(dip_moment)
         m_total = m1 + m2
@@ -311,7 +311,7 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
         # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
         m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input)
         m2, v2 = sizing_magnetorquer(dip_optimize.x)
-        print('dipole moment sizied for', dip_optimize.x)
+        print('dipole moment sized for', dip_optimize.x)
         print('cmg sizing', 'mass_4_cmg', m1, 'volume_4_cmg', v1, 'r_wheel', r_wheel_input, 'Does not include pyramid')
         print('magnetorquer sizing', 'mass magnetorquer', m2, 'volume magnetorquer', v2)
 
@@ -333,12 +333,12 @@ if __name__ == "__main__":
 
     # # Dipole sizing tester
     # t_orbits_detumbling = 40*5423  # time available for detumbling until deorbit
-    # assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [2, 2, 2]]), np.array([1, 1, 1]), np.array([1, 1, 1]),
+    # assert np.all(np.isclose(sizing_minimum_dipole(np.array([[0, 0, 0], [2, 2, 2]]), np.array([1, 1, 1]), np.array([1, 1, 1]),
     #                                        t_orbits_detumbling), np.array([1, 1, 1])))
     # m = 0.5  # tesla
     # v_r = 300/180*np.pi  # rad /s
     # torque_required = v_r/(t_orbits_detumbling*m)
-    # assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
+    # assert np.all(np.isclose(sizing_minimum_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
     #                                        t_orbits_detumbling), np.array([torque_required, torque_required,
     #                                                                        torque_required])))
 
@@ -369,7 +369,7 @@ if __name__ == "__main__":
     avg_torque = avg_torque_calc(nom_torque_1, prop_torque_1, t_prop_on, t_repeat_prop)
     I_sat = np.array([0.33, 0.42, 0.72])  # moment of inertia of the satellite
     t_orbits_detumbling = 40 * 5423
-    dip_moment_1 = sizing_dipole(mag_field, avg_torque, I_sat, t_orbits_detumbling)
+    dip_moment_1 = sizing_minimum_dipole(mag_field, avg_torque, I_sat, t_orbits_detumbling)
     print(dip_moment_1, 'dip start')
     optimum_sizer(dip_moment_1, avg_torque, mag_field, time_step)
 
