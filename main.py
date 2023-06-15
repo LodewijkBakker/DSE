@@ -13,6 +13,7 @@ from EPS_simulation import EPS_Simulation_
 # SP_s.Solar_Panel_size()
 
 EPS_s = EPS_Simulation_()
+# EPS_s.ADCS_poles_finder(6)
 EPS_s.EPS_simulation_run()
 
 

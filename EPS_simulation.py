@@ -105,9 +105,9 @@ class EPS_Simulation_:
         GNS_BC = 0.2
         COMMS_BC = 2.1      # SEE COMMS - could make a video :D 
         SDH_BC = 4
-        EPS_BC = 1          # only PCDU
+        EPS_BC = 3          # only PCDU
         Prop_BC = 0         # Preheating and thermal maintenace via pipeheating and TCS
-        ADCS_peakpower = max(self.ADCS_max_power_cont(POLES=True), self.ADCS_max_power_cont(POLES=False)) # [W] continuous max power
+        ADCS_peakpower = 14.4  #max(self.ADCS_max_power_cont(POLES_row=True), self.ADCS_max_power_cont(POLES_row=False)) # [W] continuous max power
 
         self.base_c_power_all_sc = TCS_BC + Str_BC + GNS_BC + COMMS_BC \
                                  + SDH_BC + EPS_BC + Prop_BC + ADCS_peakpower                                  # [W]
@@ -154,7 +154,7 @@ class EPS_Simulation_:
         
         if payload_cont:
             Base_Power_continuous += self.Payload_cont * np.ones(6*self.T_orbit) # [W]
-            if ltan == 6:
+            if ltan == 12:
                 Base_Power_continuous -= 5 * np.ones(6*self.T_orbit) # [W] COnstraining 12h to 5W continuously
         
         if not payload_cont:
@@ -169,7 +169,7 @@ class EPS_Simulation_:
                     Base_Power_continuous[i*self.T_orbit:i*self.T_orbit+len(self.Payload_sun_12h)] += self.Payload_sun_12h
 
         # --- Propulsion system Contribution --- #
-        Prop_power = self.Prop_peak_power * np.ones(845) # [W]
+        Prop_power = self.Prop_peak_power * np.ones(870) # [W]
         mid_point_prop = math.floor(len(Prop_power)/2)
         # --- Inserting the propulsion into the timeline --- #
         
@@ -278,13 +278,46 @@ class EPS_Simulation_:
 
         return args
 
-    def ADCS_max_power_cont(self, POLES=True):
+    def ADCS_contribution_finder(self, ltan):
+        '''
+            Function which computes the location of the poles in the orbit based on the visual data from ADCS simulation.
+                    -> row: 20% of the orbit (10% on each side of the poles)
+                    -> pitch, yaw = 60% of the orbit (30% on each side of the poles)
+        '''
+        # Get orbital data (position in space)
+        if ltan == 6:
+            x = np.array(self.get_col_from_csv(self.path_dusk_dawn, 5))
+            y = np.array(self.get_col_from_csv(self.path_dusk_dawn, 6))
+            map = np.array(self.get_col_from_csv(self.path_dusk_dawn, 13))
+        elif ltan == 9:
+            x = np.array(self.get_col_from_csv(self.path_9h, 5))
+            y = np.array(self.get_col_from_csv(self.path_9h, 6))
+            map = np.array(self.get_col_from_csv(self.path_9h, 13))
+        elif ltan == 12:
+            x = np.array(self.get_col_from_csv(self.path_12h, 5))
+            y = np.array(self.get_col_from_csv(self.path_12h, 6))
+            map = np.array(self.get_col_from_csv(self.path_12h, 13))
+        
+        # ogranise obit data
+        temp = self.organise_orbit(map, x, y, length=self.T_orbit)
+        x = temp[0]
+        y = temp[1]
+        orbit = np.column_stack((x, y))
+        r = np.sqrt(np.sum(np.square(orbit), axis=1))       # radius in [m]
+        r_poles_for_row = 997 * 10**3                     # radius of the poles for the row node [m]
+        r_poles_for_pitch_yaw = 2893*10**3      # radius of the poles for the pitch and yaw nodes [m]
+        
+        ADCS_cont = None
+
+        pass
+
+    def ADCS_max_power_cont(self, POLES_row=True):
         '''
             Function that calculates the base continuous power of the ADCS subsystem depending on LAMP's location over
             the poles.
 
             Parameters:
-                POLES (boolean) -> True if LAMP is over the poles, False otherwise. Default: True
+                POLES_row (boolean) -> True if LAMP is over the poles in the row node (20% of orbit time) - max power consumption
                                    
 
             Returns:
@@ -325,7 +358,7 @@ class EPS_Simulation_:
         rw_2 = 2
 
         # --- Power calculation --- #
-        if POLES:
+        if POLES_row:
             # Formula considered over the poles to maintain NADIR:
             #        P = magn in row + rw in yaw & pitch & row + remaining in standby
             ADCS_base_c_power = magn_1_active * magn_1 \
@@ -337,7 +370,7 @@ class EPS_Simulation_:
                               + star_sensor_quantity * star_sensor
             
             return ADCS_base_c_power
-        if not POLES:
+        if not POLES_row:
             # Formula considered over the poles to maintain NADIR:
             #        P = magn in yaw & pitch + rw in yaw & pitch & row + remaining in standby
             ADCS_base_c_power = magn_2_active * magn_2 \
@@ -471,30 +504,30 @@ class EPS_Simulation_:
             pass
         else:
             # Define the battery capacity used from the propulsion battery during sun operations only if in discharge
-            midpoint_prop = math.floor((845)/2)
+            midpoint_prop = math.floor((870)/2)
             if ltan == 6:
                 mid_point_sun0 = math.floor(len(self.Payload_sun_6h)/2)
                 temp_start = mid_point_sun0 - midpoint_prop
-                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+870])
                 if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
                     C_needed_prop_sun = 0
             elif ltan == 9:
                 mid_point_sun0 = math.floor(len(self.Payload_sun_9h)/2)
                 temp_start = mid_point_sun0 - midpoint_prop
-                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+870])
                 if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
                     C_needed_prop_sun = 0
             elif ltan == 12:
                 mid_point_sun0 = math.floor(len(self.Payload_sun_12h)/2)
                 temp_start = mid_point_sun0 - midpoint_prop
-                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+845])
+                C_needed_prop_sun = np.sum(battery_array_cd[temp_start:temp_start+870])
                 if C_needed_prop_sun > 0:       # In case of a positive value it would indicate charginng
                     C_needed_prop_sun = 0
 
         
             # Compute the total needed capacity for operations of propulsion battery
             # Battery Li-Ion operates for 10 000 cycles - > 50% DOD: SOURCE - Analysis of On-Board Photovoltaics for a Battery Electric Bus and Their Impact on Battery Lifespan - Scientific Figure on ResearchGate. Available from: https://www.researchgate.net/figure/Depth-of-discharge-versus-cycle-life-of-the-lithium-ion-battery_fig4_318292540 [accessed 14 Jun, 2023]
-            C_needed_prop = self.Prop_peak_power * 845 + abs(C_needed_prop_sun)     # [Ws]
+            C_needed_prop = self.Prop_peak_power * 870 + abs(C_needed_prop_sun)     # [Ws]
             C_BOL_prop = C_needed_prop / (0.5 * self.n_bat)                         # [Ws]
             M_prop_bat = (C_BOL_prop / 3600) / self.Esp_liion                       # [kg] = [Ws / 3600] / [Wh/kg] = Wh / Wh/kg
             V_prop_bat = (C_BOL_prop / 3600) / self.rhosp_liion                     # [U] = [Ws / 3600] / [Wh/L] = Wh / Wh/U
@@ -664,7 +697,7 @@ class EPS_Simulation_:
 
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [0.5, 1, 1.5, 2, 2.5]:
+            for j in [1.1, 1.2, 1.3, 1.4, 1.5]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=True)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i],j)
@@ -760,7 +793,7 @@ class EPS_Simulation_:
             os.makedirs('./Outputs/EPS_simulation/CSV/Discontinuous/12h/')
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [0.5, 1, 1.5, 2, 2.5]:
+            for j in [1.1, 1.2, 1.3, 1.4, 1.5]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=False)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i], j)

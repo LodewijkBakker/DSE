@@ -25,7 +25,7 @@ import csv
 df = pd.read_csv('./battery_sizings.csv')
 
 # Filter the DataFrame based on the condition
-condition = df['Config'].str.contains('1.5') & (df['Config'].str.contains('12') | df['Config'].str.contains('9') | df['Config'].str.contains('6'))
+condition = df['Config'].str.contains('1.5') & (df['Config'].str.contains('12') | df['Config'].str.contains('9') | df['Config'].str.contains('6')) & df['Config'].str.contains('_i_Folds')
 filtered_df = df[condition]
 
 # Write the filtered DataFrame back to the CSV file
@@ -50,8 +50,8 @@ v_prop_bat = row_max_C_BOL_prop['V_prop_bat']
 v_remain_bat = row_max_C_BOL_remain['V_remain_bat']
 
 # Total mass and volume of the batteries
-m_tot_bat = m_prop_bat + m_remain_bat
-v_tot_bat = v_prop_bat + v_remain_bat
+m_tot_bat = (m_prop_bat + m_remain_bat) * 1.2                       # 20% safety factor
+v_tot_bat = (v_prop_bat + v_remain_bat) * 1.2                       # 20% safety factor
 
 # Mass of the solar panels 
 mass_p_cell = 53/2/1000     # [kg] Mass of a single solar panel cell   
