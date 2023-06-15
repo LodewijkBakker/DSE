@@ -216,11 +216,11 @@ def sizing_cmg(max_angular_momentum, r_wheel=0.02):
     return m_full, v_cmg
 
 def sizing_magnetorquer(dip_moment):
-    m_magnetorquer = 0
+    m_magnetorquer = 0 
     v_magnetorquer = 0
     for dip_moment_axis in dip_moment:
         assert(dip_moment_axis > 0)
-        m_magnetorquer += dip_moment_axis*0.15
+        m_magnetorquer += dip_moment_axis*0.015
         v_magnetorquer += m_magnetorquer*2.1  # U/kg
 
     return m_magnetorquer, v_magnetorquer
@@ -256,6 +256,14 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
         print(dip_min, m_total_min, v_total_min, r)
 
 if __name__ == "__main__":
+
+    # Magnetorquer sizing
+    dip_moment = np.array([4,4,4])
+    m1, v1 = sizing_magnetorquer(dip_moment)
+    assert ()
+    print(m1, v1)
+
+
     # Avg torque calc tester
     assert (np.all(np.isclose(avg_torque_calc(np.array([0, 0, 0]), np.array([0, 0, 0]), 0, 1000), np.array([0, 0, 0]))))
     assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([0.5, 0, 0.2]), 200, 1000), np.array([1, 1, 1]))))
