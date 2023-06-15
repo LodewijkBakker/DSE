@@ -195,23 +195,24 @@ def sizing_angular_momentum_calc(max_angular_momentum):
     sizing_angular_momentum = max(max_angular_momentum[0], max_angular_momentum[1])/(2*(1+np.cos(beta_angle)))
     return sizing_angular_momentum
 
-def sizing_cmg(max_angular_momentum, r_wheel=0.02):
+def sizing_cmg(max_angular_momentum, r_wheel=0.02, sizing_angular_momentum=None):
     """
     :param max_angular_momentum: angular momentum along body axis (roll, pitch, yaw)
     :param r_wheel: radius of the wheel
     :return:
     """
-    sizing_angular_momentum = sizing_angular_momentum_calc(max_angular_momentum)
+    if sizing_angular_momentum is None:
+        sizing_angular_momentum = sizing_angular_momentum_calc(max_angular_momentum)
     #print(sizing_angular_momentum*1000)  # varies from okay to really really shit so look out
     # TODO investigate 4 placement
     rho_cmg = 0.8989617244  # [u / kg]
     delta_angular_velocity = 2500*2*np.pi/60  # from statistics
     #r_range = 0.02  # actually 0.015 - 0.025
-    inertia_needed = sizing_angular_momentum/delta_angular_velocity
+    inertia_needed = sizing_angular_momentum/delta_angular_velocity # correct
     n_cmg = 4
-    m_disk = n_cmg * inertia_needed/r_wheel**2
+    m_disk = inertia_needed/r_wheel**2
     m_full = n_cmg * (1+2/3) * m_disk
-    v_cmg = n_cmg * m_full*rho_cmg  # [u]
+    v_cmg = m_full*rho_cmg  # [u]
 
     return m_full, v_cmg
 
@@ -258,10 +259,10 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
 if __name__ == "__main__":
 
     # Magnetorquer sizing
-    dip_moment = np.array([4,4,4])
+    dip_moment = np.array([4, 4, 4])
     m1, v1 = sizing_magnetorquer(dip_moment)
-    assert ()
-    print(m1, v1)
+    np.testing.assert_almost_equal(m1, 0.18)
+    np.testing.assert_almost_equal(v1, 0.756)
 
 
     # Avg torque calc tester
@@ -284,14 +285,23 @@ if __name__ == "__main__":
     H_roll = 83.8
     H_pitch = 68.1
     H_yaw = 38.4
-    H = [H_roll, H_pitch, H_yaw]
+    H = np.array([H_roll, H_pitch, H_yaw])
     np.testing.assert_almost_equal(sizing_angular_momentum_calc(H), 22, decimal=1)
+
+    # CMG sizing tester
+    np.testing.assert_almost_equal(sizing_cmg(np.array([17e-3, 17e-3, 17e-3]), r_wheel=0.025,
+                                              sizing_angular_momentum=17e-3),
+                                   (0.69264, 0.62266), decimal=4)
+    np.testing.assert_almost_equal(sizing_cmg(np.array([17e-3, 17e-3, 17e-3]), r_wheel=0.015,
+                                              sizing_angular_momentum=17e-3),
+                                   (1.92400, 1.72961), decimal=4)
 
     # angular momentum is not correct now it seems. (way to high (cause maybe average magnetic))
 
     mag_field, time_step = mag_field_creator()
     t_orbit = 5432
     t_repeat_prop = t_orbit*3
+    t_prop_on = 900
     t_prop_on = 0
     nom_torque_1 = np.array([1.71E-05, 7.91E-05, 2.58E-05])
     prop_torque_1 = np.array([1.75E-05,	8.22E-05, 2.30E-05])
