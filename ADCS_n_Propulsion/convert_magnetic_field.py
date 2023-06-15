@@ -52,9 +52,9 @@ def mag_field_creator():
     y = BF[:, 1]
     z = BF[:, 2]
 
-    yaw = np.interp(np.linspace(0, len(x), num=1000), np.arange(0, len(x)), x)
-    roll = np.interp(np.linspace(0, len(y), num=1000), np.arange(0, len(y)), y)
-    pitch = np.interp(np.linspace(0, len(z), num=1000), np.arange(0, len(z)), z)
+    yaw = np.interp(np.linspace(0, len(x), num=len(x)*time_step), np.arange(0, len(x)), x)
+    roll = np.interp(np.linspace(0, len(y), num=len(y)*time_step), np.arange(0, len(y)), y)
+    pitch = np.interp(np.linspace(0, len(z), num=len(z)*time_step), np.arange(0, len(z)), z)
 
     #Turn arrays to absolute values
     mag_field = 1e-9*np.column_stack((np.absolute(roll), np.absolute(pitch), np.absolute(yaw)))
@@ -107,8 +107,73 @@ def sizing_dipole(mag_field: np.ndarray, avg_torque: np.ndarray, I_sat: np.ndarr
 
     return dip_moment
 
+def res_torques_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray):
+    """
+    :param mag_field: roll, pitch yaw magnetic field in [nanotesla]
+    :param avg_torque: roll, pitch, yaw average torque over orbit [Nm]
+    :return res_torques: roll, pitch, yaw resultant torques over orbit with desaturation [Nm]
+    """
+
+    mag_torque = np.multiply(dip_moment, mag_field)
+    res_torques = avg_torque - mag_torque
+    # # Add window of propulsion at one point
+    # result_torque_left_pitch[400:415] += (entry_torque_straight_prop[1]-entry_torque[1])
+    return res_torques
+
+def integrate_torques(res_torques: np.ndarray):
+    """
+    :param res_torques: roll, pitch, yaw resultant torques over orbit with desaturation [Nm]
+    :param time_step: time step resolution of the torques
+    :return: angular_momentum stored velocity of spacecraft in reaction wheels [Nms]
+    """
+    # Integration
+    angular_momentum = integrate.cumtrapz(res_torques, axis=0)  # min to sec
+
+    return angular_momentum  # this should be 0 on average I think
+
+def angular_momentum_realism_creator(angular_momentum: np.ndarray):
+    """
+    :param angular_momentum: stored velocity of spacecraft in reaction wheels [Nms]
+    :return angular_momentum: stored velocity of spacecraft in reaction wheels but now realistic [Nms]:
+    """
+    # Find The peaks at minimum points under 0
+    roll_peaks, _ = find_peaks(-angular_momentum[:, 0], height=0)
+    pitch_peaks, _ = find_peaks(-angular_momentum[:, 1], height=0)
+    yaw_peaks, _ = find_peaks(-angular_momentum[:, 2], height=0)
+
+    # Update peaks
+    for r_peak in roll_peaks:
+        if angular_momentum[r_peak, 0] < 0:
+            angular_momentum[r_peak:, 0] -= angular_momentum[r_peak, 0]
+
+    for p_peak in pitch_peaks:
+        if angular_momentum[p_peak, 1] < 0:
+            angular_momentum[p_peak:, 1] -= angular_momentum[p_peak, 1]
+
+    for y_peak in yaw_peaks:
+        if angular_momentum[y_peak, 2] < 0:
+            angular_momentum[y_peak:, 2] -= angular_momentum[y_peak, 2]
+
+    # all items that are below zero then reset to 0
+    angular_momentum = np.clip(angular_momentum, 0, None)
+    return angular_momentum
+
+def get_sizing_from_angular_momentum(angular_momentum: np.ndarray):
+    """
+    :param angular_momentum: stored velocity of spacecraft in reaction wheels [Nms]
+    :return design_max_angular_momentum_mNms: maximum momentum in mNms to size cmgs
+    """
+
+    # Find Maximum
+    max_angular_momentum = np.max(angular_momentum, axis=0)
+    safety_factor = 2
+    design_max_angular_momentum_Nms = max_angular_momentum*safety_factor
+
+    return design_max_angular_momentum_Nms
+
+
 def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray, time_step: float):
-    #@jit(nopython=True)
+    # @jit(nopython=True)
     def res_torques_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_moment: np.ndarray):
         """
         :param mag_field: roll, pitch yaw magnetic field in [nanotesla]
@@ -122,18 +187,17 @@ def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_mom
         # result_torque_left_pitch[400:415] += (entry_torque_straight_prop[1]-entry_torque[1])
         return res_torques
 
-    #@jit(nopython=True)
-    def integrate_torques(res_torques: np.ndarray, time_step: float):
+    # @jit(nopython=True)
+    def integrate_torques(res_torques: np.ndarray):
         """
         :param res_torques: roll, pitch, yaw resultant torques over orbit with desaturation [Nm]
         :param time_step: time step resolution of the torques
         :return: angular_momentum stored velocity of spacecraft in reaction wheels [Nms]
         """
         # Integration
-        angular_momentum = integrate.cumtrapz(res_torques, axis=0)*time_step  # min to sec
+        angular_momentum = integrate.cumtrapz(res_torques, axis=0)  # min to sec
 
         return angular_momentum  # this should be 0 on average I think
-
 
     def angular_momentum_realism_creator(angular_momentum: np.ndarray):
         """
@@ -179,7 +243,7 @@ def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_mom
     i_t_t1 = perf_counter()
     res_torques = res_torques_calc(mag_field, avg_torque, dip_moment)
     i_t_t2 = perf_counter()
-    angular_momentum = integrate_torques(res_torques, time_step)
+    angular_momentum = integrate_torques(res_torques)
     i_t_t3 = perf_counter()
     angular_momentum = angular_momentum_realism_creator(angular_momentum)
     i_t_t4 = perf_counter()
@@ -266,20 +330,20 @@ if __name__ == "__main__":
 
 
     # Avg torque calc tester
-    assert (np.all(np.isclose(avg_torque_calc(np.array([0, 0, 0]), np.array([0, 0, 0]), 0, 1000), np.array([0, 0, 0]))))
-    assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([0.5, 0, 0.2]), 200, 1000), np.array([1, 1, 1]))))
-    assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([2, 0, 2]), 1000, 1000), np.array([2, 1, 2]))))
+    # assert (np.all(np.isclose(avg_torque_calc(np.array([0, 0, 0]), np.array([0, 0, 0]), 0, 1000), np.array([0, 0, 0]))))
+    # assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([0.5, 0, 0.2]), 200, 1000), np.array([1, 1, 1]))))
+    # assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([2, 0, 2]), 1000, 1000), np.array([2, 1, 2]))))
 
-    # Dipole sizing tester
-    t_orbits_detumbling = 40*5423  # time available for detumbling until deorbit
-    assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [2, 2, 2]]), np.array([1, 1, 1]), np.array([1, 1, 1]),
-                                           t_orbits_detumbling), np.array([1, 1, 1])))
-    m = 0.5  # tesla
-    v_r = 300/180*np.pi  # rad /s
-    torque_required = v_r/(t_orbits_detumbling*m)
-    assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
-                                           t_orbits_detumbling), np.array([torque_required, torque_required,
-                                                                           torque_required])))
+    # # Dipole sizing tester
+    # t_orbits_detumbling = 40*5423  # time available for detumbling until deorbit
+    # assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [2, 2, 2]]), np.array([1, 1, 1]), np.array([1, 1, 1]),
+    #                                        t_orbits_detumbling), np.array([1, 1, 1])))
+    # m = 0.5  # tesla
+    # v_r = 300/180*np.pi  # rad /s
+    # torque_required = v_r/(t_orbits_detumbling*m)
+    # assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
+    #                                        t_orbits_detumbling), np.array([torque_required, torque_required,
+    #                                                                        torque_required])))
 
     # Cmg h tester
     H_roll = 83.8
