@@ -1,0 +1,5 @@
+case, max torque roll, max torque pitch, max torque yaw, max unstable torque pitch, max unstable torque yaw, max torque roll prop, max torque pitch prop, max torque yaw prop, max unstable torque pitch prop, max unstable torque yaw prop, max average roll torque all, max average pitch torque all, max average yaw torque all, max roll torque all, max pitch torque all, max yaw torque all
+CIV-Ffh0-Sf0, 0.00001714, 0.00007876, 0.00002485, 0.00007837, 0.00002577, 0.00001751, 0.00035089, 0.00002208, 0.00035058, 0.00002300, 0.00000030, 0.00000032, 0.00000005, 0.00027117, 0.00047308, 0.00010968 
+CIV-Ffh12-Sf12, 0.00001647, 0.00007898, 0.00002917, 0.00007905, 0.00002521, 0.00001683, 0.00035111, 0.00002641, 0.00035139, 0.00002245, 0.00000029, 0.00000031, 0.00000005, 0.00027067, 0.00045705, 0.00011394 
+absolute maximums
+0.00001714, 0.00007898, 0.00002917, 0.00007905, 0.00002577, 0.00001751, 0.00035111, 0.00002641, 0.00035139, 0.00002300, 0.00000030, 0.00000032, 0.00000032, 0.00027117, 0.00047308, 0.00011394 

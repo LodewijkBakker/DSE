@@ -56,105 +56,104 @@ cg_s = {[0, 0.181, -0.018], [0, 0.177, -0.018], [0, 0.172, -0.018]};  % array of
 %     end
 % end
 
-
-modGeneral = 'CI-Br-Sf0';
-modNames = {'CI-Br0-Sf0', 'CI-Br30-Sf0', 'CI-Br60-Sf0', 'CI-Br90-Sf0'};
-config_1_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sf0\\CI-Br-Sf0.csv';
-get_config_torque_csv(config_1_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIII-Bfhi-Sfi';
-modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf12'};
-config_2_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfi\\CIII-Bfhi-Sfi.csv';
-get_config_torque_csv(config_2_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIII-Bfhi-Sfo';
-modNames = {'CIII-Bfh0-Sfo', 'CIII-Bfh12-Sfo'};
-config_3_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfo\\CIII-Bfhi-Sfo.csv';
-get_config_torque_csv(config_3_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIII-Bfvi-Sfi';
-modNames = {'CIII-Bfv46-Sf46', 'CIII-Bfv61-Sf61', 'CIII-Bfv72-Sf72', 'CIII-Bfv80-Sf80', 'CIII-Bfv83-Sf83'};
-config_4_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sfi\\CIII-Bfvi-Sfi.csv';
-get_config_torque_csv(config_4_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIII-Bfvi-Sf0';
-modNames = {'CIII-Bfv46-Sf0', 'CIII-Bfv61-Sf0', 'CIII-Bfv72-Sf0', 'CIII-Bfv80-Sf0', 'CIII-Bfv83-Sf0'};
-config_5_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sf0\\CIII-Bfvi-Sf0.csv';
-get_config_torque_csv(config_5_loc, cg_s, inparam, modNames, modGeneral)
-
 modGeneral = 'CIV-Ffhi-Sfi';
 modNames = {'CIV-Ffh0-Sf0', 'CIV-Ffh12-Sf12'};
-config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sfi.csv';
+config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sfi.csv';
 get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% % CIV-Fr-Sfi
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf0';
+% modNames = {'CIV-Fr0-Sf0', 'CIV-Fr30-Sf0', 'CIV-Fr60-Sf0', 'CIV-Fr90-Sf0'};
+% config_13_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf0\\CIV-Fr-Sf0.csv';
+% get_config_torque_csv(config_13_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf12';
+% modNames = {'CIV-Fr0-Sf12', 'CIV-Fr30-Sf12', 'CIV-Fr60-Sf12', 'CIV-Fr90-Sf12'};
+% config_14_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf12\\CIV-Fr-Sf12.csv';
+% get_config_torque_csv(config_14_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf46';
+% modNames = {'CIV-Fr0-Sf46', 'CIV-Fr30-Sf46', 'CIV-Fr60-Sf46', 'CIV-Fr90-Sf46'};
+% config_15_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf46\\CIV-Fr-Sf46.csv';
+% get_config_torque_csv(config_15_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf61';
+% modNames = {'CIV-Fr0-Sf61', 'CIV-Fr30-Sf61', 'CIV-Fr60-Sf61', 'CIV-Fr90-Sf61'};
+% config_16_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf61\\CIV-Fr-Sf61.csv';
+% get_config_torque_csv(config_16_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf72'; % last one was here
+% modNames = {'CIV-Fr0-Sf72', 'CIV-Fr30-Sf72', 'CIV-Fr60-Sf72', 'CIV-Fr90-Sf72'};
+% config_17_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf72\\CIV-Fr-Sf72.csv';
+% get_config_torque_csv(config_17_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf80';
+% modNames = {'CIV-Fr0-Sf80', 'CIV-Fr30-Sf80', 'CIV-Fr60-Sf80', 'CIV-Fr90-Sf80'};
+% config_18_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf80\\CIV-Fr-Sf80.csv';
+% get_config_torque_csv(config_18_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf83';
+% modNames = {'CIV-Fr0-Sf83', 'CIV-Fr30-Sf83', 'CIV-Fr60-Sf83', 'CIV-Fr90-Sf83'};
+% config_19_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf83\\CIV-Fr-Sf83.csv';
+% get_config_torque_csv(config_19_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sf0';
+% modNames = {'CI-Br0-Sf0', 'CI-Br30-Sf0', 'CI-Br60-Sf0', 'CI-Br90-Sf0'};
+% config_1_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sf0\\CI-Br-Sf0.csv';
+% get_config_torque_csv(config_1_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIII-Bfhi-Sfi';
+% modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf12'};
+% config_2_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfi\\CIII-Bfhi-Sfi.csv';
+% get_config_torque_csv(config_2_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIII-Bfhi-Sfo';
+% modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf0'};
+% config_3_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfo\\CIII-Bfhi-Sfo.csv';
+% get_config_torque_csv(config_3_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIII-Bfvi-Sfi';
+% modNames = {'CIII-Bfv46-Sf46', 'CIII-Bfv61-Sf61', 'CIII-Bfv72-Sf72', 'CIII-Bfv80-Sf80', 'CIII-Bfv83-Sf83'};
+% config_4_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sfi\\CIII-Bfvi-Sfi.csv';
+% get_config_torque_csv(config_4_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CIII-Bfvi-Sfo';
+% modNames = {'CIII-Bfv46-Sf0', 'CIII-Bfv61-Sf0', 'CIII-Bfv72-Sf0', 'CIII-Bfv80-Sf0', 'CIII-Bfv83-Sf0'};
+% config_5_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfvi-Sf0\\CIII-Bfvi-Sf0.csv';
+% get_config_torque_csv(config_5_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% % CI-Bri-Sfi
+% % CI-Br-Sf12
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf12';
+% modNames = {'CI-Br0-Sf12', 'CI-Br30-Sf12', 'CI-Br60-Sf12', 'CI-Br90-Sf12'};
+% config_7_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf12\\CIV-Br-Sf12.csv';
+% get_config_torque_csv(config_7_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf46';
+% modNames = {'CI-Br0-Sf46', 'CI-Br30-Sf46', 'CI-Br60-Sf46', 'CI-Br90-Sf46'};
+% config_8_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf46\\CIV-Br-Sf46.csv';
+% get_config_torque_csv(config_8_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf61';
+% modNames = {'CI-Br0-Sf61', 'CI-Br30-Sf61', 'CI-Br60-Sf61', 'CI-Br90-Sf61'};
+% config_9_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf61\\CIV-Br-Sf61.csv';
+% get_config_torque_csv(config_9_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf71';
+% modNames = {'CI-Br0-Sf72', 'CI-Br30-Sf72', 'CI-Br60-Sf72', 'CI-Br90-Sf72'};
+% config_10_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf72\\CIV-Br-Sf72.csv';
+% get_config_torque_csv(config_10_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf80';
+% modNames = {'CI-Br0-Sf80', 'CI-Br30-Sf80', 'CI-Br60-Sf80', 'CI-Br90-Sf80'};
+% config_11_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf80\\CIV-Br-Sf80.csv';
+% get_config_torque_csv(config_11_loc, cg_s, inparam, modNames, modGeneral)
+% 
+% modGeneral = 'CI-Br-Sfi\\CI-Br-Sf83';
+% modNames = {'CI-Br0-Sf83', 'CI-Br30-Sf83', 'CI-Br60-Sf83', 'CI-Br90-Sf83'};
+% config_12_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf83\\CIV-Br-Sf83.csv';
+% get_config_torque_csv(config_12_loc, cg_s, inparam, modNames, modGeneral)
 
-% CI-Bri-Sfi
-% CI-Br-Sf12
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf12';
-modNames = {'CI-Br0-Sf12', 'CI-Br30-Sf12', 'CI-Br60-Sf12', 'CI-Br90-Sf12'};
-config_7_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf12\\CIV-Br-Sf12.csv';
-get_config_torque_csv(config_7_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf46';
-modNames = {'CI-Br0-Sf46', 'CI-Br30-Sf46', 'CI-Br60-Sf46', 'CI-Br90-Sf46'};
-config_8_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf46\\CIV-Br-Sf46.csv';
-get_config_torque_csv(config_8_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf61';
-modNames = {'CI-Br0-Sf61', 'CI-Br30-Sf61', 'CI-Br60-Sf61', 'CI-Br90-Sf61'};
-config_9_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf61\\CIV-Br-Sf61.csv';
-get_config_torque_csv(config_9_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf71';
-modNames = {'CI-Br0-Sf72', 'CI-Br30-Sf72', 'CI-Br60-Sf72', 'CI-Br90-Sf72'};
-config_10_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf72\\CIV-Br-Sf72.csv';
-get_config_torque_csv(config_10_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf80';
-modNames = {'CI-Br0-Sf80', 'CI-Br30-Sf80', 'CI-Br60-Sf80', 'CI-Br90-Sf80'};
-config_11_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf80\\CIV-Br-Sf80.csv';
-get_config_torque_csv(config_11_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CI-Br-Sfi\\CI-Br-Sf83';
-modNames = {'CI-Br0-Sf83', 'CI-Br30-Sf83', 'CI-Br60-Sf83', 'CI-Br90-Sf83'};
-config_12_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sfi\\CI-Br-Sf83\\CIV-Br-Sf83.csv';
-get_config_torque_csv(config_12_loc, cg_s, inparam, modNames, modGeneral)
-
-
-% CIV-Fr-Sfi
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf0';
-modNames = {'CIV-Fr0-Sf0', 'CIV-Fr30-Sf0', 'CIV-Fr60-Sf0', 'CIV-Fr90-Sf0'};
-config_13_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf0\\CIV-Ffhi-Sf0.csv';
-get_config_torque_csv(config_13_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf12';
-modNames = {'CIV-Fr-Sf12', 'CIV-Fr30-Sf12', 'CIV-Fr60-Sf12', 'CIV-Fr90-Sf12'};
-config_14_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf12\\CIV-Ffhi-Sf12.csv';
-get_config_torque_csv(config_14_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf46';
-modNames = {'CIV-Fr0-Sf46', 'CIV-Fr30-Sf46', 'CIV-Fr60-Sf46', 'CIV-Fr90-Sf46'};
-config_15_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf46\\CIV-Ffhi-Sf46.csv';
-get_config_torque_csv(config_15_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf61';
-modNames = {'CIV-Fr0-Sf61', 'CIV-Fr30-Sf61', 'CIV-Fr60-Sf61', 'CIV-Fr90-Sf61'};
-config_16_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf61\\CIV-Fr-Sf61.csv';
-get_config_torque_csv(config_16_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf71';
-modNames = {'CIV-Fr0-Sf72', 'CIV-Fr30-Sf72', 'CIV-Fr60-Sf72', 'CIV-Fr90-Sf72'};
-config_17_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf72\\CIV-Fr-Sf72.csv';
-get_config_torque_csv(config_17_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf80';
-modNames = {'CIV-Fr0-Sf80', 'CIV-Fr30-Sf80', 'CIV-Fr60-Sf80', 'CIV-Fr90-Sf80'};
-config_18_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf80\\CIV-Fr-Sf80.csv';
-get_config_torque_csv(config_18_loc, cg_s, inparam, modNames, modGeneral)
-
-modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf83';
-modNames = {'CIV-Fr0-Sf83', 'CIV-Fr30-Sf83', 'CIV-Fr60-Sf83', 'CIV-Fr90-Sf83'};
-config_19_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Fr-Sfi\\CIV-Fr-Sf83\\CIV-Fr-Sf83.csv';
-get_config_torque_csv(config_19_loc, cg_s, inparam, modNames, modGeneral)
 
 
 
@@ -227,9 +226,9 @@ function [abs_t_m_r, abs_t_m_p, abs_t_m_y, abs_t_m_p_u, abs_t_m_y_u, abs_t_m_r_p
         abs_t_m_avg_p = max(abs_t_m_avg_p, t_m_avg_p);
         abs_t_m_avg_y = max(abs_t_m_avg_y, t_m_avg_p);
 
-        abs_t_m_all_r = max(abs_t_m_all_r, t_m_avg_r);
-        abs_t_m_all_p = max(abs_t_m_all_p, t_m_avg_p);
-        abs_t_m_all_y = max(abs_t_m_all_y, t_m_avg_y);
+        abs_t_m_all_r = max(abs_t_m_all_r, t_m_all_r);
+        abs_t_m_all_p = max(abs_t_m_all_p, t_m_all_p);
+        abs_t_m_all_y = max(abs_t_m_all_y, t_m_all_y);
 
     end
 end
@@ -266,7 +265,7 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
     max_avg_pitch = 0;
     max_avg_yaw = 0;
 
-    n_fib = 200;
+    n_fib = 300;
     all_roll_list = zeros(n_fib);
     all_pitch_list = zeros(n_fib);
     all_yaw_list = zeros(n_fib);
@@ -331,7 +330,7 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
 
         % Avg case
         for j = 1:n_fib
-            [aos, aoa] = aos_aoa_converter(xg(j));
+            [aos, aoa] = aos_aoa_converter(xg(j, :));
             fileOut = calc_coeff(modOut_imp, resOut, deg2rad(aos), deg2rad(aoa), inparam, shadow, solar, 1, 0); 
             Cm_B = load(fileOut, "Cm_B").Cm_B;
             % Converter to aerodynamic torque!!
@@ -347,9 +346,9 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
             max_all_pitch = max(max_all_pitch, pitch_torque_all);
             max_all_yaw = max(max_all_yaw, yaw_torque_all);
         end
-        max_avg_roll = max(max_avg_roll, mean(all_roll_list));
-        max_avg_pitch = max(max_avg_pitch, mean(all_pitch_list));
-        max_avg_yaw = max(max_avg_yaw, mean(all_yaw_list));
+        max_avg_roll = max(max_avg_roll, mean(all_roll_list,"all")); % should likely exceed
+        max_avg_pitch = max(max_avg_pitch, mean(all_pitch_list,"all"));
+        max_avg_yaw = max(max_avg_yaw, mean(all_yaw_list,"all"));
     end
 end 
 
@@ -404,8 +403,8 @@ end
 function [t_roll_torque, t_pitch_torque, t_yaw_torque, t_pitch_unstable, t_yaw_unstable, roll_torque, pitch_torque, yaw_torque, pitch_unstable, yaw_unstable] = torque_w_thrust(M_b, cg, aoa, aos)
     % Propulsion torque
     random_angle_offset = 0/180*pi;
-    % minimises torque
-    rad_offset = [9.63/180*pi, 0.1/180*pi];  % local angles compared to body angles, (roll is disregarded) first is a pitch angle and seconds is a yaw like angle
+    % minimises torque 9.63
+    rad_offset = [0/180*pi, 0.1/180*pi];  % local angles compared to body angles, (roll is disregarded) first is a pitch angle and seconds is a yaw like angle
 
     prop_point = [0.18, 0, 0.146];  
     % if thruster in z direction is higher than cg then res pitch should be
@@ -498,8 +497,8 @@ function [aos, aoa] = aos_aoa_converter(x)
     % two circles
     % s_vector = [-1, 0, 0]  % xyz
     [azimuth, elevation, ~] = cart2sph(x(1), x(2), x(3));
-    aos = azimuth;
-    aoa = elevation;
+    aos = rad2deg(azimuth);
+    aoa = rad2deg(elevation);
 end
 % zero torque at precise cg 0.1765479 and angle 9.63194
 
