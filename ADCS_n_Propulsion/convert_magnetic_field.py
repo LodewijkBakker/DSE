@@ -5,7 +5,7 @@ from scipy import integrate
 from scipy.signal import find_peaks
 from tqdm import tqdm
 from time import perf_counter
-from numba import jit
+
 
 def mag_field_creator():
     """
@@ -188,9 +188,21 @@ def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_mom
     #print(i_t_t5 - i_t_t4, i_t_t4 - i_t_t3, i_t_t3 - i_t_t2, i_t_t2 - i_t_t1)
     return design_max_angular_momentum_Nms
 
+
+def sizing_angular_momentum_calc(max_angular_momentum):
+    # https://arc.aiaa.org/doi/10.2514/1.G006461
+    beta_angle = 2*np.arctan(max_angular_momentum[2]/(2*max(max_angular_momentum[0], max_angular_momentum[1])))  # look out for arctan2 values
+    sizing_angular_momentum = max(max_angular_momentum[0], max_angular_momentum[1])/(2*(1+np.cos(beta_angle)))
+    return sizing_angular_momentum
+
 def sizing_cmg(max_angular_momentum, r_wheel=0.02):
-    sizing_angular_momentum = max(max_angular_momentum)
-    print(sizing_angular_momentum*1000) # varies from okay to really really shit so look out
+    """
+    :param max_angular_momentum: angular momentum along body axis (roll, pitch, yaw)
+    :param r_wheel: radius of the wheel
+    :return:
+    """
+    sizing_angular_momentum = sizing_angular_momentum_calc(max_angular_momentum)
+    #print(sizing_angular_momentum*1000)  # varies from okay to really really shit so look out
     # TODO investigate 4 placement
     rho_cmg = 0.8989617244  # [u / kg]
     delta_angular_velocity = 2500*2*np.pi/60  # from statistics
@@ -259,6 +271,13 @@ if __name__ == "__main__":
     assert np.all(np.isclose(sizing_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
                                            t_orbits_detumbling), np.array([torque_required, torque_required,
                                                                            torque_required])))
+
+    # Cmg h tester
+    H_roll = 83.8
+    H_pitch = 68.1
+    H_yaw = 38.4
+    H = [H_roll, H_pitch, H_yaw]
+    np.testing.assert_almost_equal(sizing_angular_momentum_calc(H), 22, decimal=1)
 
     # angular momentum is not correct now it seems. (way to high (cause maybe average magnetic))
 
