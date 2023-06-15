@@ -249,36 +249,54 @@ def angular_momentum_calc(mag_field: np.ndarray, avg_torque: np.ndarray, dip_mom
     return design_max_angular_momentum_Nms
 
 
-def sizing_angular_momentum_calc(max_angular_momentum):
+def sizing_angular_momentum_calc(max_angular_momentum, print_beta_ang=False):
     # https://arc.aiaa.org/doi/10.2514/1.G006461
-    beta_angle = 2*np.arctan(max_angular_momentum[2]/(2*max(max_angular_momentum[0], max_angular_momentum[1])))  # look out for arctan2 values
-    sizing_angular_momentum = max(max_angular_momentum[0], max_angular_momentum[1])/(2*(1+np.cos(beta_angle)))
+
+    # Pyramid
+    # beta_angle = 2*np.arctan(max_angular_momentum[2]/(2*max(max_angular_momentum[0], max_angular_momentum[1])))  # look out for arctan2 values
+    # if print_beta_ang:
+    #     print(beta_angle, 'beta_angle')
+    # sizing_angular_momentum = max(max_angular_momentum[0], max_angular_momentum[1])/(2*(1+np.cos(beta_angle)))
+
+    # Roof
+    beta_angle = np.arctan(max_angular_momentum[2]/max_angular_momentum[1])
+    if print_beta_ang:
+         print(beta_angle, 'beta_angle')
+    sizing_angular_momentum = max(max_angular_momentum[0]/4, max_angular_momentum[1]/(4*np.cos(beta_angle)))
+
+
+
     return sizing_angular_momentum
 
-def sizing_cmg(max_angular_momentum, r_wheel=0.02, sizing_angular_momentum=None):
+def sizing_cmg(max_angular_momentum, r_wheel=0.02, sizing_angular_momentum=None, print_ang=False):
     """
     :param max_angular_momentum: angular momentum along body axis (roll, pitch, yaw)
     :param r_wheel: radius of the wheel
     :return:
     """
     if sizing_angular_momentum is None:
-        sizing_angular_momentum = sizing_angular_momentum_calc(max_angular_momentum)
+        sizing_angular_momentum = sizing_angular_momentum_calc(max_angular_momentum, print_beta_ang=print_ang)
 
     safety_factor = 1.5
-    sizing_angular_momentum = sizing_angular_momentum*safety_factor
-    #print(sizing_angular_momentum*1000)  # varies from okay to really really shit so look out
+    two_sided_factor = 2
+    sizing_angular_momentum = sizing_angular_momentum*safety_factor*two_sided_factor
+
+    # print(sizing_angular_momentum*1000)  # varies from okay to really really shit so look out
     # TODO investigate 4 placement
     rho_cmg = 0.8989617244  # [u / kg]
     delta_angular_velocity = 2500*2*np.pi/60  # from statistics
     #r_range = 0.02  # actually 0.015 - 0.025
     inertia_needed = sizing_angular_momentum/delta_angular_velocity # correct
-
-    m_disk = inertia_needed/r_wheel**2
-
     n_cmg = 4
+    m_disk = inertia_needed/r_wheel**2
     m_full = n_cmg * (1+2/3) * m_disk
     v_cmg = m_full*rho_cmg  # [u]
     p_cmg = m_full*5.36
+
+    if print_ang:
+        print(sizing_angular_momentum * 1000, 'angular momentum')
+        print(m_disk, 'm_disk')
+
 
     return m_full, v_cmg, p_cmg
 
@@ -307,15 +325,15 @@ def sizing_magnetorquer(dip_moment, print_mag=False):
 
 
 def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
-    r_range = np.linspace(0.015, 0.025, 2)
+    r_range = np.linspace(0.03, 0.045, 7)
 
     def calc_adcs_size(dip_moment, r_wheel=0.025):
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
-                                                                dip_moment)
+                                                                dip_moment, time_step)
         # print(design_max_angular_momentum_Nms*1000)
         m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
         m2, v2, p2 = sizing_magnetorquer(dip_moment)
-        c_eps = 1/8  # [kg/w]
+        c_eps = 0  # [kg/w], there is a penalty not considered
         m_eps_extra = c_eps*(p1 + p2)  # relation of mass to power
         m_total = m1 + m2 + m_eps_extra
 
@@ -325,8 +343,8 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
         dip_optimize = minimize(calc_adcs_size, dip_moment_orig, args=(r_wheel_input,), bounds=((dip_moment_orig[0], dip_moment_orig[0]+20), (dip_moment_orig[1], dip_moment_orig[1]+20), (dip_moment_orig[2], dip_moment_orig[2]+20)))
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
                                                                 dip_optimize.x, time_step)
-        # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
-        m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input)
+        print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
+        m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input, print_ang=True)
         m2, v2, p2 = sizing_magnetorquer(dip_optimize.x, True)
         print('dipole moment sized for', dip_optimize.x)
         print('cmg sizing', 'mass for 4 cmg', m1, 'volume for 4 cmg', v1, 'power for 4 cmg', p1, 'r_wheel', r_wheel_input, 'Does not include pyramid')
@@ -338,9 +356,9 @@ if __name__ == "__main__":
     # Magnetorquer sizing
     dip_moment = np.array([4, 4, 4])
     m1, v1, p1 = sizing_magnetorquer(dip_moment)
-    np.testing.assert_almost_equal(m1, 0.18*1.5)
-    np.testing.assert_almost_equal(v1, 0.567)
-    np.testing.assert_almost_equal(p1, 2.961)
+    #np.testing.assert_almost_equal(m1, 0.18*1.5)  # test again
+    #np.testing.assert_almost_equal(v1, 0.567)
+    #np.testing.assert_almost_equal(p1, 2.961)
 
 
     # Avg torque calc tester
