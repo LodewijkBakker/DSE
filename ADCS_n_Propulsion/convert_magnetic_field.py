@@ -297,7 +297,7 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
     def calc_adcs_size(dip_moment, r_wheel=0.025):
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
                                                                 dip_moment, time_step)
-        # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
+        #print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
         m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
         m2, v2 = sizing_magnetorquer(dip_moment)
         m_total = m1 + m2
@@ -311,8 +311,9 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
         # print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
         m1, v1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input)
         m2, v2 = sizing_magnetorquer(dip_optimize.x)
-        print(m1, v1)
-        print(m2, v2)
+        print('dipole moment sizied for', dip_optimize.x)
+        print('cmg sizing', 'mass_4_cmg', m1, 'volume_4_cmg', v1, 'r_wheel', r_wheel_input, 'Does not include pyramid')
+        print('magnetorquer sizing', 'mass magnetorquer', m2, 'volume magnetorquer', v2)
 
 
 
