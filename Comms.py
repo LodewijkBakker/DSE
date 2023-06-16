@@ -66,9 +66,9 @@ omnidirectional = Antenna("Omnidirectional", [0, 0, 0, 0, 0, 0, 0], power=2, gim
 low_gain_patch = Antenna("Low gain patch", [-4.3, -2, 0.6, 3, 4.9, 6.1, 6.7], power=4, gimballed=True, rotating=True)
 high_gain_patch = Antenna("High gain patch", [-15.7, -10.8, -6, -0.5, 6.3, 10.5, 11.5], power=3, gimballed=True, rotating=True)
 comb_patch = Antenna("Combined patch", [-4.3, -2, 0.6, 3, 6.3, 10.5, 11.5], power=3, gimballed=True, rotating=True)
-reflect_array = Antenna("Reflectarray", [-10, -10, -10, -10, -8, 4, 24], power=5, gimballed=False, rotating=True)
+reflect_array = Antenna("Reflectarray", [-10, -10, -10, -10, -8, 4, 24], power=5, gimballed=True, rotating=True)
 isoflux = Antenna("Isoflux", [-8, -3, 2, 5, 5.8, 3.7, 2.9], power=5, gimballed=False, rotating=True)
-phase_array = Antenna("Phased array", [-20, -15, 15, 27, 30, 30, 30], power=2, gimballed=False, rotating=False)
+phase_array = Antenna("Phased array", [-20, -15, 15, 27, 30, 30, 30], power=1, gimballed=False, rotating=False)
 parabolic_10 = Antenna("10cm-Parabolic", [-30, -25, -20, -8.6, 2.528, 12.24, 16.3], power=4, gimballed=True, rotating=True)
 parabolic_5 = Antenna("5cm-Parabolic", [-14.6, -9, -3.5, 2.22, 6.22, 9.22, 10.22], power=4, gimballed=True, rotating=True)
 # https://www.satsig.net/pointing/antenna-beamwidth-calculator.htm
@@ -387,20 +387,24 @@ def plot_data_vs_elev(max_elev: int, antenna: Antenna, rotation_axes: int, plot_
     plt.title(f'Maximum data rate vs elevation angle')
 
 
-def plot_data_vs_elev_all_antennas(max_elev: int, rotation_axes: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth: float = 100):
+def plot_data_vs_elev_all_antennas(max_elev: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth: float = 100):
     """
     Plots data vs elevation graph for all antennas in antenna_list
     :param bandwidth: [MHz] Maximum available bandwidth
     :param max_elev: [deg] Maximum elevation of the pass
-    :param rotation_axes: 0 for fixed, 1 for single axis rotation or 2 for dual axis rotation (gimballed)
     :param modulation: Modulation class
     :return: Shows plots
     """
     for antenna in antenna_list:
-        plot_data_vs_elev(max_elev=max_elev, antenna=antenna, rotation_axes=rotation_axes, plot_label=antenna.name, modulation=modulation, bandwidth=bandwidth)
+        if antenna.gimballed:
+            plot_data_vs_elev(max_elev=max_elev, antenna=antenna, rotation_axes=2, plot_label=antenna.name, modulation=modulation, bandwidth=bandwidth)
+        else:
+            plot_data_vs_elev(max_elev=max_elev, antenna=antenna, rotation_axes=0, plot_label=antenna.name, modulation=modulation, bandwidth=bandwidth)
+
     plt.xlabel(f"Angle from maximum elevation [deg]")
     plt.ylabel(f"Data rate [Mb/s]")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+    plt.tight_layout(rect=[0, 0, 1, 1])
     plt.show()
 
 
@@ -422,7 +426,7 @@ def plot_data_vs_elev_all_modulations(max_elev: int, rotation_axes: int, antenna
     plt.show()
 
 
-def plot_data_vs_time_all_antennas(max_elev: int, rotation_axes: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth: float = 100):
+def plot_data_vs_time_all_antennas(max_elev: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth: float = 100):
     """
     Generates data-rate vs time plots for all antennas in antenna_list
     :param bandwidth: [MHz] Maximum available bandwidth
@@ -432,12 +436,16 @@ def plot_data_vs_time_all_antennas(max_elev: int, rotation_axes: int, modulation
     :return: Shows plots
     """
     for antenna in antenna_list:
-        times, data_rate = data_vs_time(max_elev=max_elev, antenna=antenna, rotation_axes=rotation_axes, modulation=modulation, plot=False, bandwidth=bandwidth)
-        plt.plot(times, data_rate, '--', label=f"{antenna.name}, \n Total = {integrate.simpson(data_rate, times)}")
+        if antenna.gimballed:
+            times, data_rate = data_vs_time(max_elev=max_elev, antenna=antenna, rotation_axes=2, modulation=modulation, plot=False, bandwidth=bandwidth)
+        else:
+            times, data_rate = data_vs_time(max_elev=max_elev, antenna=antenna, rotation_axes=0, modulation=modulation, plot=False, bandwidth=bandwidth)
+        plt.plot(times, data_rate, label=f"{antenna.name}, \n Total = {int(integrate.simpson(data_rate, times))}Mb")
     plt.xlabel("Time passed [s]")
     plt.ylabel("Max data-rate [Mbit/s]")
     plt.title("Maximum data-rate vs time")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+    plt.tight_layout(rect=[0, 0, 1, 1])
     plt.show()
 
 
@@ -452,11 +460,12 @@ def plot_data_vs_time_all_elevations(antenna: Antenna, rotation_axes: int, modul
     """
     for elevation in [90, 80, 70, 60, 50, 40, 30, 20]:
         times, data_rate = data_vs_time(max_elev=elevation, antenna=antenna, rotation_axes=rotation_axes, modulation=modulation, plot=False, bandwidth=bandwidth)
-        plt.plot(times, data_rate, '--', label=f"Max elevation = {elevation}deg,    Total = {integrate.simpson(data_rate, times)}")
+        plt.plot(times, data_rate, label=f"{elevation}°, Total = {int(integrate.simpson(data_rate, times))}Mb")
     plt.xlabel("Time passed [s]")
     plt.ylabel("Max Data-rate [Mbit/s]")
     plt.title(f"{antenna.name} Antenna")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+    plt.tight_layout(rect=[0, 0, 1, 1])
     plt.show()
 
 
@@ -489,7 +498,7 @@ def plot_pass_elev_dist(lat: int):
     plt.show()
 
 
-def plot_accumalated_data(lat: int, antenna: Antenna, rotation_axes: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), disable_tqdm: bool = False,
+def plot_accumulated_data(lat: int, antenna: Antenna, rotation_axes: int, modulation: Modulation = Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), disable_tqdm: bool = False,
                           bandwidth: float = 100, single_antenna: bool = True):
     """
     Generates a graph for accumalated data in Gb vs time passed in days
@@ -574,7 +583,7 @@ def plot_accumalated_data(lat: int, antenna: Antenna, rotation_axes: int, modula
     return capacity
 
 
-def plot_accumalated_data_all_mods(lat: int, antenna: Antenna, rotation_axes: int, bandwidth: float = 100):
+def plot_accumulated_data_all_mods(lat: int, antenna: Antenna, rotation_axes: int, bandwidth: float = 100):
     """
     Generates a graph for accumalated data in Gb vs time passed in days for all different modulation schemes in Modulations.csv
     :param lat: [deg] Latitude of the ground station
@@ -589,7 +598,7 @@ def plot_accumalated_data_all_mods(lat: int, antenna: Antenna, rotation_axes: in
     best_modulation = Modulation("ERROR", 0, 0, 0)
 
     for modulation in tqdm(modulation_list, f'{antenna.name}, lat = {lat}deg'):
-        capacity = plot_accumalated_data(lat, antenna, rotation_axes, modulation, disable_tqdm=True, single_antenna=True, bandwidth=bandwidth)
+        capacity = plot_accumulated_data(lat, antenna, rotation_axes, modulation, disable_tqdm=True, single_antenna=True, bandwidth=bandwidth)
         if capacity > highest_capacity:
             highest_capacity = capacity
             best_modulation = modulation
@@ -604,52 +613,54 @@ if __name__ == "__main__":
     # plot_gains()
 
     # NOTE: Plot data vs elevation graph
-    # plot_data_vs_elev(max_elev=70, antenna=isoflux, rotation_axes=0, modulation=Modulation("8PSK - 3/5", 0.6, 5.5, 1.74), plot_label=f'Fixed-{isoflux.name}', bandwidth=70)
+    # plot_data_vs_elev(max_elev=70, antenna=isoflux, rotation_axes=0, modulation=Modulation("8PSK - 3/5", 0.6, 5.5, 1.74), plot_label=f'Fixed-{isoflux.name}', bandwidth=100)
     # plt.legend()
     # plt.show()
 
     # NOTE: Plot data vs elevation graphs for different passes
     # for elevation in range(10, 91, 10):
-    #     plot_data_vs_elev(elevation, isoflux, 0, f'elev = {elevation}', modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=np.inf)
-    # plt.legend()
+    #     plot_data_vs_elev(elevation, isoflux, 0, f'{elevation}°', modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=100)
+    # plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+    # plt.tight_layout(rect=[0, 0, 1, 1])
     # plt.show()
 
     # NOTE: Plot data vs elevation graphs for all antennas
-    # plot_data_vs_elev_all_antennas(max_elev=70, rotation_axes=0, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=np.inf)
+    # plot_data_vs_elev_all_antennas(max_elev=60, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=100)
 
     # NOTE: Plot data vs elevation graphs for all modulation schemes
     # plot_data_vs_elev_all_modulations(max_elev=90, rotation_axes=0, antenna=isoflux, bandwidth=100)
 
     # NOTE: plot data vs time graphs for all antennas
-    # plot_data_vs_time_all_antennas(max_elev=70, rotation_axes=0, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=200)
+    plot_data_vs_time_all_antennas(max_elev=60, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=100)
 
     # NOTE: Plot data vs time graphs for different passes
-    # plot_data_vs_time_all_elevations(antenna=isoflux, rotation_axes=0, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=np.inf)
+    plot_data_vs_time_all_elevations(antenna=isoflux, rotation_axes=0, modulation=Modulation("8PSK - Generic 3/5", 0.6, 5.5, 1.74), bandwidth=100)
 
     # NOTE: Calculate the total data that can be sent for all antennas in the antenna list for a specific latitude and modulation scheme
     # for antenna_class in antenna_list:
     #     total_data(lat=60, antenna=antenna_class, rotation_axes=0, modulation=Modulation("QPSK 3/4", 0.75, 4.03, 1.45), bandwidth=np.inf)
 
-    # NOTE: Plot the accumalated data for all antennas with their best modulation scheme for 78deg latitude and 50MHz bandwidth
-    # plot_accumalated_data(78, isoflux,            0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 3/4", 0.75, 4.03, 1.45))
-    # plot_accumalated_data(78, low_gain_patch,     0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
-    # plot_accumalated_data(78, high_gain_patch,    2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
-    # plot_accumalated_data(78, parabolic_5,        2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
-    # plot_accumalated_data(78, parabolic_10,       2, bandwidth=50, single_antenna=False, modulation=Modulation("16APSK 2/3-L", 0.67, 8.53, 2.57))
+    # NOTE: Plot the accumulated data for all antennas with their best modulation scheme for 78deg latitude and 50MHz bandwidth
+    # plot_accumulated_data(78, isoflux,            0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 3/4", 0.75, 4.03, 1.45))
+    # plot_accumulated_data(78, low_gain_patch,     0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
+    # plot_accumulated_data(78, high_gain_patch,    2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
+    # plot_accumulated_data(78, parabolic_5,        2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
+    # plot_accumulated_data(78, parabolic_10,       2, bandwidth=50, single_antenna=False, modulation=Modulation("16APSK 2/3-L", 0.67, 8.53, 2.57))
     # plt.legend()
     # plt.show()
 
-    # NOTE: plot the accumalated data for all antennas with their best modulation scheme for 60deg latitude and 50MHz bandwidth
-    # plot_accumalated_data(60, isoflux,          0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 2/3", 0.67, 3.10, 1.29))
-    # plot_accumalated_data(60, low_gain_patch,   0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
-    # plot_accumalated_data(60, high_gain_patch,  0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
-    # plot_accumalated_data(60, high_gain_patch,  2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
-    # plot_accumalated_data(60, parabolic_5,      2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
-    # plot_accumalated_data(60, parabolic_10,     2, bandwidth=50, single_antenna=False, modulation=Modulation("16APSK 2/3-L", 0.67, 8.53, 2.57))
+    # NOTE: plot the accumulated data for all antennas with their best modulation scheme for 60deg latitude and 50MHz bandwidth
+    # plot_accumulated_data(60, isoflux,          0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 2/3", 0.67, 3.10, 1.29))
+    # plot_accumulated_data(60, low_gain_patch,   0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
+    # plot_accumulated_data(60, high_gain_patch,  0, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 11/20", 0.55, 1.45, 1.06))
+    # plot_accumulated_data(60, high_gain_patch,  2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
+    # plot_accumulated_data(60, parabolic_5,      2, bandwidth=50, single_antenna=False, modulation=Modulation("QPSK 4/5", 0.80, 4.68, 1.55))
+    # plot_accumulated_data(60, parabolic_10,     2, bandwidth=50, single_antenna=False, modulation=Modulation("16APSK 2/3-L", 0.67, 8.53, 2.57))
     # plt.legend()
     # plt.show()
 
     # NOTE: plot all modulation schemes for a specific antenna and do this for all latitudes in the list
-    for latitude in [78]:
-        plot_accumalated_data_all_mods(latitude, phase_array, 0, bandwidth=500)
+    # for latitude in [78]:
+    #     plot_accumulated_data_all_mods(latitude, phase_array, 0, bandwidth=500)
+
     pass
