@@ -1,5 +1,7 @@
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+from DSE.Thermal.env import Env
 
 
 def heat_flows():
@@ -63,3 +65,23 @@ def prepare_heat_flows(Q: dict):
     Q_res['pipes'] = np.zeros(len(Q['north']))
 
     return list(Q_res.values())
+
+def plot_ESATAN_heat_values():
+    AN15 = prepare_heat_flows(interpolate_points(heat_flows(), Env().t_orbit, 10))
+
+    l = ['North', 'East', 'South', 'West', 'Zenith', 'Nadir', 'Batteries', 'Solar panel 1', 'OBC', 'Propellant tanks',
+         'Radiator', 'DST box', 'DST baffle', 'Solar panel 2', 'Solar panel 3', 'Thruster', 'Propellant lines']
+    idx = [0,1,2,3,4,5,7,10,12,13,14]
+    for i in idx:
+        plt.plot(AN15[i], label=f'{l[i]}')
+        plt.xlim(8*Env().t_orbit, 9*Env().t_orbit)
+        plt.xticks(np.arange(8*Env().t_orbit, 9*Env().t_orbit, 1000), np.arange(0, int(Env().t_orbit), 1000))
+        plt.legend(bbox_to_anchor=(1, 0.5), loc="center left")
+        plt.subplots_adjust(right=0.74)
+    plt.xlabel('Time [s]')
+    plt.ylabel('Heat [W]')
+    plt.title('ESATAN Heat Values')
+    plt.savefig('plots/ESATAN_Q_vals')
+    plt.close()
+
+plot_ESATAN_heat_values()

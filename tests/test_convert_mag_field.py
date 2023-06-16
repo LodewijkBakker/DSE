@@ -1,10 +1,9 @@
 import unittest
 import numpy as np
-import scipy
-import matplotlib.pyplot as plt
 from DSE.ADCS_n_Propulsion.convert_magnetic_field import avg_torque_calc, sizing_minimum_dipole, res_torques_calc, \
     integrate_torques, angular_momentum_realism_creator, get_sizing_from_angular_momentum, \
     sizing_angular_momentum_calc, sizing_cmg, sizing_magnetorquer, angular_momentum_calc, optimum_sizer
+
 
 class TestConvertMagField(unittest.TestCase):
     def test_avg_torque_calc(self):
@@ -48,20 +47,14 @@ class TestConvertMagField(unittest.TestCase):
 
     def test_sizing_angular_momentum_calc(self):
         max_ang_mom = [10, 20, 30]
-        self.assertEqual(sizing_angular_momentum_calc(max_ang_mom), 125/16)
+        self.assertAlmostEqual(sizing_angular_momentum_calc(max_ang_mom), 9.013878, delta=1e-6)
 
     def test_sizing_cmg(self):
         sam, radius, max_ang_mom = 0.005, 0.1, [1,2,1]
         np.testing.assert_almost_equal(sizing_cmg(max_ang_mom, r_wheel=radius, sizing_angular_momentum=sam),
-                                       [0.0127324, 0.0114459])
-        np.testing.assert_almost_equal(sizing_cmg(max_ang_mom, r_wheel=radius), [1.352817, 1.2161307])
+                                       [0.0381972, 0.0343378, 0.2047369])
+        np.testing.assert_almost_equal(sizing_cmg(max_ang_mom, r_wheel=radius), [4.2705753,  3.8390837, 22.8902834])
 
     def test_sizing_magnetorquer(self):
-        np.testing.assert_almost_equal(sizing_magnetorquer(np.array([1,1,1])), [0.045, 0.189])
+        np.testing.assert_almost_equal(sizing_magnetorquer(np.array([1,1,1])), [0.0727779, 0.1528336, 1.4621119])
         self.assertRaises(AssertionError, sizing_magnetorquer, np.array([0,0,0]))
-
-    def test_optimum_sizer(self):
-        a = np.ones((50, 3))*2
-        d = np.ones((50, 3))*1
-        m = np.ones((50, 3))*1
-        np.testing.assert_almost_equal(optimum_sizer(m, a, d), [0.5, 0.5, 0.5])

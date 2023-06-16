@@ -241,7 +241,7 @@ class ThermalModel:
             plt.savefig(save)
         # plt.show()
         plt.close()
-        print('CMG', self.t_solver(0, 0.1, 0.06, 0.035))
+        print('CMG', self.t_solver(0, 0.6, 0.06, 0.035))
 
     def save_csv(self, filename):
         if self.solution is not None:
