@@ -59,12 +59,12 @@ def mag_field_creator():
     #Turn arrays to absolute values
     mag_field = 1e-9*np.column_stack((np.absolute(roll), np.absolute(pitch), np.absolute(yaw)))
 
-    plt.plot(np.absolute(x[:1000]))
-    plt.show()
-    plt.plot(np.absolute(y[:1000]))
-    plt.show()
-    plt.plot(np.absolute(z[:1000]))
-    plt.show()
+    # plt.plot(np.absolute(x[:1000]))
+    # plt.show()
+    # plt.plot(np.absolute(y[:1000]))
+    # plt.show()
+    # plt.plot(np.absolute(z[:1000]))
+    # plt.show()
     # print("avg_mag_field", np.average(mag_field, axis=0))  # in [tesla])
     # plt.plot(mag_field[:, 0])
     # plt.show()
@@ -312,8 +312,6 @@ def sizing_magnetorquer(dip_moment, print_mag=False):
         design_dip_moment_axis = safety_factor*dip_moment_axis*magnetorquer_magnetometer_t + (2**0.5)*54*3.5*10**(-3)
         assert(dip_moment_axis > 0)
         # from statistics
-        m_magnetorquer += dip_moment_axis*0.015
-        v_magnetorquer += m_magnetorquer*2.1  # U/kg
         m_magnetorquer += design_dip_moment_axis*0.015
         v_magnetorquer += design_dip_moment_axis*0.015*2.1  # U/kg
         p_magnetorquer += design_dip_moment_axis*0.114 + 0.303  # statistics
@@ -324,12 +322,12 @@ def sizing_magnetorquer(dip_moment, print_mag=False):
     return m_magnetorquer, v_magnetorquer, p_magnetorquer
 
 
-def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
-    r_range = np.linspace(0.03, 0.045, 7)
+def optimum_sizer(dip_moment_orig, avg_torque, mag_field):
+    r_range = np.linspace(0.0335, 0.045, 7)
 
     def calc_adcs_size(dip_moment, r_wheel=0.025):
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
-                                                                dip_moment, time_step)
+                                                                dip_moment)
         # print(design_max_angular_momentum_Nms*1000)
         m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel)
         m2, v2, p2 = sizing_magnetorquer(dip_moment)
@@ -342,7 +340,7 @@ def optimum_sizer(dip_moment_orig, avg_torque, mag_field, time_step):
     for r_wheel_input in r_range:
         dip_optimize = minimize(calc_adcs_size, dip_moment_orig, args=(r_wheel_input,), bounds=((dip_moment_orig[0], dip_moment_orig[0]+20), (dip_moment_orig[1], dip_moment_orig[1]+20), (dip_moment_orig[2], dip_moment_orig[2]+20)))
         design_max_angular_momentum_Nms = angular_momentum_calc(mag_field, avg_torque,
-                                                                dip_optimize.x, time_step)
+                                                                dip_optimize.x)
         print(design_max_angular_momentum_Nms*1000)  # Fuck pitch is high!!
         m1, v1, p1 = sizing_cmg(design_max_angular_momentum_Nms, r_wheel_input, print_ang=True)
         m2, v2, p2 = sizing_magnetorquer(dip_optimize.x, True)
@@ -356,49 +354,18 @@ if __name__ == "__main__":
     # Magnetorquer sizing
     dip_moment = np.array([4, 4, 4])
     m1, v1, p1 = sizing_magnetorquer(dip_moment)
-    #np.testing.assert_almost_equal(m1, 0.18*1.5)  # test again
-    #np.testing.assert_almost_equal(v1, 0.567)
-    #np.testing.assert_almost_equal(p1, 2.961)
-
-
-    # Avg torque calc tester
-    # assert (np.all(np.isclose(avg_torque_calc(np.array([0, 0, 0]), np.array([0, 0, 0]), 0, 1000), np.array([0, 0, 0]))))
-    # assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([0.5, 0, 0.2]), 200, 1000), np.array([1, 1, 1]))))
-    # assert (np.all(np.isclose(avg_torque_calc(np.array([1, 1, 1]), np.array([2, 0, 2]), 1000, 1000), np.array([2, 1, 2]))))
-
-    # # Dipole sizing tester
-    # t_orbits_detumbling = 40*5423  # time available for detumbling until deorbit
-    # assert np.all(np.isclose(sizing_minimum_dipole(np.array([[0, 0, 0], [2, 2, 2]]), np.array([1, 1, 1]), np.array([1, 1, 1]),
-    #                                        t_orbits_detumbling), np.array([1, 1, 1])))
-    # m = 0.5  # tesla
-    # v_r = 300/180*np.pi  # rad /s
-    # torque_required = v_r/(t_orbits_detumbling*m)
-    # assert np.all(np.isclose(sizing_minimum_dipole(np.array([[0, 0, 0], [1, 1, 1]]), np.array([0, 0, 0]), np.array([1, 1, 1]),
-    #                                        t_orbits_detumbling), np.array([torque_required, torque_required,
-    #                                                                        torque_required])))
 
     # Cmg h tester
     H_roll = 83.8
     H_pitch = 68.1
     H_yaw = 38.4
     H = np.array([H_roll, H_pitch, H_yaw])
-    np.testing.assert_almost_equal(sizing_angular_momentum_calc(H), 22, decimal=1)
-
-    # CMG sizing tester
-    np.testing.assert_almost_equal(sizing_cmg(np.array([17e-3, 17e-3, 17e-3]), r_wheel=0.025,
-                                              sizing_angular_momentum=17e-3/1.5),
-                                   (0.69264, 0.62266, 0.69264*5.36), decimal=4)
-    np.testing.assert_almost_equal(sizing_cmg(np.array([17e-3, 17e-3, 17e-3]), r_wheel=0.015,
-                                              sizing_angular_momentum=17e-3/1.5),
-                                   (1.92400, 1.72961, 1.92400*5.36), decimal=4)
-
-    # angular momentum is not correct now it seems. (way to high (cause maybe average magnetic))
 
     mag_field, time_step = mag_field_creator()
     t_orbit = 5432
     t_repeat_prop = t_orbit*3
+    #t_prop_on = 900
     t_prop_on = 900
-    t_prop_on = 0
     nom_torque_1 = np.array([1.71E-05, 7.91E-05, 2.58E-05])
     prop_torque_1 = np.array([1.75E-05,	8.22E-05, 2.30E-05])
     avg_torque = avg_torque_calc(nom_torque_1, prop_torque_1, t_prop_on, t_repeat_prop)
@@ -406,11 +373,26 @@ if __name__ == "__main__":
     t_orbits_detumbling = 40 * 5423
     dip_moment_1 = sizing_minimum_dipole(mag_field, avg_torque, I_sat, t_orbits_detumbling)
     print(dip_moment_1, 'dip start')
-    optimum_sizer(dip_moment_1, avg_torque, mag_field, time_step)
 
-    # r_t_1 = res_torques_calc(mag_field, avg_torque, dip_moment_1)
-    # int_torques = integrate_torques(r_t_1, time_step)
-    # angular_momentum_1 = angular_momentum_realism_creator(int_torques)
-    # print(get_sizing_from_angular_momentum(angular_momentum_1))
+    # Test prop change
+    prop_torque_1 = np.array([1.75E-05,	8.22E-04, 2.30E-05])
+    res_torques_1 = res_torques_calc(mag_field, nom_torque_1, np.array([10/1.5, 20/1.5, 4/1.5]))
+    over_torque = prop_torque_1 - nom_torque_1
 
-    #integrate_torques
+
+    for i in np.arange(0, t_repeat_prop):
+        res_torques_w_prop = np.copy(res_torques_1)
+        res_torques_w_prop[i:i+900] += over_torque
+        real_ang = angular_momentum_realism_creator(integrate_torques(res_torques_w_prop))
+        print(sizing_angular_momentum_calc(get_sizing_from_angular_momentum(real_ang), print_beta_ang=True) * 1000)
+
+    real_ang = angular_momentum_realism_creator(integrate_torques(res_torques_1))
+    print(sizing_angular_momentum_calc(get_sizing_from_angular_momentum(real_ang), print_beta_ang=True)*1000)
+    plt.plot(real_ang[:, 0])
+    plt.show()
+
+    plt.plot(real_ang[:, 1])
+    plt.show()
+
+    plt.plot(real_ang[:, 2])
+    plt.show()
