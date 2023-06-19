@@ -44,23 +44,28 @@ id_max_C_BOL_remain = df['C_BOL_remain'].idxmax()
 row_max_C_BOL_prop = df.iloc[id_max_C_BOL_prop]
 row_max_C_BOL_remain = df.iloc[id_max_C_BOL_remain]
 
-m_prop_bat = row_max_C_BOL_prop['M_prop_bat']
-m_remain_bat = row_max_C_BOL_remain['M_remain_bat']
 
-v_prop_bat = row_max_C_BOL_prop['V_prop_bat']
-v_remain_bat = row_max_C_BOL_remain['V_remain_bat']
+
+C_prop = row_max_C_BOL_prop['C_BOL_prop']
+C_remain = row_max_C_BOL_remain['C_BOL_remain']
+
+m_prop_bat = 1.2 * row_max_C_BOL_prop['M_prop_bat']
+m_remain_bat = 1.2 * row_max_C_BOL_remain['M_remain_bat']
+
+v_prop_bat = 1.2 * row_max_C_BOL_prop['V_prop_bat']
+v_remain_bat = 1.2 * row_max_C_BOL_remain['V_remain_bat']
 
 # Total mass and volume of the batteries
-m_tot_bat = (m_prop_bat + m_remain_bat) * 1.2                       # 20% safety factor
-v_tot_bat = (v_prop_bat + v_remain_bat) * 1.2                       # 20% safety factor
+m_tot_bat = (m_prop_bat + m_remain_bat)                        # 20% safety factor
+v_tot_bat = (v_prop_bat + v_remain_bat)                        # 20% safety factor
 
 # Mass of the solar panels 
 mass_p_cell = 53/2/1000     # [kg] Mass of a single solar panel cell   
-cells_top = 17
-cells_side = 19
-cell_bacl = 21
+cells_top = 27
+cells_side = 16
+cell_bacl = 20
 
-num_side = 1.5
+num_side = 2
 num_top = 1
 num_back = 3
 
@@ -79,11 +84,13 @@ print('The total mass of the batteries is: ', m_tot_bat, 'kg')
 print('                                   >>> Battery mass for propulsion system maintenance : ', m_prop_bat, 'kg')
 print('                                   >>> Battery mass for remaining system maintenance  : ', m_remain_bat, 'kg')    
 print('The total volume of the batteries is: ', v_tot_bat, 'U')
-print('                                   >>> Battery volume for propulsion system maintenance : ', v_prop_bat, 'm^3')
-print('                                   >>> Battery volume for remaining system maintenance  : ', v_remain_bat, 'm^3')
+print('                                   >>> Battery volume for propulsion system maintenance : ', v_prop_bat, 'U')
+print('                                   >>> Battery volume for remaining system maintenance  : ', v_remain_bat, 'U')
+print('Capacity of the propulsion battery: ', C_prop, 'Wh')
+print('Capacity of the remaining battery: ', C_remain, 'Wh')
 print('The total mass of the solar panels is: ', m_tot_SP, 'kg')
 print('                                   >>> Mass of the top solar panels (1 fold)       : ', m_top_SP, 'kg')
-print('                                   >>> Mass of the side solar panels (2x1.5 folds) : ', m_side_SP, 'kg')
+print('                                   >>> Mass of the side solar panels (2x2 folds) : ', m_side_SP, 'kg')
 print('                                   >>> Mass of the front solar panels (1x3 folds)  : ', m_back_SP, 'kg')
 print('The total mass of the harness is: ', m_harness, 'kg')
 

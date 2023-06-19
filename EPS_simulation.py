@@ -102,8 +102,8 @@ class EPS_Simulation_:
         # Base continuous power [W] per subsystem XXX_BC
         TCS_BC = 3.5
         Str_BC = 0
-        GNS_BC = 0.2
-        COMMS_BC = 2.1      # SEE COMMS - could make a video :D 
+        GNS_BC = 0.3
+        COMMS_BC = 1.8      # SEE COMMS - could make a video :D 
         SDH_BC = 4
         EPS_BC = 3          # only PCDU
         Prop_BC = 0         # Preheating and thermal maintenace via pipeheating and TCS
@@ -697,7 +697,7 @@ class EPS_Simulation_:
 
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [1.1, 1.2, 1.3, 1.4, 1.5]:
+            for j in [1.29, 1.3, 1.31, 1.4]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=True)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i],j)
@@ -793,7 +793,7 @@ class EPS_Simulation_:
             os.makedirs('./Outputs/EPS_simulation/CSV/Discontinuous/12h/')
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [1.1, 1.2, 1.3, 1.4, 1.5]:
+            for j in [1.29, 1.3, 1.31, 1.4]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=False)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i], j)
