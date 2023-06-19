@@ -22,10 +22,10 @@
 
 clear
 
-modName = 'straight_combined_LAMP_0';
+modName = 'Verification_Tests\\Block-Yaw';
 % Path to model file
 ADBSat_path = ADBSat_dynpath;
-modIn = fullfile(ADBSat_path,'inou','obj_files', 'Test_objects', [modName,'.obj']);
+modIn = fullfile(ADBSat_path,'inou','obj_files', 'Configs', [modName,'.obj']);
 modOut = fullfile(ADBSat_path,'inou','obj_files', 'Test_objects', 'Models');
 resOut = fullfile(ADBSat_path,'inou','obj_files', 'Test_objects', 'Res', modName);
 

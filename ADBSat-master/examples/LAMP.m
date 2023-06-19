@@ -29,7 +29,7 @@ alt = 300; %km
 % Model parameters
 inparam.gsi_model = 'sentman';
 %inparam.alpha = 1; % Accommodation (altitude dependent)
-inparam.Tw = 300; % Wall Temperature [K] -> jose
+inparam.Tw = 250; % Wall Temperature [K] -> jose
 
 inparam.alpha = 0.9; % Accommodation (altitude dependent), 0.9 is more limiting from calculations
 inc = 96.67; %deg
@@ -295,7 +295,7 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
                 % Converter to aerodynamic torque!!
                 rho = 5.33e-11;
                 v_sat = 7729; % drago m/s
-                M_b = 0.5* rho * Cm_B * load(fileOut, "AreaRef").AreaRef * v_sat^2;  % should be the actual torque calculation TODO
+                M_b = 0.5* rho * Cm_B * load(fileOut, "AreaRef").AreaRef * v_sat^2 * load(fileOut, "LenRef").LenRef;  % should be the actual torque calculation TODO
 
                 % max_roll = max(max_roll, abs(M_b(1)));
                 % max_pitch = max(max_pitch, abs(M_b(3))); % 3!!!!!!! around z here because either wrong model or wrong program
