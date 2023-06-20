@@ -17,9 +17,9 @@ orbit_alt       = 300       # [km]  Orbital altitude    IF CHANGED, THE ORBITAL 
 inclination     = 96.7      # [deg] Orbital inclination IF CHANGED, THE ORBITAL PASS DATA FILES MUST BE CHANGED AS WELL
 
 # NOTE: Design choices that stay constant:
-frequency       = 14000  # [MHz] 8000 for X-Band
-gs_gain         = 43.2  # [dB]  43.2 for 2.4m X-band GS
-l_atm_zenith    = -0.3  # [dB]  -0.3 for X-Band
+frequency       = 8000  # [MHz] 8000 for X-Band
+gs_gain         = 43.2  # [dB]  43.2 for 2.4m X-band GS, 49 for 2.4m Ku-band (14.5Ghz) GS
+l_atm_zenith    = -0.3  # [dB]  -0.3 for X-Band, -0.7 for 14.5Ghz
 l_line          = -1    # [dB]  Line losses for antenna
 l_line_gs       = -1    # [dB]  Based on delfi ground station
 l_pol           = -3    # [dB]  Due to mismatch of polarization of channel and antenna. For circular -> linear, a 3 dB loss can be taken.
@@ -197,16 +197,20 @@ def data_vs_elev(max_elev: int, antenna: Antenna, rotation_axes: int, modulation
     return data_rates
 
 
-def vis_time_calc(max_elev: int, min_elev: int) -> float:  # https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=805436
+def vis_time_calc(max_elev: int, min_elev: int, orbit_altitude: float = orbit_alt, inc: float = inclination) -> float:  # https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=805436
     """
     Calculates the time between min_elev and min_elev after passing the assigned maximum elevation.
+    :param orbit_altitude: Orbital altitude
+    :param inc: Inclanation of the orbit
     :param max_elev: [deg] maximum elevation of the pass
     :param min_elev: [deg] elevation to start and stop counting at
     :return: [sec] time between minimum elevation and minimum elevation again whilst passing over the maximum elevation
     """
-    a = 2 / (np.deg2rad(360 / orbit_time) - np.deg2rad(360 / 86400) * np.cos(np.deg2rad(inclination)))
-    b = np.arccos(np.cos(np.arccos((earth_radius / orbit_radius) * np.cos(np.deg2rad(min_elev))) - np.deg2rad(min_elev)) /
-                  np.cos(np.arccos((earth_radius / orbit_radius) * np.cos(np.deg2rad(max_elev))) - np.deg2rad(max_elev)))
+    orbit_r = orbit_altitude + earth_radius
+    orbit_t = 2 * np.pi * np.sqrt(((orbit_r * 1000) ** 3) / (6.67430e-11 * 5.9736e+24))
+    a = 2 / (np.deg2rad(360 / orbit_t) - np.deg2rad(360 / 86400) * np.cos(np.deg2rad(inc)))
+    b = np.arccos(np.cos(np.arccos((earth_radius / orbit_r) * np.cos(np.deg2rad(min_elev))) - np.deg2rad(min_elev)) /
+                  np.cos(np.arccos((earth_radius / orbit_r) * np.cos(np.deg2rad(max_elev))) - np.deg2rad(max_elev)))
     return a * b
 
 
@@ -563,7 +567,7 @@ def plot_accumalated_data(lat: int, antenna: Antenna, rotation_axes: int, modula
         rotation_name = "Gimballed"
 
     if single_antenna:
-        plt.plot(time_data, backlog_history, label=f"{modulation.name}: \nTotal={int(capacity) / 1000}Gbit")
+        plt.plot(time_data, backlog_history, label=f"{bandwidth}: \nTotal={int(capacity) / 1000}Gbit")
         plt.title(f"{rotation_name}-{antenna.name}: Total acc data = {int(total_accumalated_data / 1000)}[Gb], latitude = {lat}, bandwidth = {bandwidth}MHz")
     else:
         plt.plot(time_data, backlog_history, label=f"{rotation_name}-{antenna.name}-{modulation.name}: \nTotal={int(capacity) / 1000}Gbit")
@@ -601,7 +605,7 @@ def plot_accumalated_data_all_mods(lat: int, antenna: Antenna, rotation_axes: in
 
 if __name__ == "__main__":
     # NOTE: Plot the gain graphs of all antennas
-    # plot_gains()
+    plot_gains()
 
     # NOTE: Plot data vs elevation graph
     # plot_data_vs_elev(max_elev=70, antenna=isoflux, rotation_axes=0, modulation=Modulation("8PSK - 3/5", 0.6, 5.5, 1.74), plot_label=f'Fixed-{isoflux.name}', bandwidth=70)
@@ -651,5 +655,10 @@ if __name__ == "__main__":
 
     # NOTE: plot all modulation schemes for a specific antenna and do this for all latitudes in the list
     for latitude in [78]:
-        plot_accumalated_data_all_mods(latitude, phase_array, 0, bandwidth=500)
+        plot_accumalated_data_all_mods(latitude, parabolic_10, 2, bandwidth=150)
+
+    # for bw in tqdm(range(10, 30, 1)):
+    #     plot_accumalated_data(78, isoflux, 0, bandwidth=bw, disable_tqdm=True, modulation=Modulation("QPSK 3/4",0.75,4.03,1.45))
+    # plt.legend()
+    # plt.show()
     pass

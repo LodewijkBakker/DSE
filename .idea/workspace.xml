@@ -19,7 +19,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="Efficiencies of solar panels and new pass data" />
+    <list default="true" id="904e5b15-55a4-4f93-b43f-d586ceabf42c" name="Changes" comment="Efficiencies of solar panels and new pass data">
+      <change beforePath="$PROJECT_DIR$/.idea/DSE.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DSE.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Comms.py" beforeDir="false" afterPath="$PROJECT_DIR$/Comms.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +65,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/General model/Inputs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../DSE" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -69,6 +74,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\TimLe\PycharmProjects\DSE_Git" />
       <recent name="D:\Python Projects\DSE\General model\Inputs" />
       <recent name="C:\Users\Lodewijk\Documents\University_Subjects\DSE\DSE\ADCS_n_Propulsion" />
     </key>
@@ -77,7 +83,28 @@
       <recent name="D:\Python Projects\DSE\ADCS_n_Propulsion" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Orbital_efficiencies_plot">
+  <component name="RunManager" selected="Python tests.pytest in testing.py">
+    <configuration name="Comms" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSE" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\TimLe\anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Comms.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Communication_passes_statistics" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="DSE" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,28 +141,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="FIxed_back_panel_efficiency" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="DSE" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/General model" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/General model/FIxed_back_panel_efficiency.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -188,7 +193,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Orbital_iterator_Prop_SP_config (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="testing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="DSE" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -196,12 +201,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/General model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/General model/Orbital_iterator_Prop_SP_config.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -210,21 +214,54 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <module name="DSE" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\TimLe\anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../../TimLe/PycharmProjects/DSE_Git" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/../../../../TimLe/PycharmProjects/DSE_Git/testing.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in testing.py" type="tests" factoryName="py.test" nameIsGenerated="true">
+      <module name="DSE" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\TimLe\anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/testing.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.Config 1" />
       <item itemvalue="Python.Communication_passes_statistics" />
       <item itemvalue="Python.Orbital_iterator_Orbits" />
-      <item itemvalue="Python.Orbital_iterator_Prop_SP_config (1)" />
       <item itemvalue="Python.Orbital_efficiencies_plot" />
-      <item itemvalue="Python.FIxed_back_panel_efficiency" />
+      <item itemvalue="Python.Comms" />
+      <item itemvalue="Python.testing" />
+      <item itemvalue="Python tests.pytest in testing.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.testing" />
+        <item itemvalue="Python.Comms" />
         <item itemvalue="Python.Orbital_efficiencies_plot" />
         <item itemvalue="Python.Orbital_iterator_Orbits" />
         <item itemvalue="Python.Communication_passes_statistics" />
-        <item itemvalue="Python.FIxed_back_panel_efficiency" />
-        <item itemvalue="Python.Orbital_iterator_Prop_SP_config (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -319,7 +356,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686757084632</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Efficiencies of solar panels and new pass data">
+      <created>1686757764788</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1686757764788</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,6 +379,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Orbital drag and delta v calculator" />
@@ -348,14 +393,47 @@
     <option name="LAST_COMMIT_MESSAGE" value="Efficiencies of solar panels and new pass data" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="-1251" y="118" key="#Comms" timestamp="1686842742786">
+      <screen x="-1920" y="3" width="1920" height="1040" />
+    </state>
+    <state x="-1251" y="118" key="#Comms/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1686842742786" />
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1687269205522">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687269205522" />
+    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1687268973858">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687268973858" />
+    <state width="1899" height="263" key="GridCell.Tab.0.bottom" timestamp="1687269669169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1687162046086" />
+    <state width="1899" height="263" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687269669169" />
+    <state width="1899" height="263" key="GridCell.Tab.0.center" timestamp="1687269669169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1687162046086" />
+    <state width="1899" height="263" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687269669169" />
+    <state width="1899" height="263" key="GridCell.Tab.0.left" timestamp="1687269669169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1687162046086" />
+    <state width="1899" height="263" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687269669169" />
+    <state width="1899" height="263" key="GridCell.Tab.0.right" timestamp="1687269669169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1687162046086" />
+    <state width="1899" height="263" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1687269669169" />
     <state x="-1459" y="167" key="SettingsEditor" timestamp="1686757567440">
       <screen x="-1920" y="3" width="1920" height="1040" />
     </state>
     <state x="-1459" y="167" key="SettingsEditor/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1686757567440" />
-    <state x="-1368" y="255" key="Vcs.Push.Dialog.v2" timestamp="1686757107190">
-      <screen x="-1920" y="3" width="1920" height="1040" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1686757766257">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1368" y="255" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1686757107190" />
+    <state x="-1368" y="255" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1686757575321" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.3.1920.1040@0.0.1920.1040" timestamp="1686757766257" />
     <state x="-1151" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1686757122641">
       <screen x="-1920" y="3" width="1920" height="1040" />
     </state>
