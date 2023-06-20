@@ -442,12 +442,12 @@ def plot_accumalated_data_all_mods(lat, antenna, rotation_axes, delta):
 # for antenna in antenna_list:
 #     total_data(60, antenna, 0, 0.1)
 
-# plot_accumalated_data_all_mods(78, isoflux, 0, 0.1)
+# plot_accumulated_data_all_mods(78, isoflux, 0, 0.1)
 
 plot_accumalated_data(0, isoflux, 0, 0.1, disable_tqdm=True)
-# plot_accumalated_data(0, low_gain_patch, 0, 0.1)
-# plot_accumalated_data(60, high_gain_patch, 2, 0.1)
-# plot_accumalated_data(0, reflect_array, 0, 0.1)
+# plot_accumulated_data(0, low_gain_patch, 0, 0.1)
+# plot_accumulated_data(60, high_gain_patch, 2, 0.1)
+# plot_accumulated_data(0, reflect_array, 0, 0.1)
 plt.legend()
 plt.show()
 
