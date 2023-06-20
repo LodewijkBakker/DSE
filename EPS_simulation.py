@@ -697,7 +697,7 @@ class EPS_Simulation_:
 
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [1.29, 1.3, 1.31, 1.4]:
+            for j in [1.3, 2, 0.5, 0]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=True)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i],j)
@@ -714,9 +714,12 @@ class EPS_Simulation_:
                     battery_array_csv.append(temp_bat_6)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_6h_contribution.
-                plt.plot(power_consumption_6h, label='Power Consumption')
-                plt.plot(power_intake_6h, label='Power Generation')
-                plt.plot(battery_6h_contribution, label='Battery Contribution (Charge/Discharge)')
+                # plt.plot(power_consumption_6h, label='Power Consumption')
+                # plt.plot(power_intake_6h, label='Power Generation')
+                # plt.plot(battery_6h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_6h, 'r-', label='Power Consumption')
+                plt.plot(power_intake_6h, 'b-', label='Power Generation')
+                plt.plot(battery_6h_contribution, 'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
@@ -741,9 +744,12 @@ class EPS_Simulation_:
                     battery_array_csv.append(temp_bat_9)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_9h_contribution.
-                plt.plot(power_consumption_9h, label='Power Consumption')
-                plt.plot(power_intake_9h, label='Power Generation')
-                plt.plot(battery_9h_contribution, label='Battery Contribution (Charge/Discharge)')
+                # plt.plot(power_consumption_9h, label='Power Consumption')
+                # plt.plot(power_intake_9h, label='Power Generation')
+                # plt.plot(battery_9h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_9h,'r-', label='Power Consumption')
+                plt.plot(power_intake_9h,'b-', label='Power Generation')
+                plt.plot(battery_9h_contribution,'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
@@ -768,9 +774,12 @@ class EPS_Simulation_:
                     battery_array_csv.append(temp_bat_12)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_12h_contribution.
-                plt.plot(power_consumption_12h, label='Power Consumption')
-                plt.plot(power_intake_12h, label='Power Generation')
-                plt.plot(battery_12h_contribution, label='Battery Contribution (Charge/Discharge)')
+                # plt.plot(power_consumption_12h, label='Power Consumption')
+                # plt.plot(power_intake_12h, label='Power Generation')
+                # plt.plot(battery_12h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_12h,'r-', label='Power Consumption')
+                plt.plot(power_intake_12h, 'b-', label='Power Generation')
+                plt.plot(battery_12h_contribution, 'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Continuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
@@ -793,7 +802,7 @@ class EPS_Simulation_:
             os.makedirs('./Outputs/EPS_simulation/CSV/Discontinuous/12h/')
         
         for i, config_name in tqdm(enumerate(configuration_name)):
-            for j in [1.29, 1.3, 1.31, 1.4]:
+            for j in [1.3, 2, 0.5, 0]:
                 # --- 6h orbit --- #
                 power_consumption_6h = self.Power_need(ltan=6, payload_cont=False)
                 power_intake_6h = self.Power_intake(side_panel_efficiency_map_6h[i], top_panel_efficiency_map_6h[i], back_panel_efficiency_map_6h[i], j)
@@ -810,9 +819,9 @@ class EPS_Simulation_:
                     battery_array_csv.append(temp_bat_6)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_6h_contribution.
-                plt.plot(power_consumption_6h, label='Power Consumption')
-                plt.plot(power_intake_6h, label='Power Generation')
-                plt.plot(battery_6h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_6h, 'r-', label='Power Consumption')
+                plt.plot(power_intake_6h, 'b-', label='Power Generation')
+                plt.plot(battery_6h_contribution, 'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/6h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
@@ -838,9 +847,9 @@ class EPS_Simulation_:
 
 
                 # saving plot data: plotting power_consumption, power_intake, battery_9h_contribution.
-                plt.plot(power_consumption_9h, label='Power Consumption')
-                plt.plot(power_intake_9h, label='Power Generation')
-                plt.plot(battery_9h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_9h,'r-', label='Power Consumption')
+                plt.plot(power_intake_9h,'b-', label='Power Generation')
+                plt.plot(battery_9h_contribution,'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/9h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
@@ -865,9 +874,9 @@ class EPS_Simulation_:
                     battery_array_csv.append(temp_bat_12)
 
                 # saving plot data: plotting power_consumption, power_intake, battery_12h_contribution.
-                plt.plot(power_consumption_12h, label='Power Consumption')
-                plt.plot(power_intake_12h, label='Power Generation')
-                plt.plot(battery_12h_contribution, label='Battery Contribution (Charge/Discharge)')
+                plt.plot(power_consumption_12h,'r-', label='Power Consumption')
+                plt.plot(power_intake_12h, 'b-', label='Power Generation')
+                plt.plot(battery_12h_contribution, 'g--', label='Battery Contribution (Charge/Discharge)')
                 plt.legend()
                 plt.savefig('./Outputs/EPS_simulation/Plots/Discontinuous/12h/'+config_name+'_Folds_per_side'+str(j)+'.png')
                 plt.close()
