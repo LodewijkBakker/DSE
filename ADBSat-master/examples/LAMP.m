@@ -60,6 +60,12 @@ modGeneral = 'CIV-Ffhi-Sfi';
 modNames = {'CIV-Ffh0-Sf0', 'CIV-Ffh12-Sf12'};
 config_6_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIV-Ffhi-Sfi\\CIV-Ffhi-Sfi.csv';
 get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
+
+modGeneral = 'CIII-Bfhi-Sfi';
+modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf12'};
+config_2_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfi\\CIII-Bfhi-Sfi.csv';
+get_config_torque_csv(config_2_loc, cg_s, inparam, modNames, modGeneral)
+
 % 
 % % CIV-Fr-Sfi
 % modGeneral = 'CIV-Fr-Sfi\\CIV-Fr-Sf0';
@@ -102,10 +108,6 @@ get_config_torque_csv(config_6_loc, cg_s, inparam, modNames, modGeneral)
 % config_1_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CI-Br-Sf0\\CI-Br-Sf0.csv';
 % get_config_torque_csv(config_1_loc, cg_s, inparam, modNames, modGeneral)
 % 
-% modGeneral = 'CIII-Bfhi-Sfi';
-% modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf12'};
-% config_2_loc = 'C:\\Users\\Lodewijk\\Documents\\University_Subjects\\DSE\\DSE\\ADBSat-master\\inou\\obj_files\\Configs\\CIII-Bfhi-Sfi\\CIII-Bfhi-Sfi.csv';
-% get_config_torque_csv(config_2_loc, cg_s, inparam, modNames, modGeneral)
 % 
 % modGeneral = 'CIII-Bfhi-Sfo';
 % modNames = {'CIII-Bfh0-Sf0', 'CIII-Bfh12-Sf0'};
@@ -287,7 +289,7 @@ function [max_roll, max_pitch, max_yaw, max_pitch_unstable, max_yaw_unstable, ma
         
         % Nominal case
         for aos_j = -5:1:5  % Angle of sideslip [deg]
-            for aoa_k = -1:0.1:1   % Angle of attack [deg] switched because blender wtf
+            for aoa_k = -1.3:0.1:1.3   % Angle of attack [deg] switched because blender wtf
                 % Coefficient Calculation
                 % fileOut = calc_coeff(modOut, resOut, deg2rad(aoa_deg), deg2rad(aos_deg), inparam, shadow, solar, 1, 0); 
                 fileOut = calc_coeff(modOut_imp, resOut, deg2rad(aos_j), deg2rad(aoa_k), inparam, shadow, solar, 1, 0); 
@@ -366,12 +368,13 @@ function [roll_torque, pitch_torque, yaw_torque, pitch_unstable, yaw_unstable] =
     % Sun torque
     l_s_torque = 0.35;
     q_sun_max = 1414;
-    a_albedo = 0.14;  % beta angle dependent 0.14 for < 30 0.19 above
+    a_albedo = 0.19;  % beta angle dependent 0.14 for < 30 0.19 above
     c_light = 299792458;  % [m/s] https://physics.nist.gov/cgi-bin/cuu/Value?c
-    a_reflectivity = 0.9;
-    a_frontal = 1.7;
+    a_reflectivity = 1;
+    a_frontal = 0.7;
     rad_torque = q_sun_max*(1+a_albedo)/c_light*a_frontal*(1+a_reflectivity)*l_s_torque;  % has to add in such a way that it makes it larger
-
+    
+    %display(rad_torque)
     if aoa*M_b(3) > 0
         pitch_unstable = abs(M_b(3)) + rad_torque;
     else

@@ -309,7 +309,7 @@ def sizing_magnetorquer(dip_moment, print_mag=False):
     magnetorquer_magnetometer_t = 0.9   # 0.9 sec magnetorquer 0.1 magnetomer
     for dip_moment_axis in dip_moment:
         # SQRT(2)*54*3.5*10^-3 is for spacecraft dipole
-        design_dip_moment_axis = safety_factor*dip_moment_axis*magnetorquer_magnetometer_t + (2**0.5)*54*3.5*10**(-3)
+        design_dip_moment_axis = safety_factor*(dip_moment_axis + (2**0.5)*54*3.5*10**(-3))/magnetorquer_magnetometer_t
         assert(dip_moment_axis > 0)
         # from statistics
         m_magnetorquer += design_dip_moment_axis*0.015
